@@ -53,19 +53,32 @@
   border-top: 1px solid #EEE;
 }
 
+.type-helpfile {
+ display:inline-block;
+  width: 20%;
+  padding: 1%;
+  margin:0 1%;
+  display: inline-block;
+  vertical-align: top;
+  min-height: 180px;
+  border-top: 1px solid #EEE;
+}
+
+
+
 @media (max-width:980px){
-.type-customer, .type-service, .type-testimonial, .type-product{
+.type-customer, .type-service, .type-testimonial, .type-product, .type-helpfile {
 width: 29%;
 
 
 }
 @media all and (max-width:840px){
-.type-customer, .type-service, .type-testimonial, .type-product{
+.type-customer, .type-service, .type-testimonial, .type-product, .type-helpfile {
 	width: 40%;
 
 }
 @media all and (max-width:700px){
-.type-customer, .type-service, .type-testimonial, .type-product{
+.type-customer, .type-service, .type-testimonial, .type-product, .type-helpfile {
 	width: 90%;
 }
 
