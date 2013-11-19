@@ -1,0 +1,12 @@
+/*Styles For Everyone!*/
+
+.t50 {margin-top: 50px;}
+.b50 {margin-bottom: 50px;}
+.m {margin:100px 0;}
+.bluebox {background:#C5DFFF;padding:20px;border: 1px solid #E9E9E9;margin: 20px 0 100px 0;}
+.purplebox{}
+.orangebox{background: #FEF2E8; padding: 20px;border: 1px solid #E9E9E9;margin: 20px 0 100px 0;}
+.yellowbox{background: #FEF8C9; padding: 20px;border: 1px solid #E9E9E9;margin: 20px 0 100px 0;}
+.graybox{background: #EEE; padding: 20px;border: 1px solid #E9E9E9;margin: 20px 0 100px 0;}
+.whitebox {background:white;padding:20px; border:10px solid #000;margin: 20px 0 100px 0;}
+.impact {font-family: impact;font-size:500%;}
