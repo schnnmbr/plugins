@@ -2,7 +2,7 @@
 /*
 Plugin Name: Shopno2 CPT Grid
 Plugin URI: http://shopno2.com
-Description: Styles for shopno2 sites. Styles are enqueued to be used inside posts.
+Description: Grid Styles for shopno2 sites. This plugin will provide a responsive grid to your Custom Post Types
 Author: sachin nambiar
 Author URI: shopno2.com
 Version: 0.1
