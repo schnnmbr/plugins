@@ -55,3 +55,12 @@ function shopno2_product() {
 
 // Hook into the 'init' action
 add_action( 'init', 'shopno2_product', 0 );
+
+//Activate Grid For This Post Type
+function be_grid_loop_on_product( $grid, $query ) {
+	if( is_post_type_archive( 'product' ) )
+		$grid = true;
+
+	return $grid;
+}
+add_filter( 'genesis_grid_loop_section', 'be_grid_loop_on_product', 10, 2 );

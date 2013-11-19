@@ -25,11 +25,11 @@ function shopno2_testimonial() {
 		'edit_item'           => __( 'Edit Testimonial', 'text_domain' ),
 		'update_item'         => __( 'Update Testimonial', 'text_domain' ),
 		'search_items'        => __( 'Search testimonials', 'text_domain' ),
-		'not_found'           => __( 'No testimonial found', 'text_domain' ),
-		'not_found_in_trash'  => __( 'No testimonial found in Trash', 'text_domain' ),
+		'not_found'           => __( 'No Testimonials found', 'text_domain' ),
+		'not_found_in_trash'  => __( 'No Testimonials found in Trash', 'text_domain' ),
 	);
 	$args = array(
-		'label'               => __( 'testimonial', 'text_domain' ),
+		'label'               => __( 'Testimonial', 'text_domain' ),
 		'description'         => __( 'Testimonial information pages', 'text_domain' ),
 		'labels'              => $labels,
 		'supports'            => array( 'title', 'editor', 'thumbnail', ),
@@ -55,5 +55,11 @@ function shopno2_testimonial() {
 
 // Hook into the 'init' action
 add_action( 'init', 'shopno2_testimonial', 0 );
+//Activate Grid For This Post Type
+function be_grid_loop_on_testimonial( $grid, $query ) {
+	if( is_post_type_archive( 'testimonial' ) )
+		$grid = true;
 
-
+	return $grid;
+}
+add_filter( 'genesis_grid_loop_section', 'be_grid_loop_on_testimonial', 10, 2 );

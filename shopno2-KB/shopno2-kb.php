@@ -47,6 +47,7 @@ function shopno2_kb() {
 		'exclude_from_search' => false,
 		'publicly_queryable'  => true,
 		'capability_type'     => 'page',
+		'supports' => array( 'title', 'editor', 'genesis-seo', 'thumbnail','genesis-cpt-archives-settings' ),
 	);
 	register_post_type( 'kb', $args );
 
@@ -54,3 +55,12 @@ function shopno2_kb() {
 
 // Hook into the 'init' action
 add_action( 'init', 'shopno2_kb', 0 );
+
+//Activate Grid For This Post Type
+function be_grid_loop_on_kb( $grid, $query ) {
+	if( is_post_type_archive( 'kb' ) )
+		$grid = true;
+
+	return $grid;
+}
+add_filter( 'genesis_grid_loop_section', 'be_grid_loop_on_kb', 10, 2 );

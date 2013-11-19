@@ -13,22 +13,22 @@ function shopno2_helpfile() {
 
 	$labels = array(
 		'name'                => _x( 'HelpFiles', 'Post Type General Name', 'text_domain' ),
-		'singular_name'       => _x( 'Helpfile', 'Post Type Singular Name', 'text_domain' ),
-		'menu_name'           => __( 'Helpfile', 'text_domain' ),
-		'parent_item_colon'   => __( 'Parent Helpfile:', 'text_domain' ),
+		'singular_name'       => _x( 'HelpFile', 'Post Type Singular Name', 'text_domain' ),
+		'menu_name'           => __( 'HelpFiles', 'text_domain' ),
+		'parent_item_colon'   => __( 'Parent HelpFile:', 'text_domain' ),
 		'all_items'           => __( 'All HelpFiles', 'text_domain' ),
-		'view_item'           => __( 'View Helpfile', 'text_domain' ),
-		'add_new_item'        => __( 'Add New Helpfile', 'text_domain' ),
-		'add_new'             => __( 'New Helpfile', 'text_domain' ),
-		'edit_item'           => __( 'Edit Helpfile', 'text_domain' ),
-		'update_item'         => __( 'Update Helpfile', 'text_domain' ),
-		'search_items'        => __( 'Search helpfiles', 'text_domain' ),
-		'not_found'           => __( 'No helpfile found', 'text_domain' ),
-		'not_found_in_trash'  => __( 'No helpfiles found in Trash', 'text_domain' ),
+		'view_item'           => __( 'View HelpFiles', 'text_domain' ),
+		'add_new_item'        => __( 'Add New HelpFile', 'text_domain' ),
+		'add_new'             => __( 'New HelpFile', 'text_domain' ),
+		'edit_item'           => __( 'Edit HelpFile', 'text_domain' ),
+		'update_item'         => __( 'Update HelpFile', 'text_domain' ),
+		'search_items'        => __( 'Search HelpFiles', 'text_domain' ),
+		'not_found'           => __( 'No HelpFiles found', 'text_domain' ),
+		'not_found_in_trash'  => __( 'No HelpFiles found in Trash', 'text_domain' ),
 	);
 	$args = array(
-		'label'               => __( 'helpfile', 'text_domain' ),
-		'description'         => __( 'Helpfile information pages', 'text_domain' ),
+		'label'               => __( 'HelpFiles', 'text_domain' ),
+		'description'         => __( 'HelpFiles information pages', 'text_domain' ),
 		'labels'              => $labels,
 		'supports'            => array( 'title', 'editor', 'thumbnail', 'custom-fields', ),
 		'taxonomies'          => array( 'category'),
@@ -47,9 +47,18 @@ function shopno2_helpfile() {
 		'capability_type'     => 'page',
 		'supports' => array( 'title', 'editor', 'genesis-seo', 'thumbnail','genesis-cpt-archives-settings' ),
 	);
-	register_post_type( 'helpfile', $args );
+	register_post_type( 'helpfiles', $args );
 
 }
 
 // Hook into the 'init' action
 add_action( 'init', 'shopno2_helpfile', 0 );
+
+//Activate Grid For This Post Type
+function be_grid_loop_on_helpfile( $grid, $query ) {
+	if( is_post_type_archive( 'helpfiles' ) )
+		$grid = true;
+
+	return $grid;
+}
+add_filter( 'genesis_grid_loop_section', 'be_grid_loop_on_helpfile', 10, 2 );

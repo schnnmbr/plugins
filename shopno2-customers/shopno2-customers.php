@@ -54,3 +54,12 @@ function shopno2_customer() {
 
 // Hook into the 'init' action
 add_action( 'init', 'shopno2_customer', 0 );
+
+//Activate Grid For This Post Type
+function be_grid_loop_on_customer( $grid, $query ) {
+	if( is_post_type_archive( 'customer' ) )
+		$grid = true;
+
+	return $grid;
+}
+add_filter( 'genesis_grid_loop_section', 'be_grid_loop_on_customer', 10, 2 );
