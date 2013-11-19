@@ -1,0 +1,264 @@
+/*Admin Theme CSS*/
+a.add-new-h2{
+	background: #2A95C5 ;
+	-moz-border-radius: 4px;
+	-webkit-border-radius: 4px;
+	border-radius: 4px;
+}
+td.plugin-title strong{font-weight:300; font: 120% Arial;}
+.plugin-description {font:250%;}
+.widefat th.column-sales,
+.widefat td.column-sales,
+.widefat th.column-stock,
+.widefat td.column-stock{
+	width: 90px;
+}
+
+.wrap .add-new-h2{
+	font-family:Arial, san-serif;
+	background: #2A95C5  !important;
+	color: #fff !important;
+	padding:10px 35px 10px 30px!important;
+	font-size: 20px !important;
+	text-shadow: 0px 1px 1px #2484B0;
+}
+
+.red{
+	color: #bd362f;
+}
+
+.green{
+	color: #46a546;
+}
+
+.form-table td,
+p.help, p.description, span.description, .form-wrap p{
+	font-size: 13px;
+}
+
+input.button-primary{
+	-moz-border-bottom-colors: none !important;
+	-moz-border-image: none !important;
+	-moz-border-left-colors: none !important;
+	-moz-border-right-colors: none !important;
+	-moz-border-top-colors: none !important;
+	border-radius: 4px 4px 4px 4px !important;
+	border-style: solid !important;
+	border-width: 1px !important;
+	box-shadow: 0 1px 0 rgba(255, 255, 255, 0.2) inset, 0 1px 2px rgba(0, 0, 0, 0.05) !important;
+	cursor: pointer !important;
+	display: inline-block !important;
+	font-size: 18px !important;
+	line-height: 5px !important;
+	margin-bottom: 0 !important;
+	padding: 25px 25px 30px 25px!important;
+	text-align: center !important;
+	vertical-align: middle !important;
+	color: #FFFFFF !important;
+	text-shadow: 0 -1px 0 rgba(0, 0, 0, 0.25) !important;
+	background-color: #0074CC !important;
+	background-image: -moz-linear-gradient(center top , #0088CC, #0055CC) !important;
+	background-repeat: repeat-x !important;
+	border-color: rgba(0, 0, 0, 0.1) rgba(0, 0, 0, 0.1) rgba(0, 0, 0, 0.25) !important;
+}
+
+ul.list{
+	list-style: disc;
+	list-style-type: disc;
+	margin-left: 2em;
+}
+
+
+.wrap{
+        margin: 4px 15px 0 0;
+	padding: 10px;
+	background: #fff;
+	-moz-border-radius: 10px;
+	-webkit-border-radius: 10px;
+	border-radius: 10px;
+}
+
+.wrap.frontpage_tools td input{
+	width: 100%;
+}
+
+.widefat tr.status-order_received td a.mp_order_status{background: none;}
+.widefat tr.status-order_paid td a.mp_order_status{background: none;}
+.widefat tr.status-order_shipped td a.mp_order_status{background: none;}
+
+#adminmenuwrap{
+	bottom: 45px;
+	left: 0;
+	position: absolute;
+	right: 0;
+	top: 0px;
+	overflow: visible;
+}
+
+#adminmenu li.wp-menu-open{
+	border-bottom: 1px solid #DFDFDF;
+	border-top: 1px solid #FFFFFF;
+	margin: 0;
+}
+
+#adminmenu li.menu-top > a
+{
+	background-color: #F5F5F5;
+	background-image: -moz-linear-gradient(center top , #F5F5F5, #EEEEEE);
+	font-size: 12px;
+	font-weight: normal;
+	text-shadow: 0 1px 0 #FFFFFF;
+}
+
+#adminmenu li.menu-top:hover > a, #adminmenu li.menu-top.focused > a, #adminmenu li.menu-top > a:focus
+{
+        
+	color: #222;
+	background-color: #F5F5F5;
+	font-size: 12px;
+	font-weight: normal;
+	background-image: -moz-linear-gradient(center top , #F5F5F5, #EEEEEE);
+	
+}
+
+
+.postbox .hndle, #poststuff h3, .metabox-holder h3{
+	background-color: #F5F5F5;
+	font-size: 18px;
+	font-weight: normal;
+	padding: 5px;
+        background-image: -moz-linear-gradient(center top , #F5F5F5, #EEEEEE);
+	text-shadow: 0 1px 0 #CCC;
+}
+#adminmenu li.menu-top:hover, #adminmenu li.opensub > a.menu-top, #adminmenu li > a.menu-top:focus { 
+color: #2A95C5;
+
+}
+
+#adminmenu a:hover, #adminmenu li.menu-top > a:focus, #adminmenu .wp-submenu a:hover, #the-comment-list .comment a:hover, #rightnow a:hover, #media-upload a.del-link:hover, div.dashboard-widget-submit input:hover, .subsubsub a:hover, .subsubsub a.current:hover, .ui-tabs-nav a:hover, .plugins .inactive a:hover, #all-plugins-table .plugins .inactive a:hover, #search-plugins-table .plugins .inactive a:hover { 
+color: #2A95C5;
+}
+#adminmenu a.menu-top{
+	font-weight: normal;
+}
+
+#adminmenu a, #the-comment-list p.comment-author strong a, #media-upload a.del-link, #media-items a.delete, .plugins a.delete, .ui-tabs-nav a{
+	color: #333;
+}
+
+#adminmenuback, #adminmenuwrap, #adminmenu, #adminmenu .wp-submenu, #adminmenu .wp-submenu-wrap, .folded #adminmenu .wp-has-current-submenu .wp-submenu{
+	width: 145px;
+}
+
+
+#wpcontent, #footer{
+	/*margin-left: 150px !important;*/
+}
+
+.wp-menu-arrow{
+	display: none !important;
+}
+
+#adminmenu li .wp-submenu, .folded #adminmenu .wp-has-current-submenu .wp-submenu{
+	left: 145px;
+}
+
+#adminmenu li.wp-menu-separator{
+	/*display: none; Important to do this especially when you want to use menu related plugins*/
+}
+
+#wpadminbar{
+
+	padding: 5px;
+	background: #222;
+	box-shadow: 2px 2px 8px #CCC;
+}
+
+#wpwrap{
+	top: 9px;
+}
+
+#wpadminbar .quicklinks > ul > li{
+	border: none;
+}
+
+#wpadminbar .ab-top-menu > li:hover > .ab-item, 
+#wpadminbar .ab-top-menu > li.hover > .ab-item, 
+#wpadminbar .ab-top-menu > li > .ab-item:focus, 
+#wpadminbar.nojq .quicklinks .ab-top-menu > li > .ab-item:focus,
+#wpadminbar .ab-top-secondary{
+	background: none;
+	background: transparent;
+}
+
+#adminmenu .wp-submenu a{
+	font-size: 12px;
+	padding: 5px;
+	border-bottom: 1px solid #f2f2f2;
+	color: #666;
+}
+#adminmenu div.wp-menu-image {
+float: left;
+width: 28px;
+height: 28px;
+}
+
+
+#wp-admin-bar-new-content>.ab-item .ab-icon{
+background-image:url(../wp-includes/images/admin-bar-sprite.png?d=20120830);
+background-position:-2px -182px;background-repeat:no-repeat}
+
+/*.icon16.icon-dashboard, .menu-icon-dashboard div.wp-menu-image, .icon16.icon-post, .menu-icon-post div.wp-menu-image, .icon16.icon-media, .menu-icon-media div.wp-menu-image, .icon16.icon-links, .menu-icon-links div.wp-menu-image, .icon16.icon-page, .menu-icon-page div.wp-menu-image, .icon16.icon-comments, .menu-icon-comments div.wp-menu-image, .icon16.icon-appearance, .menu-icon-appearance div.wp-menu-image, .icon16.icon-plugins, .menu-icon-plugins div.wp-menu-image, .icon16.icon-users, .menu-icon-users div.wp-menu-image, .icon16.icon-tools, .menu-icon-tools div.wp-menu-image, .icon16.icon-settings, .menu-icon-settings div.wp-menu-image, .icon16.icon-site, .menu-icon-site div.wp-menu-image, .icon16.icon-generic, .menu-icon-generic div.wp-menu-image {
+background-image: url(../images/menu.png?ver=20121105);
+}*/
+.wp-menu-image{
+	/*display: none; This is necessary or the menu icons won't show*/
+}
+
+.folded .wp-menu-image {
+	display:inline;
+}
+
+@media screen and (max-width:900px){
+	.wp-menu-image {
+		display:inline;
+	}
+}
+
+#adminmenuback, #adminmenuwrap{
+	background-color: #FFF;
+}
+
+.folded #adminmenu .wp-submenu,
+.folded #adminmenu .wp-has-current-submenu .wp-submenu{
+	left: 38px;
+}
+
+#wpcontent, #wpfooter {
+/*margin-left: 165px; to ensure that the wrap extends width on folded menu*/
+}
+.folded #wpcontent,.folded #wpfooter{margin-left:52px}
+#screen-meta {background:#F9F9F9;}
+.widefat {
+border-color: #f2f2f2;
+background-color: #F9F9F9;
+}
+
+/*Whitelabelling -  Remove HeadWay Icon From Meta Boxes*/
+
+div.postbox[id^="headway-admin-meta-box-"] div.handlediv, 
+div.postbox[id^="headway-admin-meta-box-"]:hover div.handlediv {
+	background: url(../mu-plugins/s2logo-16.png);
+	background-repeat: no-repeat;
+	background-position: center;
+	opacity: 1;
+}
+
+	#icon-headway {
+		background: url(../mu-plugins/s2logo-32.png) no-repeat;
+		width: 32px;
+		height: 32px;
+		margin-right: 12px;
+	}
+/*#welcome-panel {background: #EFEFEF;}
+.custom-welcome-panel-content h1,h2,h3{color: #222;}
