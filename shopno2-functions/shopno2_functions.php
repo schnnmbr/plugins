@@ -70,29 +70,21 @@ if (basename($_SERVER['PHP_SELF']) == basename (__FILE__)) {
 /*
 Adding Theme Support For Custom Backgrounds for Posts
 */
-/*add_theme_support( 'custom-background' );
-add_theme_support( 'custom-header' );*/
-// Register Theme Features
-function custom_theme_features()  {
+add_theme_support( 'custom-background' );
 
-	// Add theme support for Custom Header
-	$header_args = array(
-		'default-image'          => '',
-		'width'                  => 640,
-		'height'                 => 500,
-		'flex-width'             => true,
+//* Add support for custom header
+add_theme_support( 'custom-header', array(
+      // 'default-text-color'     => '000000',
+     	'header-text'            => true,
+        'height'                 => 200,
+        'width'                  => 0,
+	 // Support flexible height and width.
 		'flex-height'            => true,
-		'random-default'         => false,
-		'header-text'            => true,
-		'default-text-color'     => '#000',
-		'uploads'                => true,
+	 	'flex-width'             => true,
+	
+) );
 
-	);
-	add_theme_support( 'custom-header', $header_args );
-}
 
-// Hook into the 'after_setup_theme' action
-add_action( 'after_setup_theme', 'custom_theme_features' );
 // Obscure login screen error messages
 function shopno2_login_obscure(){ return 'Wrong Username/Password Combination';}
 add_filter( 'login_errors', 'shopno2_login_obscure' );
