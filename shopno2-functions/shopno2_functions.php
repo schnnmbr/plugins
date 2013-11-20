@@ -67,8 +67,32 @@ if (basename($_SERVER['PHP_SELF']) == basename (__FILE__)) {
 /*add_action('admin_notices', 'showAdminMessages'); 
 */
 
+/*
+Adding Theme Support For Custom Backgrounds for Posts
+*/
+/*add_theme_support( 'custom-background' );
+add_theme_support( 'custom-header' );*/
+// Register Theme Features
+function custom_theme_features()  {
 
+	// Add theme support for Custom Header
+	$header_args = array(
+		'default-image'          => '',
+		'width'                  => 640,
+		'height'                 => 500,
+		'flex-width'             => true,
+		'flex-height'            => true,
+		'random-default'         => false,
+		'header-text'            => true,
+		'default-text-color'     => '#000',
+		'uploads'                => true,
 
+	);
+	add_theme_support( 'custom-header', $header_args );
+}
+
+// Hook into the 'after_setup_theme' action
+add_action( 'after_setup_theme', 'custom_theme_features' );
 // Obscure login screen error messages
 function shopno2_login_obscure(){ return 'Wrong Username/Password Combination';}
 add_filter( 'login_errors', 'shopno2_login_obscure' );
