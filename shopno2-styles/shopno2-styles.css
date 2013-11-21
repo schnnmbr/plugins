@@ -11,4 +11,5 @@
 .whitebox {background:white;padding:10px; border:10px solid #000;margin: 20px 0 100px 0;}
 .impact {font-family: impact;font-size:500%;}
 .highlight {background: #EEE; padding: 10px;border: 1px solid #E9E9E9;margin: 20px 0;}/*To use without the huge bottom margins -  ideal for use inside pages*/
-.signup {background:yellow;border: 1px solid #E9E9E9;margin: 20px 0;}
+.signup {background:#5EB83D;border: 1px solid #7CF751;margin: 20px 0;}
+.punch {background:#B82D2C;border: 1px solid #FE3D3C;margin: 20px 0;}
