@@ -12,4 +12,4 @@
 .impact {font-family: impact;font-size:500%;}
 .highlight {background: #EEE; padding: 10px;border: 1px solid #E9E9E9;}/*To use without the huge bottom margins -  ideal for use inside pages*/
 .signup {background:#5EB83D; padding: 10px; border: 1px solid #7CF751;}
-.punch {background:#B82D2C; padding: 10px; border: 1px solid #FE3D3C;}
+.punch {font-size:4.5rem; font-family:Helvetica; line-height:6rem;}
