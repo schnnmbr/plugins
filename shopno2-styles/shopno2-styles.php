@@ -16,4 +16,4 @@ function shopno2_styles() {
             wp_enqueue_style( 'shopno2-styles', plugin_dir_url( __FILE__ ) . 'shopno2-styles.css', array(), '0.1', 'screen' );
         }
 }
-add_action( 'wp_enqueue_scripts', 'shopno2_styles' );
+add_action( 'wp_enqueue_scripts', 'shopno2_styles', true );
