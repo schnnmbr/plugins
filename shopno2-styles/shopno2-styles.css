@@ -52,7 +52,13 @@
 	text-shadow: 0 1px 0 rgba(255,255,255,0.5);
 	border-radius: 4px;}
 .graybox{background: #EEE; padding: 10px;border: 1px solid #E9E9E9;margin: 20px 0 100px 0;}
-.whitebox {background:white;padding:10px; border:10px solid #000;margin: 20px 0 100px 0;}
+.focusbox {
+	background:#EEE;
+	padding:10px; 
+	border:10px solid #000;
+	margin: 20px 0 100px 0;
+	box-shadow: 3px 3px 5px;
+}
 
 /*Buttons*/
 .bluebutton {
@@ -178,3 +184,46 @@ filter: progid:DXImageTransform.Microsoft.gradient(enabled=false);
 .highlight {background: #EEE; padding: 10px;border: 1px solid #E9E9E9;}/*To use without the huge bottom margins -  ideal for use inside pages*/
 .signup {background:#5EB83D; padding: 10px; border: 1px solid #7CF751;}
 .punch {font-size:4.5rem; font-family:Helvetica; line-height:6rem;}
+
+/**/
+/*3 Grid Widgets*/
+#wah1,#wah2,#wah3,#wbh1,#wbh2,#wbh3,#bsw1,#bsw2,#bsw3/* 3 Columns */ {
+  display:inline-block;
+  width: 31%;
+  padding: 20px;
+  margin: 1%;
+  display: inline-block;
+  vertical-align: top;
+  min-height: 180px;
+  background: #FFEFF0;
+  border: 1px solid #000;
+}
+
+@media (max-width:980px){
+#wah1,#wah2,#wah3,#wbh1,#wbh2,#wbh3,#bsw1,#bsw2,#bsw3{
+width: 31%;
+margin: 0.5%;
+
+}
+@media all and (max-width:900px){
+  #wah1,#wah2,#wah3,#wbh1,#wbh2,#wbh3,#bsw1,#bsw2,#bsw3{
+  width: 47%;
+  margin: 0.5%;
+}
+@media all and (max-width:580px){
+  #wah1,#wah2,#wah3,#wbh1,#wbh2,#wbh3,#bsw1,#bsw2,#bsw3 {
+  width: 90%;
+  margin: 20px 5% auto;
+}
+
+} }}
+
+/*Full Width Widgets*/
+#fwah1,#fwah2,#fwah3 {
+display:inline-block;
+  width: 91%;
+  margin: 30px 4% auto;
+  padding: 20px;
+  background: #FFEFF0;
+  border: 1px solid #000;
+}
