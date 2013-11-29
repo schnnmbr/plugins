@@ -7,7 +7,7 @@
 /*BOXES*/
 .bluebox {
 	background:#d9edf7;
-	padding:10px;
+	padding:20px;
 	border: 1px solid #bce8f1;
 	margin: 20px 0 50px 0; 
 	color: #3a87ad;
@@ -16,7 +16,7 @@
 }
 .greenbox {
 	background:#dff0d8;
-	padding:10px;
+	padding:20px;
 	border: 1px solid #d6e9c6;
 	margin: 20px 0 50px 0; 
 	color: #468847;
@@ -25,7 +25,7 @@
 }
 .yellowbox{
 	background:#fcf8e3;
-	padding:10px;
+	padding:20px;
 	border: 1px solid #fbeed5;
 	margin: 20px 0 50px 0; 
 	color: #c09853;
@@ -34,7 +34,7 @@
 }
 .redbox{
 	background: #f2dede;
-	padding:10px;
+	padding:20px;
 	border: 1px solid #eed3d7;
 	margin: 20px 0 50px 0; 
 	color: #b94a48;
@@ -43,15 +43,15 @@
 
 }
 .purplebox{}
-.orangebox{background: #FEF2E8; padding: 10px;border: 1px solid #E9E9E9;margin: 20px 0 100px 0;}
+.orangebox{background: #FEF2E8; padding: 20px;border: 1px solid #E9E9E9;margin: 20px 0 100px 0;}
 .yellowbox{background:#fcf8e3;
-	padding:10px;
+	padding:20px;
 	border: 1px solid #fbeed5;
 	margin: 20px 0 50px 0; 
 	color: #c09853;
 	text-shadow: 0 1px 0 rgba(255,255,255,0.5);
 	border-radius: 4px;}
-.graybox{background: #EEE; padding: 10px;border: 1px solid #E9E9E9;margin: 20px 0 100px 0;}
+.graybox{background: #EEE; padding: 20px;border: 1px solid #E9E9E9;margin: 20px 0 100px 0;}
 
 .focusbox/*Has Shadow*/ {
 	background:#EEE;
