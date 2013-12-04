@@ -1,3 +1,4 @@
+@import url(http://fonts.googleapis.com/css?family=Oxygen:400,700);
 /*Styles For Everyone!*/
 
 .t50 {margin-top: 50px;}
@@ -7,7 +8,7 @@
 /*BOXES*/
 .bluebox {
 	background:#d9edf7;
-	padding:20px;
+	padding:10px;
 	border: 1px solid #bce8f1;
 	margin: 20px 0 50px 0; 
 	color: #3a87ad;
@@ -16,7 +17,7 @@
 }
 .greenbox {
 	background:#dff0d8;
-	padding:20px;
+	padding:10px;
 	border: 1px solid #d6e9c6;
 	margin: 20px 0 50px 0; 
 	color: #468847;
@@ -25,7 +26,7 @@
 }
 .yellowbox{
 	background:#fcf8e3;
-	padding:20px;
+	padding:10px;
 	border: 1px solid #fbeed5;
 	margin: 20px 0 50px 0; 
 	color: #c09853;
@@ -34,7 +35,7 @@
 }
 .redbox{
 	background: #f2dede;
-	padding:20px;
+	padding:10px;
 	border: 1px solid #eed3d7;
 	margin: 20px 0 50px 0; 
 	color: #b94a48;
@@ -43,17 +44,16 @@
 
 }
 .purplebox{}
-.orangebox{background: #FEF2E8; padding: 20px;border: 1px solid #E9E9E9;margin: 20px 0 100px 0;}
+.orangebox{background: #FEF2E8; padding: 10px;border: 1px solid #E9E9E9;margin: 20px 0 100px 0;}
 .yellowbox{background:#fcf8e3;
-	padding:20px;
+	padding:10px;
 	border: 1px solid #fbeed5;
 	margin: 20px 0 50px 0; 
 	color: #c09853;
 	text-shadow: 0 1px 0 rgba(255,255,255,0.5);
 	border-radius: 4px;}
-.graybox{background: #EEE; padding: 20px;border: 1px solid #E9E9E9;margin: 20px 0 100px 0;}
-
-.focusbox/*Has Shadow*/ {
+.graybox{background: #EEE; padding: 10px;border: 1px solid #E9E9E9;margin: 20px 0 100px 0;}
+.focusbox {
 	background:#EEE;
 	padding:10px; 
 	border:10px solid #000;
@@ -62,11 +62,14 @@
 }
 
 /*Buttons*/
-.bluebutton {
+.bluebutton{
+text-align:center;
 font-size: 20px;
 font-weight: normal;
 padding: 14px 24px;
-margin-right: 10px;
+min-width: 200px;
+max-width: 20%;
+margin: 50px auto;
 -webkit-border-radius: 6px;
 -moz-border-radius: 6px;
 border-radius: 6px;
@@ -84,6 +87,11 @@ filter: progid:DXImageTransform.Microsoft.gradient(startColorstr='#0088cc', endC
 border-color: #0055cc #0055cc #003580;
 border-color: rgba(0,0,0,0.1) rgba(0,0,0,0.1) rgba(0,0,0,0.25);
 filter: progid:DXImageTransform.Microsoft.gradient(enabled=false);
+}
+.bluebutton a:link {
+	color: #FFF!important;
+	text-decoration: none !important; 
+	border:0 !important;
 }
 	
 
@@ -186,9 +194,16 @@ filter: progid:DXImageTransform.Microsoft.gradient(enabled=false);
 .signup {background:#5EB83D; padding: 10px; border: 1px solid #7CF751;}
 .punch {font-size:4.5rem; font-family:Helvetica; line-height:6rem;}
 
-/**/
+/*Templates*/
+.bigsignup {font-size: 7rem;font-weight: bolder;font-family: 'Oxygen', sans-serif;color: black;text-align: center;}
+
 /*3 Grid Widgets*/
-#wah1,#wah2,#wah3,#wbh1,#wbh2,#wbh3,#bsw1,#bsw2,#bsw3/* 3 Columns */ {
+#ah1,#ah2,#ah3,
+#bh1,#bh2,#bh3,
+#bsw1,#bsw2,#bsw3,
+#asw1,#asw2,#asw3,
+#bg1,#bg2,#bg3,
+#bf1,#bf2,#bf3/* 3 Columns*/  {
   display:inline-block;
   width: 31%;
   padding: 20px;
@@ -201,18 +216,23 @@ filter: progid:DXImageTransform.Microsoft.gradient(enabled=false);
 }
 
 @media (max-width:980px){
-#wah1,#wah2,#wah3,#wbh1,#wbh2,#wbh3,#bsw1,#bsw2,#bsw3{
+#ah1,#ah2,#ah3,
+#bh1,#bh2,#bh3,
+#bsw1,#bsw2,#bsw3,
+#asw1,#asw2,#asw3,
+#bg1,#bg2,#bg3,
+#bf1,#bf2,#bf3{
 width: 31%;
 margin: 0.5%;
 
 }
 @media all and (max-width:900px){
-  #wah1,#wah2,#wah3,#wbh1,#wbh2,#wbh3,#bsw1,#bsw2,#bsw3{
+  #ah1,#ah2,#ah3,#bh1,#bh2,#bh3,#bsw1,#bsw2,#bsw3,#asw1,#asw2,#asw3,#bg1,#bg2,#bg3,#bf1,#bf2,#bf3{
   width: 47%;
   margin: 0.5%;
 }
 @media all and (max-width:580px){
-  #wah1,#wah2,#wah3,#wbh1,#wbh2,#wbh3,#bsw1,#bsw2,#bsw3 {
+  #ah1,#ah2,#ah3,#bh1,#bh2,#bh3,#bsw1,#bsw2,#bsw3,#asw1,#asw2,#asw3,#bg1,#bg2,#bg3 {
   width: 90%;
   margin: 20px 5% auto;
 }
@@ -220,11 +240,16 @@ margin: 0.5%;
 } }}
 
 /*Full Width Widgets*/
-#fwah1,#fwah2,#fwah3 {
+#fah1,#fah2,#fah3,#fbh1,#fbh2,#fbh3,#fbf1,#fbf2,#fbf3,#fbsw1,#fbsw2,#fbsw3,#fbg1,#fbg2,#fbg3 {
 display:inline-block;
-  width: 91%;
-  margin: 30px 4% auto;
+  width: 100%;
+  margin: 0;
   padding: 20px;
-  background: #FFEFF0;
   border: 1px solid #000;
+}
+#fbf1,#fbf2,#fbf3,#fbsw1,#fbsw2,#fbsw3 {
+background: #FFEFF0;
+}
+#fah1,#fah2,#fah3,#fbg1,#fbg2,#fbg3 {
+background: #F3FDEC;
 }

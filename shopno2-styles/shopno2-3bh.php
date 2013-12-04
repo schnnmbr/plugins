@@ -12,52 +12,52 @@ Version: 0.1
 
 // 1
 	register_sidebar( array(
-		'name' => __( '3wbh1', 'shopno2' ),
-		'id' => '3wbh1',
+		'name' => __( 'Before Header 1/3-1', 'shopno2' ),
+		'id' => '3bh1',
 		'description' => __( 'Add widgets here to appear in your sidebar.', 'shopno2' ),
-		'before_widget' => '<div id="wbh1" class="widget-container %2$s">',
+		'before_widget' => '<div id="bh1" class="widget-container %2$s">',
 		'after_widget' => '</div>',
 		'before_title' => '<h3 class="widget-title">',
 		'after_title' => '</h3>',
 	) );
 
-add_action( 'genesis_before_header', 'shopno2_sidebar_3wbh1' );
+add_action( 'genesis_before_header', 'shopno2_sidebar_3bh1' );
 
-function shopno2_sidebar_3wbh1() {
-if (is_front_page()){
-	if ( !function_exists( 'dynamic_sidebar' ) || !dynamic_sidebar( '3wbh1' ) ) {}}}
+function shopno2_sidebar_3bh1() {
+//if (is_front_page()){
+	if ( !function_exists( 'dynamic_sidebar' ) || !dynamic_sidebar( '3bh1' ) ) {}}//}
 
 // 2
 	register_sidebar( array(
-		'name' => __( '3wbh2', 'shopno2' ),
-		'id' => '3wbh2',
+		'name' => __( 'Before Header 1/3-2', 'shopno2' ),
+		'id' => '3bh2',
 		'description' => __( 'Add widgets here to appear in your sidebar.', 'shopno2' ),
-		'before_widget' => '<div id="wbh2" class="widget-container %2$s">',
+		'before_widget' => '<div id="bh2" class="widget-container %2$s">',
 		'after_widget' => '</div>',
 		'before_title' => '<h3 class="widget-title">',
 		'after_title' => '</h3>',
 	) );
-add_action( 'genesis_before_header', 'shopno2_sidebar_3wbh2' );//location of sidebar 2
+add_action( 'genesis_before_header', 'shopno2_sidebar_3bh2' );//location of sidebar 2
 
-function shopno2_sidebar_3wbh2() {
-	if (is_front_page()){
-	if ( !function_exists( 'dynamic_sidebar' ) || !dynamic_sidebar( '3wbh2' ) ) {} }}
+function shopno2_sidebar_3bh2() {
+//	if (is_front_page()){
+	if ( !function_exists( 'dynamic_sidebar' ) || !dynamic_sidebar( '3bh2' ) ) {} }//}
 
 // 3
 	register_sidebar( array(
-		'name' => __( '3wbh3', 'shopno2' ),
-		'id' => '3wbh3',
+		'name' => __( 'Before Header 1/3-3', 'shopno2' ),
+		'id' => '3bh3',
 		'description' => __( 'Add widgets here to appear in your sidebar.', 'shopno2' ),
-		'before_widget' => '<div id="wbh3" class="widget-container %2$s">',
+		'before_widget' => '<div id="bh3" class="widget-container %2$s">',
 		'after_widget' => '</div>',
 		'before_title' => '<h3 class="widget-title">',
 		'after_title' => '</h3>',
 	) );
-add_action( 'genesis_before_header', 'shopno2_sidebar_3wbh3' );//location of sidebar 2
+add_action( 'genesis_before_header', 'shopno2_sidebar_3bh3' );//location of sidebar 2
 
-function shopno2_sidebar_3wbh3() {
-	if (is_front_page()){
-	if ( !function_exists( 'dynamic_sidebar' ) || !dynamic_sidebar( '3wbh3' ) ) {} }}
+function shopno2_sidebar_3bh3() {
+//	if (is_front_page()){
+	if ( !function_exists( 'dynamic_sidebar' ) || !dynamic_sidebar( '3bh3' ) ) {} }//}
 
 //Loads StyleSheet for Above Widgets
 /* 
