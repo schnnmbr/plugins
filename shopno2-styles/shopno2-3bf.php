@@ -24,8 +24,8 @@ Version: 0.1
 add_action( 'genesis_before_footer', 'shopno2_sidebar_3bf1' );
 
 function shopno2_sidebar_3bf1() {
-//if (is_front_page()){
-	if ( !function_exists( 'dynamic_sidebar' ) || !dynamic_sidebar( '3bf1' ) ) {}}//}
+if (is_front_page()){
+	if ( !function_exists( 'dynamic_sidebar' ) || !dynamic_sidebar( '3bf1' ) ) {}}}
 
 // 2
 	register_sidebar( array(
@@ -40,8 +40,8 @@ function shopno2_sidebar_3bf1() {
 add_action( 'genesis_before_footer', 'shopno2_sidebar_3bf2' );//location of sidebar 2
 
 function shopno2_sidebar_3bf2() {
-//	if (is_front_page()){
-	if ( !function_exists( 'dynamic_sidebar' ) || !dynamic_sidebar( '3bf2' ) ) {} }//}
+	if (is_front_page()){
+	if ( !function_exists( 'dynamic_sidebar' ) || !dynamic_sidebar( '3bf2' ) ) {} }}
 
 // 3
 	register_sidebar( array(
