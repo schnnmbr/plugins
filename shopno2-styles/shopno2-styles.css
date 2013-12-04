@@ -243,7 +243,7 @@ margin: 0.5%;
 #fah1,#fah2,#fah3,#fbh1,#fbh2,#fbh3,#fbf1,#fbf2,#fbf3,#fbsw1,#fbsw2,#fbsw3,#fbg1,#fbg2,#fbg3 {
 display:inline-block;
   max-width: 100%;
-  margin:auto;
+  margin:0 auto;
   padding: 20px;
   border: 1px solid #000;
 }
