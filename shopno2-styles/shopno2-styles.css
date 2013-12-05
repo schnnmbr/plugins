@@ -212,7 +212,7 @@ filter: progid:DXImageTransform.Microsoft.gradient(enabled=false);
   vertical-align: top;
   min-height: 180px;
   background: #FFEFF0;
-  border: 1px solid #000;
+  
 }
 
 @media (max-width:980px){
@@ -244,7 +244,6 @@ margin: 0.5%;
   max-width: 100%;
   margin:0 auto;
   padding: 20px;
-  border: 1px solid #000;
 }
 #fbf1,#fbf2,#fbf3,#fbsw1,#fbsw2,#fbsw3 {
 background: #FFEFF0;
