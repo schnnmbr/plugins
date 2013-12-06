@@ -60,7 +60,12 @@
 	margin: 20px 0 100px 0;
 	box-shadow: 3px 3px 5px;
 }
+.circle {
+height:100px;
+width:100px;
+border-radius: 50%;
 
+}
 /*Buttons*/
 .bluebutton{
 text-align:center;
@@ -241,8 +246,7 @@ margin: 0.5%;
 
 /*Full Width Widgets*/
 #fah1,#fah2,#fah3,#fbh1,#fbh2,#fbh3,#fbf1,#fbf2,#fbf3,#fbsw1,#fbsw2,#fbsw3,#fbg1,#fbg2,#fbg3 {
-  max-width: 100%;
-  margin:0 auto;
+ 
 }
 #fbf1,#fbf2,#fbf3,#fbsw1,#fbsw2,#fbsw3 {
 
