@@ -60,12 +60,7 @@
 	margin: 20px 0 100px 0;
 	box-shadow: 3px 3px 5px;
 }
-.circle {
-height:100px;
-width:100px;
-border-radius: 50%;
 
-}
 /*Buttons*/
 .bluebutton{
 text-align:center;
@@ -197,7 +192,7 @@ filter: progid:DXImageTransform.Microsoft.gradient(enabled=false);
 .impact {font-family: impact;font-size:500%;}
 .highlight {background: #EEE; padding: 10px;border: 1px solid #E9E9E9;}/*To use without the huge bottom margins -  ideal for use inside pages*/
 .signup {background:#5EB83D; padding: 10px; border: 1px solid #7CF751;}
-.punch {font-size:4.5rem; font-family:Helvetica; line-height:6rem; background: }
+.punch {font-size:4.5rem; font-family:Helvetica; line-height:6rem;}
 
 /*Templates*/
 .bigsignup {font-size: 7rem;font-weight: bolder;font-family: 'Oxygen', sans-serif;color: black;text-align: center;}
@@ -217,7 +212,7 @@ filter: progid:DXImageTransform.Microsoft.gradient(enabled=false);
   vertical-align: top;
   min-height: 180px;
   background: #FFEFF0;
-  
+  border: 1px solid #000;
 }
 
 @media (max-width:980px){
@@ -246,11 +241,15 @@ margin: 0.5%;
 
 /*Full Width Widgets*/
 #fah1,#fah2,#fah3,#fbh1,#fbh2,#fbh3,#fbf1,#fbf2,#fbf3,#fbsw1,#fbsw2,#fbsw3,#fbg1,#fbg2,#fbg3 {
- 
+display:inline-block;
+  width: 100%;
+  margin: 0;
+  padding: 20px;
+  border: 1px solid #000;
 }
 #fbf1,#fbf2,#fbf3,#fbsw1,#fbsw2,#fbsw3 {
-
+background: #FFEFF0;
 }
 #fah1,#fah2,#fah3,#fbg1,#fbg2,#fbg3 {
-
+background: #F3FDEC;
 }

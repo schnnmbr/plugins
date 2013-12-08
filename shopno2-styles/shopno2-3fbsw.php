@@ -24,8 +24,8 @@ Version: 0.1
 add_action( 'genesis_before_content_sidebar_wrap', 'shopno2_sidebar_3fbsw1' );
 
 function shopno2_sidebar_3fbsw1() {
-if (is_front_page()){
-	if ( !function_exists( 'dynamic_sidebar' ) || !dynamic_sidebar( '3fbsw1' ) ) {}}}
+//if (is_front_page()){
+	if ( !function_exists( 'dynamic_sidebar' ) || !dynamic_sidebar( '3fbsw1' ) ) {}}//}
 
 // 2
 	register_sidebar( array(
@@ -40,8 +40,8 @@ if (is_front_page()){
 add_action( 'genesis_before_content_sidebar_wrap', 'shopno2_sidebar_3fbsw2' );//location of sidebar 2
 
 function shopno2_sidebar_3fbsw2() {
-	if (is_front_page()){
-	if ( !function_exists( 'dynamic_sidebar' ) || !dynamic_sidebar( '3fbsw2' ) ) {} }}
+//	if (is_front_page()){
+	if ( !function_exists( 'dynamic_sidebar' ) || !dynamic_sidebar( '3fbsw2' ) ) {} }//}
 
 // 3
 	register_sidebar( array(
