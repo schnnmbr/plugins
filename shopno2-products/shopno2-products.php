@@ -3,7 +3,7 @@
 /*
 Plugin Name: Shopno2 Products
 Plugin URI: http://shopno2.com
-Description: Shopno2 Products
+Description: Products Custom Post Type For Use Through Out The Site
 Use Products to add and display products to your site.
 Author: sachin nambiar
 Author URI: sachinnambiar.com
@@ -56,11 +56,24 @@ function shopno2_product() {
 // Hook into the 'init' action
 add_action( 'init', 'shopno2_product', 0 );
 
-//Activate Grid For This Post Type
-function be_grid_loop_on_product( $grid, $query ) {
-	if( is_post_type_archive( 'product' ) )
-		$grid = true;
-
-	return $grid;
+function shono2_category_archive_product( $query ) {
+	// we don't want this running on the admin side
+	if ( is_admin() )
+		return;
+	// include our stream type on tag pages
+	if ( is_tag() && $query->is_main_query() ) {
+		$query->query_vars['post_type'] = array( 'post', 'Product' );
+		return;
+	}
+    // include our stream type on category pages
+    if ( is_category() && $query->is_main_query() ) {
+		$query->query_vars['post_type'] = array( 'post', 'Product' );
+		return;
+	}
+    // include our stream type on home page
+	if ( is_home() && $query->is_main_query() ) {
+		$query->query_vars['post_type'] = array( 'post', 'Product' );
+		return;
+	}
 }
-add_filter( 'genesis_grid_loop_section', 'be_grid_loop_on_product', 10, 2 );
+add_action ( 'pre_get_posts', 'shono2_category_archive_product' );

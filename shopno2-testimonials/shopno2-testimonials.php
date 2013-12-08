@@ -3,8 +3,7 @@
 /*
 Plugin Name: Shopno2 Testimonials
 Plugin URI: http://shopno2.com
-Description: Styles for siteorigin pagebuilder panels. 
-Put your css into pagebuilder.css to customise your panels. 
+Description: Testimonial Custom Post Type For Use Through Out The Site 
 Author: sachin nambiar
 Author URI: sachinnambiar.com
 Version: 0.1
