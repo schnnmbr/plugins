@@ -99,7 +99,7 @@ function shopno2_custom_admin_bar_setting() {
 }
 //This snippet automatically sets the featured image by fetching the first image of the post.
 //*Note – if you choose a featured image, that will be displayed instead.
-function autoset_featured() {
+/*function autoset_featured() {
           global $post;
           $already_has_thumb = has_post_thumbnail($post->ID);
               if (!$already_has_thumb)  {
@@ -138,7 +138,7 @@ add_option("large_crop", "1"); }
 else {
 update_option("large_crop", "1");
 }
-
+*/
 
  //Uncomment Below Line To Hide Admin Bar For Logged In Users
 //add_filter ('show_admin_bar', 'shopno2_custom_admin_bar_setting');
