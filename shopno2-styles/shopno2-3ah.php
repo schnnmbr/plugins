@@ -40,8 +40,8 @@ function shopno2_sidebar_3ah1() {
 add_action( 'genesis_after_header', 'shopno2_sidebar_3ah2' );//location of sidebar 2
 
 function shopno2_sidebar_3ah2() {
-//	if (is_front_page()){
-	if ( !function_exists( 'dynamic_sidebar' ) || !dynamic_sidebar( '3ah2' ) ) {} }//}
+	if (is_front_page()){
+	if ( !function_exists( 'dynamic_sidebar' ) || !dynamic_sidebar( '3ah2' ) ) {} }}
 
 // 3
 	register_sidebar( array(
@@ -56,6 +56,6 @@ function shopno2_sidebar_3ah2() {
 add_action( 'genesis_after_header', 'shopno2_sidebar_3ah3' );//location of sidebar 2
 
 function shopno2_sidebar_3ah3() {
-//	if (is_front_page()){
-	if ( !function_exists( 'dynamic_sidebar' ) || !dynamic_sidebar( '3ah3' ) ) {} }//}
+	if (is_front_page()){
+	if ( !function_exists( 'dynamic_sidebar' ) || !dynamic_sidebar( '3ah3' ) ) {} }}
 
