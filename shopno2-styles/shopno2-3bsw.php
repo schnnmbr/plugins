@@ -24,8 +24,8 @@ Version: 0.1
 add_action( 'genesis_before_content_sidebar_wrap', 'shopno2_sidebar_3bsw1' );
 
 function shopno2_sidebar_3bsw1() {
-//if (is_front_page()){
-	if ( !function_exists( 'dynamic_sidebar' ) || !dynamic_sidebar( '3bsw1' ) ) {}}//}
+if (is_front_page()){
+	if ( !function_exists( 'dynamic_sidebar' ) || !dynamic_sidebar( '3bsw1' ) ) {}}}
 
 // 2
 	register_sidebar( array(
@@ -53,7 +53,7 @@ function shopno2_sidebar_3bsw2() {
 		'before_title' => '<h3 class="widget-title">',
 		'after_title' => '</h3>',
 	) );
-add_action( 'genesis_before_content_sidebar_wrap', 'shopno2_sidebar_3bsw3' );//location of sidebar 2
+add_action( 'genesis_before_content_sidebar_wrap', 'shopno2_sidebar_3bsw3' );//location of sidebar 3
 
 function shopno2_sidebar_3bsw3() {
 	if (is_front_page()){
