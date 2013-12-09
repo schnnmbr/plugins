@@ -66,7 +66,7 @@ if (basename($_SERVER['PHP_SELF']) == basename (__FILE__)) {
   */
 /*add_action('admin_notices', 'showAdminMessages'); 
 */
-/*
+
  // remove wp version param from any enqueued scripts
 function shopno2_remove_wp_ver_css_js( $src ) {
     if ( strpos( $src, 'ver=' ) )
@@ -76,10 +76,10 @@ function shopno2_remove_wp_ver_css_js( $src ) {
 //remove css jss from head
 add_filter( 'style_loader_src', 'shopno2_remove_wp_ver_css_js', 9999 );
 add_filter( 'script_loader_src', 'shopno2_remove_wp_ver_css_js', 9999 );
-*/
+
 
 // remove junk from head
-/*remove_action('wp_head', 'rsd_link');
+remove_action('wp_head', 'rsd_link');
 remove_action('wp_head', 'wp_generator');
 remove_action('wp_head', 'feed_links', 2);
 remove_action('wp_head', 'index_rel_link');
@@ -87,8 +87,8 @@ remove_action('wp_head', 'wlwmanifest_link');
 remove_action('wp_head', 'feed_links_extra', 3);
 remove_action('wp_head', 'start_post_rel_link', 10, 0);
 remove_action('wp_head', 'parent_post_rel_link', 10, 0);
-remove_action('wp_head', 'adjacent_posts_rel_link', 10, 0);*/
-
+remove_action('wp_head', 'adjacent_posts_rel_link', 10, 0);
+/*
 function shopno2_remove_extra_meta_boxes() {
 //remove_meta_box( 'postcustom' , 'post' , 'normal' ); // custom fields for posts
 //remove_meta_box( 'postcustom' , 'page' , 'normal' ); // custom fields for pages
