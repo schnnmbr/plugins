@@ -217,7 +217,7 @@ filter: progid:DXImageTransform.Microsoft.gradient(enabled=false);
 #twobsw1,#twobsw2 {
   width: 47%;
   margin: 0.5%;
-  min-height: 180px;
+  min-height: 250px;
   display: inline-block;
   vertical-align: top;
 }
