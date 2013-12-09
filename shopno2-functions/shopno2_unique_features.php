@@ -6,7 +6,7 @@ Description: Hides Admin bar for non admins, Auto set Featured Images, Autocrops
 Adds them support for custom background and headers/post.
 Author: sachin nambiar
 Author URI: shopno2.com
-Version: 0.3
+Version: 0.1
 */
 /* Disallow direct access to the plugin file */
  
@@ -16,13 +16,13 @@ if (basename($_SERVER['PHP_SELF']) == basename (__FILE__)) {
  
 /** START ADDING CODE BELOW THIS LINE **/
 //Uncomment Below Line To Hide Admin Bar For Logged In Users
-add_filter ('show_admin_bar', 'shopno2_custom_admin_bar_setting');
+/*add_filter ('show_admin_bar', 'shopno2_custom_admin_bar_setting');
 function shopno2_custom_admin_bar_setting() {
 	if (is_admin())
 		return TRUE;
 	else
 		return FALSE;
-}
+}*/
 
 
 //This snippet automatically sets the featured image by fetching the first image of the post.
