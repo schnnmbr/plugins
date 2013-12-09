@@ -68,7 +68,7 @@ if (basename($_SERVER['PHP_SELF']) == basename (__FILE__)) {
 */
 
  // remove wp version param from any enqueued scripts
-function shopno2_remove_wp_ver_css_js( $src ) {
+/*function shopno2_remove_wp_ver_css_js( $src ) {
     if ( strpos( $src, 'ver=' ) )
         $src = remove_query_arg( 'ver', $src );
     return $src;
@@ -76,7 +76,7 @@ function shopno2_remove_wp_ver_css_js( $src ) {
 //remove css jss from head
 add_filter( 'style_loader_src', 'shopno2_remove_wp_ver_css_js', 9999 );
 add_filter( 'script_loader_src', 'shopno2_remove_wp_ver_css_js', 9999 );
-
+*/
 // remove junk from head
 //remove_action('wp_head', 'rsd_link');
 remove_action('wp_head', 'wp_generator');
