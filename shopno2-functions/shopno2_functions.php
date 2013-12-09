@@ -5,7 +5,7 @@ Plugin URI: http://shopno2.com
 Description: A simple plugin that contains all Custom Functions
 Author: sachin nambiar
 Author URI: shopno2.com
-Version: 0.3
+Version: 0.5
 */
  
 /* Disallow direct access to the plugin file */
@@ -32,40 +32,6 @@ if (basename($_SERVER['PHP_SELF']) == basename (__FILE__)) {
  * the red message style. If false, the message is a status
   * message, so use the yellow information message style.
  */
-/*function showMessage($message, $errormsg = false)
-{
-    if ($errormsg) {
-        echo '<div id="message" class="error">';
-    }
-    else {
-        echo '<div id="message" class="updated fade">';
-    }
- 
-    echo "<p><strong>$message</strong></p></div>";
-}
-*/
-/**
- * Just show our message (with possible checking if we only want
- * to show message to certain users.
- */
-/*function showAdminMessages()
-{
-    // Shows as an error message. You could add a link to the right page if you wanted.
-    showMessage("You need to upgrade your database as soon as possible...", true);
-
-    // Only show to admins
-    if (user_can('manage_options') {
-       showMessage("Hello admins!");
-    }
-}
-
-/** 
-  * Call showAdminMessages() when showing other admin 
-  * messages. The message only gets shown in the admin
-  * area, but not on the frontend of your WordPress site. 
-  */
-/*add_action('admin_notices', 'showAdminMessages'); 
-*/
 
  // remove wp version param from any enqueued scripts
 function shopno2_remove_wp_ver_css_js( $src ) {
@@ -113,4 +79,39 @@ add_action( 'admin_menu' , 'shopno2_remove_extra_meta_boxes' );
   return '<a href="mailto:sachin@shopno2.com">email support</a>';
 }
 add_filter( 'update_footer', 'shopno2_change_footer', 9999 );
+*/
+
+/*function showMessage($message, $errormsg = false)
+{
+    if ($errormsg) {
+        echo '<div id="message" class="error">';
+    }
+    else {
+        echo '<div id="message" class="updated fade">';
+    }
+ 
+    echo "<p><strong>$message</strong></p></div>";
+}
+*/
+/**
+ * Just show our message (with possible checking if we only want
+ * to show message to certain users.
+ */
+/*function showAdminMessages()
+{
+    // Shows as an error message. You could add a link to the right page if you wanted.
+    showMessage("You need to upgrade your database as soon as possible...", true);
+
+    // Only show to admins
+    if (user_can('manage_options') {
+       showMessage("Hello admins!");
+    }
+}
+
+/** 
+  * Call showAdminMessages() when showing other admin 
+  * messages. The message only gets shown in the admin
+  * area, but not on the frontend of your WordPress site. 
+  */
+/*add_action('admin_notices', 'showAdminMessages'); 
 */

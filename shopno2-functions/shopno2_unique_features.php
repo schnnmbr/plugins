@@ -15,15 +15,6 @@ if (basename($_SERVER['PHP_SELF']) == basename (__FILE__)) {
 }
  
 /** START ADDING CODE BELOW THIS LINE **/
-//Uncomment Below Line To Hide Admin Bar For Logged In Users
-/*add_filter ('show_admin_bar', 'shopno2_custom_admin_bar_setting');
-function shopno2_custom_admin_bar_setting() {
-	if (is_admin())
-		return TRUE;
-	else
-		return FALSE;
-}*/
-
 
 //This snippet automatically sets the featured image by fetching the first image of the post.
 //*Note – if you choose a featured image, that will be displayed instead.
@@ -68,20 +59,14 @@ else {
 update_option("large_crop", "1");
 }
 
-/*
-Adding Theme Support For Custom Backgrounds for Posts
-*/
-add_theme_support( 'custom-background' );
+//Uncomment Below Line To Hide Admin Bar For Logged In Users
+/*add_filter ('show_admin_bar', 'shopno2_custom_admin_bar_setting');
+function shopno2_custom_admin_bar_setting() {
+  if (is_admin())
+    return TRUE;
+  else
+    return FALSE;
+}*/
 
-//* Add support for custom header
-add_theme_support( 'custom-header', array(
-      // 'default-text-color'     => '000000',
-     	'header-text'            => true,
-        'height'                 => 200,
-        'width'                  => 0,
-	 // Support flexible height and width.
-		'flex-height'            => true,
-	 	'flex-width'             => true,
-	
-) );
+
 
