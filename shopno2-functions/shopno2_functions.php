@@ -67,79 +67,6 @@ if (basename($_SERVER['PHP_SELF']) == basename (__FILE__)) {
 /*add_action('admin_notices', 'showAdminMessages'); 
 */
 
-/*
-Adding Theme Support For Custom Backgrounds for Posts
-*/
-add_theme_support( 'custom-background' );
-
-//* Add support for custom header
-add_theme_support( 'custom-header', array(
-      // 'default-text-color'     => '000000',
-     	'header-text'            => true,
-        'height'                 => 200,
-        'width'                  => 0,
-	 // Support flexible height and width.
-		'flex-height'            => true,
-	 	'flex-width'             => true,
-	
-) );
-
-
- //Uncomment Below Line To Hide Admin Bar For Logged In Users
-/*add_filter ('show_admin_bar', 'shopno2_custom_admin_bar_setting');
-function shopno2_custom_admin_bar_setting() {
-	if (is_admin())
-		return TRUE;
-	else
-		return FALSE;
-}
-*/
-
-//This snippet automatically sets the featured image by fetching the first image of the post.
-//*Note – if you choose a featured image, that will be displayed instead.
-/*function autoset_featured() {
-          global $post;
-          $already_has_thumb = has_post_thumbnail($post->ID);
-              if (!$already_has_thumb)  {
-              $attached_image = get_children( "post_parent=$post->ID&post_type=attachment&post_mime_type=image&numberposts=1" );
-                          if ($attached_image) {
-                                foreach ($attached_image as $attachment_id => $attachment) {
-                                set_post_thumbnail($post->ID, $attachment_id);
-                                }
-                           }
-                        }
-      }
-add_action('the_post', 'autoset_featured');
-add_action('save_post', 'autoset_featured');
-add_action('draft_to_publish', 'autoset_featured');
-add_action('new_to_publish', 'autoset_featured');
-add_action('pending_to_publish', 'autoset_featured');
-add_action('future_to_publish', 'autoset_featured');
-//Autocrop thumbnails fo they do not stretch and look ugly!
-// Standard Size Thumbnail
-if(false === get_option("thumbnail_crop")) {
-add_option("thumbnail_crop", "1"); }
-else {
-update_option("thumbnail_crop", "1");
-}
-
-// Medium Size Thumbnail
-if(false === get_option("medium_crop")) {
-add_option("medium_crop", "1"); }
-else {
-update_option("medium_crop", "1");
-}
-
-// Large Size Thumbnail
-if(false === get_option("large_crop")) {
-add_option("large_crop", "1"); }
-else {
-update_option("large_crop", "1");
-}
-*/
-
-
-
  // remove wp version param from any enqueued scripts
 function shopno2_remove_wp_ver_css_js( $src ) {
     if ( strpos( $src, 'ver=' ) )
@@ -151,12 +78,12 @@ add_filter( 'style_loader_src', 'shopno2_remove_wp_ver_css_js', 9999 );
 add_filter( 'script_loader_src', 'shopno2_remove_wp_ver_css_js', 9999 );
 
 // remove junk from head
-remove_action('wp_head', 'rsd_link');
+//remove_action('wp_head', 'rsd_link');
 remove_action('wp_head', 'wp_generator');
-remove_action('wp_head', 'feed_links', 2);
+//remove_action('wp_head', 'feed_links', 2);
 remove_action('wp_head', 'index_rel_link');
 remove_action('wp_head', 'wlwmanifest_link');
-remove_action('wp_head', 'feed_links_extra', 3);
+//remove_action('wp_head', 'feed_links_extra', 3);
 remove_action('wp_head', 'start_post_rel_link', 10, 0);
 remove_action('wp_head', 'parent_post_rel_link', 10, 0);
 remove_action('wp_head', 'adjacent_posts_rel_link', 10, 0);
@@ -180,104 +107,10 @@ remove_meta_box('slugdiv','page','normal'); // page slug
 }
 add_action( 'admin_menu' , 'shopno2_remove_extra_meta_boxes' );
 
-// Remove Dashboard Widgets
-function shopno2_remove_dashboard_widgets() {
-	remove_meta_box( 'dashboard_browser_nag', 'dashboard', 'side' );
-	remove_meta_box( 'dashboard_incoming_links', 'dashboard', 'normal' );
-	remove_meta_box( 'dashboard_primary', 'dashboard', 'side');
-	remove_meta_box( 'dashboard_secondary', 'dashboard', 'side');
-	remove_meta_box( 'dashboard_recent_comments', 'dashboard', 'normal');
-	remove_meta_box( 'dashboard_plugins', 'dashboard', 'normal');
-	remove_meta_box( 'dashboard_welcome', 'dashboard', 'normal');
-	remove_meta_box( 'dashboard_right_now', 'dashboard', 'normal');
-	remove_action( 'welcome_panel', 'wp_welcome_panel' );
-//	wp_deregister_script('postbox');//Disable Drag 'n' Drop of Metaboxesin Admin
-} 
 
-// Hook into the 'wp_dashboard_setup' action to register function
-//add_action('wp_dashboard_setup', 'shopno2_remove_dashboard_widgets' );
-add_action('admin_init', 'shopno2_remove_dashboard_widgets' );
-
-
-
-//Change Wordpress Verison in footer to fool hackers.
-/*function shopno2_change_footer_version() {
-  return '<a href="mailto:support@es.gy">email support</a>';
+//Change Wordpress Admin footer
+/*function shopno2_change_footer() {
+  return '<a href="mailto:sachin@shopno2.com">email support</a>';
 }
-add_filter( 'update_footer', 'shopno2_change_footer_version', 9999 );
+add_filter( 'update_footer', 'shopno2_change_footer', 9999 );
 */
-
-
-
-
-
-
-
-
-//Shopno2 Admin Theme
-//function shopno2_admin_head() {
-//	echo '<link rel="stylesheet" type="text/css" href="' .plugins_url('admin.css', __FILE__). '">';
-
-
-//add_action('admin_head', 'shopno2_admin_head');
-
-//Comment "IN" if CUSTOM WELCOME PANEL is WANTED
-/*function shopno2_welcome_panel() {
-
-	?>
-
-
-	<div class="custom-welcome-panel-content">
-	<h1><?php _e( 'Welcome to shopno2 Content Management System!' ); ?></h1>
-	<p class="about-description"><?php _e( 'You can create your own content right from this Dashboard!' ); ?></p>
-	<div class="welcome-panel-column-container">
-	<div class="welcome-panel-column">
-		<h4><?php _e( "Let's Get Started" ); ?></h4>
-		<a class="button button-primary button-hero load-customize hide-if-no-customize" href="post-new.php?post_type=page"><?php _e( 'Add a Site Page' ); ?></a>
-			<p class="hide-if-no-customize"><?php printf( __( 'or, <a href="%s">Check Current Pages</a>' ), admin_url( 'edit.php?post_type=page' ) ); ?></p>
-	</div>
-	<div class="welcome-panel-column">
-
-		<h4><?php _e( 'Next Steps' ); ?></h4>
-		<ul>
-		<?php if ( 'page' == get_option( 'show_on_front' ) && ! get_option( 'page_for_posts' ) ) : ?>
-			<li><?php printf( '<a href="%s" class="welcome-icon welcome-edit-page">' . __( 'Edit your front page' ) . '</a>', get_edit_post_link( get_option( 'page_on_front' ) ) ); ?></li>
-			<li><?php printf( '<a href="%s" class="welcome-icon welcome-add-page">' . __( 'Add additional pages' ) . '</a>', admin_url( 'post-new.php?post_type=page' ) ); ?></li>
-		<?php elseif ( 'page' == get_option( 'show_on_front' ) ) : ?>
-			<li><?php printf( '<a href="%s" class="welcome-icon welcome-edit-page">' . __( 'Edit your front page' ) . '</a>', get_edit_post_link( get_option( 'page_on_front' ) ) ); ?></li>
-			<li><?php printf( '<a href="%s" class="welcome-icon welcome-add-page">' . __( 'Add additional pages' ) . '</a>', admin_url( 'post-new.php?post_type=page' ) ); ?></li>
-			<li><?php printf( '<a href="%s" class="welcome-icon welcome-write-blog">' . __( 'Add a blog post' ) . '</a>', admin_url( 'post-new.php' ) ); ?></li>
-		<?php else : ?>
-			<li><?php printf( '<a href="%s" class="welcome-icon welcome-write-blog">' . __( 'Write your first blog post' ) . '</a>', admin_url( 'post-new.php' ) ); ?></li>
-			<li><?php printf( '<a href="%s" class="welcome-icon welcome-add-page">' . __( 'Add an About page' ) . '</a>', admin_url( 'post-new.php?post_type=page' ) ); ?></li>
-		<?php endif; ?>
-			<li><?php printf( '<a href="%s" class="welcome-icon welcome-view-site">' . __( 'View your site' ) . '</a>', home_url( '/' ) ); ?></li>
-		</ul>
-	</div>
-	<div class="welcome-panel-column welcome-panel-last">
-		<h4><?php _e( 'More Actions' ); ?></h4>
-		<ul>
-			<li><?php printf( '<div class="welcome-icon welcome-widgets-menus">' . __( 'Manage <a href="%1$s">widgets</a> or <a href="%2$s">menus</a>' ) . '</div>', admin_url( 'widgets.php' ), admin_url( 'nav-menus.php' ) ); ?></li>
-			<li><?php printf( '<a href="%s" class="welcome-icon welcome-comments">' . __( 'Turn comments on or off' ) . '</a>', admin_url( 'options-discussion.php' ) ); ?></li>
-			<li><?php printf( '<a href="%s" class="welcome-icon welcome-learn-more">' . __( 'Learn more about getting started' ) . '</a>', __( 'http://codex.wordpress.org/First_Steps_With_WordPress' ) ); ?></li>
-		</ul>
-	</div>
-	</div>
-	<div class="">
-	<h3><?php _e( 'shopno2 Support Options' ); ?></h3>
-	<p class="about-description">Create a new paragraph!</p>
-	<ol><li> <a href="http://es.gy/priority">Priority Support</a> </li>
-		<li> <a href="http://es.gy/help">Forums</a>
-	</ol>
-	</div>
-	</div>
-
-<?php
-}
-
-add_action( 'welcome_panel', 'shopno2_welcome_panel' );
-/** STOP ADDING CODE NOW**/
- 
-/* That's all folks! */
- 
-/*?>

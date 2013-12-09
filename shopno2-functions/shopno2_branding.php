@@ -50,3 +50,11 @@ function shopno2_replace_howdy( $wp_admin_bar ) {
 }
 add_filter( 'admin_bar_menu', 'shopno2_replace_howdy',25 );
 
+ //Uncomment Below Line To Hide Admin Bar For Logged In Users
+add_filter ('show_admin_bar', 'shopno2_custom_admin_bar_setting');
+function shopno2_custom_admin_bar_setting() {
+	if (is_admin())
+		return TRUE;
+	else
+		return FALSE;
+}
