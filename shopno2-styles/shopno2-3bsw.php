@@ -48,7 +48,7 @@ function shopno2_sidebar_3bsw2() {
 		'name' => __( 'Before Sidewrap 1/3-3', 'shopno2' ),
 		'id' => '3bsw3',
 		'description' => __( 'Add widgets here to appear in your sidebar.', 'shopno2' ),
-		'before_widget.000' => '<div id="bsw3" class="widget-container %2$s">',
+		'before_widget' => '<div id="bsw3" class="widget-container %2$s">',
 		'after_widget' => '</div>',
 		'before_title' => '<h3 class="widget-title">',
 		'after_title' => '</h3>',
