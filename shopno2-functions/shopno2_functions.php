@@ -77,7 +77,6 @@ function shopno2_remove_wp_ver_css_js( $src ) {
 add_filter( 'style_loader_src', 'shopno2_remove_wp_ver_css_js', 9999 );
 add_filter( 'script_loader_src', 'shopno2_remove_wp_ver_css_js', 9999 );
 
-
 // remove junk from head
 remove_action('wp_head', 'rsd_link');
 remove_action('wp_head', 'wp_generator');
@@ -88,7 +87,7 @@ remove_action('wp_head', 'feed_links_extra', 3);
 remove_action('wp_head', 'start_post_rel_link', 10, 0);
 remove_action('wp_head', 'parent_post_rel_link', 10, 0);
 remove_action('wp_head', 'adjacent_posts_rel_link', 10, 0);
-/*
+
 function shopno2_remove_extra_meta_boxes() {
 //remove_meta_box( 'postcustom' , 'post' , 'normal' ); // custom fields for posts
 //remove_meta_box( 'postcustom' , 'page' , 'normal' ); // custom fields for pages
@@ -102,8 +101,8 @@ remove_meta_box( 'trackbacksdiv' , 'post' , 'normal' ); // post trackbacks
 remove_meta_box( 'trackbacksdiv' , 'page' , 'normal' ); // page trackbacks
 remove_meta_box( 'commentstatusdiv' , 'post' , 'normal' ); // allow comments for posts
 remove_meta_box( 'commentstatusdiv' , 'page' , 'normal' ); // allow comments for pages
-remove_meta_box('slugdiv','post','normal'); // post slug
-remove_meta_box('slugdiv','page','normal'); // page slug
+//remove_meta_box('slugdiv','post','normal'); // post slug
+//remove_meta_box('slugdiv','page','normal'); // page slug
 //remove_meta_box('pageparentdiv','page','side'); // Page Parent Attributes. Necessary to use page attributes.
 }
 add_action( 'admin_menu' , 'shopno2_remove_extra_meta_boxes' );
