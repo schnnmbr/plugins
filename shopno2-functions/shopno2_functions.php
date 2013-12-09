@@ -85,18 +85,16 @@ add_theme_support( 'custom-header', array(
 ) );
 
 
-// Obscure login screen error messages
-function shopno2_login_obscure(){ return 'Wrong Username/Password Combination';}
-add_filter( 'login_errors', 'shopno2_login_obscure' );
-
-
-
+ //Uncomment Below Line To Hide Admin Bar For Logged In Users
+/*add_filter ('show_admin_bar', 'shopno2_custom_admin_bar_setting');
 function shopno2_custom_admin_bar_setting() {
 	if (is_admin())
 		return TRUE;
 	else
 		return FALSE;
 }
+*/
+
 //This snippet automatically sets the featured image by fetching the first image of the post.
 //*Note – if you choose a featured image, that will be displayed instead.
 /*function autoset_featured() {
@@ -140,8 +138,7 @@ update_option("large_crop", "1");
 }
 */
 
- //Uncomment Below Line To Hide Admin Bar For Logged In Users
-//add_filter ('show_admin_bar', 'shopno2_custom_admin_bar_setting');
+
 
  // remove wp version param from any enqueued scripts
 function shopno2_remove_wp_ver_css_js( $src ) {
@@ -201,23 +198,7 @@ function shopno2_remove_dashboard_widgets() {
 //add_action('wp_dashboard_setup', 'shopno2_remove_dashboard_widgets' );
 add_action('admin_init', 'shopno2_remove_dashboard_widgets' );
 
-//Replace Howdy with a more corporate sounding "Hello"
-function shopno2_replace_howdy( $wp_admin_bar ) {
-    $my_account=$wp_admin_bar->get_node('my-account');
-    $newtitle = str_replace( 'Howdy,', 'Hello', $my_account->title );            
-    $wp_admin_bar->add_node( array(
-        'id' => 'my-account',
-        'title' => $newtitle,
-    ) );
-}
-add_filter( 'admin_bar_menu', 'shopno2_replace_howdy',25 );
 
-//Remove the theme editor menu which is anyway never allowed to use.
-function shopno2_remove_editor_menu() {
-  remove_action('admin_menu', '_add_themes_utility_last', 101);
-}
-
-add_action('_admin_menu', 'shopno2_remove_editor_menu', 1);
 
 //Change Wordpress Verison in footer to fool hackers.
 /*function shopno2_change_footer_version() {
@@ -225,32 +206,12 @@ add_action('_admin_menu', 'shopno2_remove_editor_menu', 1);
 }
 add_filter( 'update_footer', 'shopno2_change_footer_version', 9999 );
 */
-//Custom Footer Text
-function shopno2_remove_footer_admin () {
-  echo '<i>Thank you for being our Customer! :) </i>';
-}
-add_filter('admin_footer_text', 'shopno2_remove_footer_admin');
 
 
 
 
-/*shopno2 Login Screen*/
-function shopno2_custom_login_logo() {
-    echo '<style type="text/css">
-        h1 a { background-image:url('.content_url('').'/mu-plugins/s2logo-72.png) !important; }
-    </style>';
-}
 
-add_action('login_head', 'shopno2_custom_login_logo');
 
-//shopno2 Admin Screen Branding
-function shopno2_custom_logo() {
-  echo '<style type="text/css">
-    #header-logo { background-image: url('.content_url('').'/mu-plugins/s2logo-72.png) !important; }
-    </style>';
-}
-
-add_action('admin_head', 'shopno2_custom_logo');
 
 
 //Shopno2 Admin Theme
