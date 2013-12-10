@@ -18,7 +18,7 @@ if (basename($_SERVER['PHP_SELF']) == basename (__FILE__)) {
 
 //This snippet automatically sets the featured image by fetching the first image of the post.
 //*Note – if you choose a featured image, that will be displayed instead.
-function autoset_featured() {
+/*function autoset_featured() {
           global $post;
           $already_has_thumb = has_post_thumbnail($post->ID);
               if (!$already_has_thumb)  {
@@ -36,7 +36,7 @@ add_action('draft_to_publish', 'autoset_featured');
 add_action('new_to_publish', 'autoset_featured');
 add_action('pending_to_publish', 'autoset_featured');
 add_action('future_to_publish', 'autoset_featured');
-
+*/
 //Autocrop thumbnails fo they do not stretch and look ugly!
 // Standard Size Thumbnail
 if(false === get_option("thumbnail_crop")) {
