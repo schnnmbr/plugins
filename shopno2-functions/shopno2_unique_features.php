@@ -37,6 +37,35 @@ add_action('new_to_publish', 'autoset_featured');
 add_action('pending_to_publish', 'autoset_featured');
 add_action('future_to_publish', 'autoset_featured');
 */
+
+// @ http://wp-mix.com/set-attachment-featured-image/
+add_filter('the_content', 'set_featured_image_from_attachment');
+function set_featured_image_from_attachment($content) {
+     global $post;
+     if (has_post_thumbnail()) {
+          // display the featured image
+          $content = the_post_thumbnail() . $content;
+     } else {
+          // get & set the featured image
+          $attachments = get_children(array(
+               'post_parent' => $post->ID, 
+               'post_status' => 'inherit', 
+               'post_type' => 'attachment', 
+               'post_mime_type' => 'image', 
+               'order' => 'ASC', 
+               'orderby' => 'menu_order'
+          ));
+          if ($attachments) {
+               foreach ($attachments as $attachment) {
+                    set_post_thumbnail($post->ID, $attachment->ID);
+                    break;
+               }
+               // display the featured image
+               $content = the_post_thumbnail() . $content;
+          }
+     }
+     return $content;
+}
 //Autocrop thumbnails fo they do not stretch and look ugly!
 // Standard Size Thumbnail
 if(false === get_option("thumbnail_crop")) {
