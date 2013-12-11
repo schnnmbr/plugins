@@ -38,6 +38,9 @@ add_action('pending_to_publish', 'autoset_featured');
 add_action('future_to_publish', 'autoset_featured');
 */
 
+// Add Theme Support
+add_theme_support('post-thumbnails');
+set_post_thumbnail_size(130, 100, true); // width, height, hard crop
 // @ http://wp-mix.com/set-attachment-featured-image/
 add_filter('the_content', 'set_featured_image_from_attachment');
 function set_featured_image_from_attachment($content) {
