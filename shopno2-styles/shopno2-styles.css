@@ -214,7 +214,7 @@ filter: progid:DXImageTransform.Microsoft.gradient(enabled=false);
 }
 
 /*2 Grid Widgets*/
-#twobsw1,#twobsw2 {
+#twobsw1,#twobsw2,#twoah1,#twoah2 {
   width: 47%;
   margin: 0.5%;
   min-height: 250px;
@@ -239,7 +239,7 @@ margin: 0.5%;
   margin: 0.5%;
 }
 @media all and (max-width:580px){
-  #ah1,#ah2,#ah3,#bh1,#bh2,#bh3,#bsw1,#bsw2,#bsw3,#asw1,#asw2,#asw3,#bg1,#bg2,#bg3,#twobsw1,#twobsw2 {
+  #ah1,#ah2,#ah3,#bh1,#bh2,#bh3,#bsw1,#bsw2,#bsw3,#asw1,#asw2,#asw3,#bg1,#bg2,#bg3,#twobsw1,#twobsw2,#twoah1,#twoah2 {
   width: 90%;
   margin: 20px 5% auto;
 }

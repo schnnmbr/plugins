@@ -21,6 +21,17 @@
   min-height: 180px;
   border-top: 1px solid #EEE;
 }
+.type-boxes{
+ display:inline-block;
+  width: 29%;
+  padding: 1%;
+  margin:0 1%;
+  display: inline-block;
+  vertical-align: top;
+  min-height: 180px;
+
+}
+
 .type-service { display:inline-block;
   width: 20%;
   padding: 1%;
