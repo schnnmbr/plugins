@@ -204,7 +204,6 @@ filter: progid:DXImageTransform.Microsoft.gradient(enabled=false);
 #bf1,#bf2,#bf3/* 3 Columns*/  {
   display:inline-block;
   width: 31%;
-  padding: 20px;
   margin: 1%;
   display: inline-block;
   vertical-align: top;
@@ -251,7 +250,6 @@ margin: 0.5%;
 display:inline-block;
   width: 100%;
   margin: 0;
-  padding: 20px;
   border: 1px solid #000;
 }
 #fbf1,#fbf2,#fbf3,#fbsw1,#fbsw2,#fbsw3 {

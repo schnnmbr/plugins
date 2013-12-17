@@ -48,7 +48,7 @@ function shopno2_sidebar_3fah2() {
 		'name' => __( 'Full Widget AH3', 'shopno2' ),
 		'id' => '3fah3',
 		'description' => __( 'Add widgets here to appear in your sidebar.', 'shopno2' ),
-		'before_widget' => '<div id="fahwrap1"><div id="fah3" class="widget-container %2$s">',
+		'before_widget' => '<div id="fahwrap3"><div id="fah3" class="widget-container %2$s">',
 		'after_widget' => '</div></div>',
 		'before_title' => '<h3 class="widget-title">',
 		'after_title' => '</h3>',
