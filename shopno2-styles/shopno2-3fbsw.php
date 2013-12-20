@@ -15,8 +15,8 @@ Version: 0.1
 		'name' => __( 'Full Widget BS1', 'shopno2' ),
 		'id' => '3fbsw1',
 		'description' => __( 'Add widgets here to appear in your sidebar.', 'shopno2' ),
-		'before_widget' => '<div id="fbsw1" class="widget-container %2$s">',
-		'after_widget' => '</div>',
+		'before_widget' => '<div id="fbswrap1"><div id="fbsw1" class="widget-container %2$s">',
+		'after_widget' => '</div></div>',
 		'before_title' => '<h3 class="widget-title">',
 		'after_title' => '</h3>',
 	) );
@@ -32,8 +32,8 @@ function shopno2_sidebar_3fbsw1() {
 		'name' => __( 'Full Widget BS2', 'shopno2' ),
 		'id' => '3fbsw2',
 		'description' => __( 'Add widgets here to appear in your sidebar.', 'shopno2' ),
-		'before_widget' => '<div id="fbsw2" class="widget-container %2$s">',
-		'after_widget' => '</div>',
+		'before_widget' => '<div id="fbswrap2"><div id="fbsw2" class="widget-container %2$s">',
+		'after_widget' => '</div></div>',
 		'before_title' => '<h3 class="widget-title">',
 		'after_title' => '</h3>',
 	) );
@@ -48,8 +48,8 @@ function shopno2_sidebar_3fbsw2() {
 		'name' => __( 'Full Widget BS3', 'shopno2' ),
 		'id' => '3fbsw3',
 		'description' => __( 'Add widgets here to appear in your sidebar.', 'shopno2' ),
-		'before_widget' => '<div id="fbsw3" class="widget-container %2$s">',
-		'after_widget' => '</div>',
+		'before_widget' => '<div id="fbswrap3"><div id="fbsw3" class="widget-container %2$s">',
+		'after_widget' => '</div></div>',
 		'before_title' => '<h3 class="widget-title">',
 		'after_title' => '</h3>',
 	) );

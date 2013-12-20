@@ -45,7 +45,7 @@ function shopno2_sidebar_bg2() {
 
 // 3
 	register_sidebar( array(
-		'name' => __( 'Before Layout 1/3-3', 'shopno2' ),
+		'name' => __( 'Before Layout 1/3-3 FP Only', 'shopno2' ),
 		'id' => 'bg3',
 		'description' => __( 'Add widgets here to appear in your sidebar.', 'shopno2' ),
 		'before_widget' => '<div id="bg3" class="widget-container %2$s">',

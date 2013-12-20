@@ -12,7 +12,7 @@ Version: 0.1
 
 // 1
 	register_sidebar( array(
-		'name' => __( 'After Header 1/3-1', 'shopno2' ),
+		'name' => __( 'AH 1/3-1 FP Only', 'shopno2' ),
 		'id' => '3ah1',
 		'description' => __( 'Add widgets here to appear in your sidebar.', 'shopno2' ),
 		'before_widget' => '<div id="ah1" class="widget-container %2$s">',
@@ -29,7 +29,7 @@ function shopno2_sidebar_3ah1() {
 
 // 2
 	register_sidebar( array(
-		'name' => __( 'After Header 1/3-2', 'shopno2' ),
+		'name' => __( 'AH 1/3-2 FP Only', 'shopno2' ),
 		'id' => '3ah2',
 		'description' => __( 'Add widgets here to appear in your sidebar.', 'shopno2' ),
 		'before_widget' => '<div id="ah2" class="widget-container %2$s">',
@@ -45,7 +45,7 @@ function shopno2_sidebar_3ah2() {
 
 // 3
 	register_sidebar( array(
-		'name' => __( 'After Header 1/3-3', 'shopno2' ),
+		'name' => __( 'AH 1/3-3 FP Only', 'shopno2' ),
 		'id' => '3ah3',
 		'description' => __( 'Add widgets here to appear in your sidebar.', 'shopno2' ),
 		'before_widget' => '<div id="ah3" class="widget-container %2$s">',

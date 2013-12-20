@@ -12,7 +12,7 @@ Version: 0.1
 
 // 1
 	register_sidebar( array(
-		'name' => __( 'Before Sidewrap 1/2-1', 'shopno2' ),
+		'name' => __( 'BS 1/2-1 FP Only', 'shopno2' ),
 		'id' => '2bsw1',
 		'description' => __( 'Add widgets here to appear in your sidebar.', 'shopno2' ),
 		'before_widget' => '<div id="twobsw1" class="widget-container %2$s">',
@@ -29,7 +29,7 @@ if (is_front_page()){
 
 // 2
 	register_sidebar( array(
-		'name' => __( 'Before Sidewrap 1/2-2', 'shopno2' ),
+		'name' => __( 'BS 1/2-2 FP Only', 'shopno2' ),
 		'id' => '2bsw2',
 		'description' => __( 'Add widgets here to appear in your sidebar.', 'shopno2' ),
 		'before_widget' => '<div id="twobsw2" class="widget-container %2$s">',
