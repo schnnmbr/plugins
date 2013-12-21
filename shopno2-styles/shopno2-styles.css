@@ -195,6 +195,44 @@ filter: progid:DXImageTransform.Microsoft.gradient(enabled=false);
 /*Templates*/
 .bigsignup {font-size: 7rem;font-weight: bolder;font-family: 'Oxygen', sans-serif;color: black;text-align: center;}
 
+/*Animations*/
+.animationright {
+-webkit-animation: bobble 2s ;
+}
+
+@-webkit-keyframes bobble {
+    100% {-webkit-transform: translate(-12px, 0px);}
+    	-webkit-animation-timing-function: ease-in;}	
+    75%  {-webkit-transform: translate(-11px, 0px);
+        -webkit-animation-timing-function: ease-in;}
+    50%  {-webkit-transform: translate(-10px, 0px);
+        -webkit-animation-timing-function: ease-in;}    
+    45%   {-webkit-transform: translate(-9px, 0px);
+        -webkit-animation-timing-function: ease-in;} 
+    40%  {-webkit-transform: translate(-8px, 0px);
+        -webkit-animation-timing-function: ease-in;} 
+    35%   {-webkit-transform: translate(-7px, 0px);
+        -webkit-animation-timing-function: ease-in;} 
+    30%   {-webkit-transform: translate(-6px, 0px);
+        -webkit-animation-timing-function: ease-in;} 
+    25%   {-webkit-transform: translate(-5px, 0px);
+        -webkit-animation-timing-function: ease-in;}
+    20%   {-webkit-transform: translate(-4px, 20px);
+        -webkit-animation-timing-function: ease-in;}
+    15%   {-webkit-transform: translate(-3px, 0px);
+        -webkit-animation-timing-function: ease-in;} 
+    10%   {-webkit-transform: translate(-2px, 0px);
+        -webkit-animation-timing-function: ease-in;}
+    5%   {-webkit-transform: translate(-1px, 0px);
+        -webkit-animation-timing-function: ease-in;}
+    0%   {-webkit-transform: translate(0px, 0px);
+        -webkit-animation-timing-function: ease-in;}        
+
+}
+.animationleft {
+
+
+}
 /*3 Grid Widgets*/
 #ah1,#ah2,#ah3,
 #bh1,#bh2,#bh3,
@@ -202,14 +240,13 @@ filter: progid:DXImageTransform.Microsoft.gradient(enabled=false);
 #asw1,#asw2,#asw3,
 #bg1,#bg2,#bg3,
 #bf1,#bf2,#bf3/* 3 Columns*/  {
-  display:inline-block;
   width: 31%;
   margin: 1%;
   display: inline-block;
   vertical-align: top;
   min-height: 180px;
-  background: #FFEFF0;
-  border: 1px solid #000;
+  
+  border: 1px solid #f8f8f8;
 }
 
 /*2 Grid Widgets*/
@@ -247,14 +284,14 @@ margin: 0.5%;
 
 /*Full Width Widgets*/
 #fah1,#fah2,#fah3,#fbh1,#fbh2,#fbh3,#fbf1,#fbf2,#fbf3,#fbsw1,#fbsw2,#fbsw3,#fbg1,#fbg2,#fbg3 {
-display:inline-block;
+
   width: 100%;
   margin: 0;
-  border: 1px solid #000;
+  border: 1px solid #f8f8f8;
 }
 #fbf1,#fbf2,#fbf3,#fbsw1,#fbsw2,#fbsw3 {
-background: #FFEFF0;
+
 }
 #fah1,#fah2,#fah3,#fbg1,#fbg2,#fbg3 {
-background: #F3FDEC;
+
 }

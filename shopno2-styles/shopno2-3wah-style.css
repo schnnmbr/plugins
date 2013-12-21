@@ -20,13 +20,13 @@ margin: 0.5%;
 }
 @media all and (max-width:900px){
   #wah1,#wah2,#wah3{
-  width: 47%;
-  margin: 0.5%;
+  width: 90%;
+  margin: 20px 5% auto;
 }
-@media all and (max-width:580px){
+/*@media all and (max-width:580px){
   #wah1,#wah2,#wah3 {
   width: 90%;
   margin: 20px 5% auto;
 }
 
-} }}
+}*/ }}

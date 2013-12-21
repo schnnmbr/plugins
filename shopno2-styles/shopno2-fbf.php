@@ -1,8 +1,8 @@
 <?php
 /*
-Plugin Name: Shopno2 3 Full Widgets Before Footer
+Plugin Name: Shopno2 Full Widgets Before Footer
 Plugin URI: http://shopno2.com
-Description: Responsive Widgets For Your Site
+Description: Full Widgets Before Footer
 Use Boxes to add and display your boxes to your site.
 Author: sachin nambiar
 Author URI: sachinnambiar.com
@@ -24,10 +24,10 @@ Version: 0.1
 add_action( 'genesis_before_footer', 'shopno2_sidebar_3fbf1' );
 
 function shopno2_sidebar_3fbf1() {
-//if (is_front_page()){
-	if ( !function_exists( 'dynamic_sidebar' ) || !dynamic_sidebar( '3fbf1' ) ) {}}//}
+if (is_front_page()){
+	if ( !function_exists( 'dynamic_sidebar' ) || !dynamic_sidebar( '3fbf1' ) ) {}}}
 
-// 2
+/*/ 2
 	register_sidebar( array(
 		'name' => __( 'Full Width BF2', 'shopno2' ),
 		'id' => '3fbf2',
@@ -43,7 +43,7 @@ function shopno2_sidebar_3fbf2() {
 	if (is_front_page()){
 	if ( !function_exists( 'dynamic_sidebar' ) || !dynamic_sidebar( '3fbf2' ) ) {} }}
 
-// 3
+/*3 
 	register_sidebar( array(
 		'name' => __( 'Full Width BF3', 'shopno2' ),
 		'id' => '3fbf3',

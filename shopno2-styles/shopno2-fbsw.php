@@ -1,9 +1,8 @@
 <?php
 /*
-Plugin Name: Shopno2 3 Full Widgets Before SideWrap
+Plugin Name: Shopno2 Full Widget Before SideWrap
 Plugin URI: http://shopno2.com
-Description: Boxes For Your Site
-Use Boxes to add and display your boxes to your site.
+Description: Full Widget Before SideWrap
 Author: sachin nambiar
 Author URI: sachinnambiar.com
 Version: 0.1
@@ -24,10 +23,10 @@ Version: 0.1
 add_action( 'genesis_before_content_sidebar_wrap', 'shopno2_sidebar_3fbsw1' );
 
 function shopno2_sidebar_3fbsw1() {
-//if (is_front_page()){
-	if ( !function_exists( 'dynamic_sidebar' ) || !dynamic_sidebar( '3fbsw1' ) ) {}}//}
+if (is_front_page()){
+	if ( !function_exists( 'dynamic_sidebar' ) || !dynamic_sidebar( '3fbsw1' ) ) {}}}
 
-// 2
+/*/ 2
 	register_sidebar( array(
 		'name' => __( 'Full Widget BS2', 'shopno2' ),
 		'id' => '3fbsw2',

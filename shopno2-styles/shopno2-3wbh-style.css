@@ -20,13 +20,12 @@ margin: 0.5%;
 }
 @media all and (max-width:900px){
   #wbh1,#wbh2,#wbh3{
-  width: 47%;
-  margin: 0.5%;
-}
-@media all and (max-width:580px){
-  #wbh1,#wbh2,#wbh3 {
   width: 90%;
   margin: 20px 5% auto;
 }
+/*@media all and (max-width:580px){
+  #wbh1,#wbh2,#wbh3 {
 
-} }}
+}
+
+}*/ }}
