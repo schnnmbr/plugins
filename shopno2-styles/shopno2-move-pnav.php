@@ -10,5 +10,11 @@ Version:0.1
 
 
 /* Reposition the primary navigation menu*/
-remove_action( 'genesis_after_header', 'genesis_do_nav' );
+function shopno2_move_pnav() {
+	remove_action( 'genesis_after_header', 'genesis_do_nav' );	
+	
+}
+
+add_action ('genesis_before_header','shopno2_move_pnav');
 add_action( 'genesis_before_header', 'genesis_do_nav' );
+

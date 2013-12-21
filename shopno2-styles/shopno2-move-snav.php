@@ -9,5 +9,10 @@ Version:0.1
 
 
 /* Reposition the primary navigation menu*/
-remove_action( 'genesis_after_header', 'genesis_do_subnav' );
+function shopno2_move_subnav() {
+	remove_action( 'genesis_after_header', 'genesis_do_subnav' );	
+	
+}
+
+add_action ('genesis_before_header','shopno2_move_subnav');
 add_action( 'genesis_before_header', 'genesis_do_subnav' );
