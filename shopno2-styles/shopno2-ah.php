@@ -1,6 +1,6 @@
 <?php
 /*
-Plugin Name: Shopno2 Full Widgets After Header
+Plugin Name: Shopno2 Widgets After Header
 Plugin URI: http://shopno2.com
 Description: Responsive Widgets For Your Site
 Use Boxes to add and display your boxes to your site.
@@ -10,30 +10,12 @@ Version: 0.1
 */
 //WIDGETS
 
-//Genesis Sidebar Code
-	
-/*genesis_register_sidebar(array(
-	'name'=>'gs',
-	'id' => 'gs',
-	'description' => 'This is a gs sidebar',
-	'before_widget' => '<div id="%1$s"><div class="widget %2$s">',
-	'after_widget'  => "</div></div>\n",
-	'before_title'  => '<h4><span>',
-	'after_title'   => "</span></h4>\n"
-));
-
-add_action( 'genesis_after_header', 'child_do_sidebar' );
-
-function child_do_sidebar() {
-	if (is_front_page()) {
-	if ( !function_exists( 'dynamic_sidebar' ) || !dynamic_sidebar( 'gs' ) ) {}}}
-*/
 // 1
 	register_sidebar( array(
 		'name' => __( 'AH1', 'shopno2' ),
 		'id' => 'ah1',
 		'description' => __( 'Add widgets here to appear in your sidebar.', 'shopno2' ),
-		'before_widget' => '<div id="ah1" class="widget-container %2$s">',
+		'before_widget' => '<div id="%1$s" class="widget-container %2$s">',
 		'after_widget' => '</div>',
 		'before_title' => '<h3 class="widget-title">',
 		'after_title' => '</h3>',
@@ -50,7 +32,7 @@ if (is_front_page()){
 		'name' => __( 'AH2', 'shopno2' ),
 		'id' => 'ah2',
 		'description' => __( 'Add widgets here to appear in your sidebar.', 'shopno2' ),
-		'before_widget' => '<div id="ah2" class="widget-container %2$s">',
+		'before_widget' => '<div id="%1$s" class="widget-container %2$s">',
 		'after_widget' => '</div>',
 		'before_title' => '<h3 class="widget-title">',
 		'after_title' => '</h3>',
@@ -66,7 +48,7 @@ function shopno2_sidebar_ah2() {
 		'name' => __( 'AH3', 'shopno2' ),
 		'id' => 'ah3',
 		'description' => __( 'Add widgets here to appear in your sidebar.', 'shopno2' ),
-		'before_widget' => '<div id="ah3" class="widget-container %2$s">',
+		'before_widget' => '<div id="%1$s" class="widget-container %2$s">',
 		'after_widget' => '</div>',
 		'before_title' => '<h3 class="widget-title">',
 		'after_title' => '</h3>',
