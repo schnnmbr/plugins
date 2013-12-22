@@ -15,8 +15,8 @@ Version: 0.1
 		'name' => __( 'BF1', 'shopno2' ),
 		'id' => 'bf1',
 		'description' => __( 'Add widgets here to appear in your sidebar.', 'shopno2' ),
-		'before_widget' => '<div id="bfwrap1"><div id="bf"><div id="fbf1" class="widget-container %2$s">',
-		'after_widget' => '</div></div>',
+		'before_widget' => '<div id="bf"><div id="fbf1" class="widget-container %2$s">',
+		'after_widget' => '</div>',
 		'before_title' => '<h3 class="widget-title">',
 		'after_title' => '</h3>',
 	) );
@@ -32,8 +32,8 @@ if (is_front_page()){
 		'name' => __( 'BF2', 'shopno2' ),
 		'id' => 'bf2',
 		'description' => __( 'Add widgets here to appear in your sidebar.', 'shopno2' ),
-		'before_widget' => '<div id="bfwrap2"><div id="bf2" class="widget-container %2$s">',
-		'after_widget' => '</div></div>',
+		'before_widget' => '<div id="bf2" class="widget-container %2$s">',
+		'after_widget' => '</div>',
 		'before_title' => '<h3 class="widget-title">',
 		'after_title' => '</h3>',
 	) );
@@ -48,8 +48,8 @@ function shopno2_sidebar_bf2() {
 		'name' => __( 'BF3', 'shopno2' ),
 		'id' => 'fbf3',
 		'description' => __( 'Add widgets here to appear in your sidebar.', 'shopno2' ),
-		'before_widget' => '<div id="bfwrap3"><div id="bf3" class="widget-container %2$s">',
-		'after_widget' => '</div></div>',
+		'before_widget' => '<div id="bf3" class="widget-container %2$s">',
+		'after_widget' => '</div>',
 		'before_title' => '<h3 class="widget-title">',
 		'after_title' => '</h3>',
 	) );

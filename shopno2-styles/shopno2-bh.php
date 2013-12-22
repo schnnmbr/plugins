@@ -14,8 +14,8 @@ Version: 0.1
 		'name' => __( 'BH1', 'shopno2' ),
 		'id' => 'bh1',
 		'description' => __( 'Add widgets here to appear in your sidebar.', 'shopno2' ),
-		'before_widget' => '<div id="bh1"><div id="bh1" class="widget-container %2$s">',
-		'after_widget' => '</div></div>',
+		'before_widget' => '<div id="bh1" class="widget-container %2$s">',
+		'after_widget' => '</div>',
 		'before_title' => '<h3 class="widget-title">',
 		'after_title' => '</h3>',
 	) );
@@ -31,8 +31,8 @@ if (is_front_page()){
 		'name' => __( 'BH2', 'shopno2' ),
 		'id' => 'bh2',
 		'description' => __( 'Add widgets here to appear in your sidebar.', 'shopno2' ),
-		'before_widget' => '<div id="bhwrap2"><div id="bh2" class="widget-container %2$s">',
-		'after_widget' => '</div></div>',
+		'before_widget' => '<div id="bh2" class="widget-container %2$s">',
+		'after_widget' => '</div>',
 		'before_title' => '<h3 class="widget-title">',
 		'after_title' => '</h3>',
 	) );
@@ -47,8 +47,8 @@ function shopno2_sidebar_bh2() {
 		'name' => __( 'BH3', 'shopno2' ),
 		'id' => 'bh3',
 		'description' => __( 'Add widgets here to appear in your sidebar.', 'shopno2' ),
-		'before_widget' => '<div id="bhwrap3"><div id="bh3" class="widget-container %2$s">',
-		'after_widget' => '</div></div>',
+		'before_widget' => '<div id="bh3" class="widget-container %2$s">',
+		'after_widget' => '</div>',
 		'before_title' => '<h3 class="widget-title">',
 		'after_title' => '</h3>',
 	) );

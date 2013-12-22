@@ -15,8 +15,8 @@ Version: 0.1
 		'name' => __( 'AH1', 'shopno2' ),
 		'id' => 'ah1',
 		'description' => __( 'Add widgets here to appear in your sidebar.', 'shopno2' ),
-		'before_widget' => '<div id="ahwrap1"><div id="ah1" class="widget-container %2$s">',
-		'after_widget' => '</div></div>',
+		'before_widget' => '<div id="ah1" class="widget-container %2$s">',
+		'after_widget' => '</div>',
 		'before_title' => '<h3 class="widget-title">',
 		'after_title' => '</h3>',
 	) );
@@ -32,8 +32,8 @@ if (is_front_page()){
 		'name' => __( 'AH2', 'shopno2' ),
 		'id' => 'ah2',
 		'description' => __( 'Add widgets here to appear in your sidebar.', 'shopno2' ),
-		'before_widget' => '<div id="ahwrap2"><div id="ah2" class="widget-container %2$s">',
-		'after_widget' => '</div></div>',
+		'before_widget' => '<div id="ah2" class="widget-container %2$s">',
+		'after_widget' => '</div>',
 		'before_title' => '<h3 class="widget-title">',
 		'after_title' => '</h3>',
 	) );
@@ -48,8 +48,8 @@ function shopno2_sidebar_ah2() {
 		'name' => __( 'AH3', 'shopno2' ),
 		'id' => 'ah3',
 		'description' => __( 'Add widgets here to appear in your sidebar.', 'shopno2' ),
-		'before_widget' => '<div id="ahwrap3"><div id="ah3" class="widget-container %2$s">',
-		'after_widget' => '</div></div>',
+		'before_widget' => '<div id="ah3" class="widget-container %2$s">',
+		'after_widget' => '</div>',
 		'before_title' => '<h3 class="widget-title">',
 		'after_title' => '</h3>',
 	) );
