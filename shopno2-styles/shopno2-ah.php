@@ -12,52 +12,52 @@ Version: 0.1
 
 // 1
 	register_sidebar( array(
-		'name' => __( 'Full Widget AH1', 'shopno2' ),
-		'id' => '3fah1',
+		'name' => __( 'AH1', 'shopno2' ),
+		'id' => 'ah1',
 		'description' => __( 'Add widgets here to appear in your sidebar.', 'shopno2' ),
-		'before_widget' => '<div id="fah1" class="widget-container %2$s">',
-		'after_widget' => '</div>',
+		'before_widget' => '<div id="ahwrap1"><div id="ah1" class="widget-container %2$s">',
+		'after_widget' => '</div></div>',
 		'before_title' => '<h3 class="widget-title">',
 		'after_title' => '</h3>',
 	) );
 
-add_action( 'genesis_after_header', 'shopno2_sidebar_3fah1' );
+add_action( 'genesis_after_header', 'shopno2_sidebar_ah1' );
 
-function shopno2_sidebar_3fah1() {
+function shopno2_sidebar_ah1() {
 if (is_front_page()){
-	if ( !function_exists( 'dynamic_sidebar' ) || !dynamic_sidebar( '3fah1' ) ) {}}}
+	if ( !function_exists( 'dynamic_sidebar' ) || !dynamic_sidebar( 'ah1' ) ) {}}}
 
 // 2
 	register_sidebar( array(
-		'name' => __( 'Full Widget AH2', 'shopno2' ),
-		'id' => '3fah2',
+		'name' => __( 'AH2', 'shopno2' ),
+		'id' => 'ah2',
 		'description' => __( 'Add widgets here to appear in your sidebar.', 'shopno2' ),
-		'before_widget' => '<div id="fah2" class="widget-container %2$s">',
-		'after_widget' => '</div>',
+		'before_widget' => '<div id="ahwrap2"><div id="ah2" class="widget-container %2$s">',
+		'after_widget' => '</div></div>',
 		'before_title' => '<h3 class="widget-title">',
 		'after_title' => '</h3>',
 	) );
-add_action( 'genesis_after_header', 'shopno2_sidebar_3fah2' );//location of sidebar 2
+add_action( 'genesis_after_header', 'shopno2_sidebar_ah2' );//location of sidebar 2
 
-function shopno2_sidebar_3fah2() {
+function shopno2_sidebar_ah2() {
 	if (is_front_page()){
-	if ( !function_exists( 'dynamic_sidebar' ) || !dynamic_sidebar( '3fah2' ) ) {} }}
+	if ( !function_exists( 'dynamic_sidebar' ) || !dynamic_sidebar( 'ah2' ) ) {} }}
 
 //3
 	register_sidebar( array(
-		'name' => __( 'Full Widget AH3', 'shopno2' ),
-		'id' => '3fah3',
+		'name' => __( 'AH3', 'shopno2' ),
+		'id' => 'ah3',
 		'description' => __( 'Add widgets here to appear in your sidebar.', 'shopno2' ),
-		'before_widget' => '<div id="fah3" class="widget-container %2$s">',
-		'after_widget' => '</div>',
+		'before_widget' => '<div id="ahwrap3"><div id="ah3" class="widget-container %2$s">',
+		'after_widget' => '</div></div>',
 		'before_title' => '<h3 class="widget-title">',
 		'after_title' => '</h3>',
 	) );
-add_action( 'genesis_after_header', 'shopno2_sidebar_3fah3' );//location of sidebar 2
+add_action( 'genesis_after_header', 'shopno2_sidebar_ah3' );//location of sidebar 2
 
-function shopno2_sidebar_3fah3() {
+function shopno2_sidebar_ah3() {
 	if (is_front_page()){
-	if ( !function_exists( 'dynamic_sidebar' ) || !dynamic_sidebar( '3fah3' ) ) {} }}
+	if ( !function_exists( 'dynamic_sidebar' ) || !dynamic_sidebar( 'ah3' ) ) {} }}
 
 //Loads StyleSheet for Above Widgets
 /* 

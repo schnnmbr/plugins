@@ -1,9 +1,8 @@
 <?php
 /*
-Plugin Name: Shopno2 Full Widgets Before Footer
+Plugin Name: Shopno2 Full Widgets Before Header
 Plugin URI: http://shopno2.com
-Description: Full Widgets Before Footer
-Use Boxes to add and display your boxes to your site.
+Description: Full Widgets Before Header
 Author: sachin nambiar
 Author URI: sachinnambiar.com
 Version: 0.1
@@ -12,52 +11,52 @@ Version: 0.1
 
 // 1
 	register_sidebar( array(
-		'name' => __( 'Full Width BF1', 'shopno2' ),
-		'id' => '3fbf1',
+		'name' => __( 'BH1', 'shopno2' ),
+		'id' => 'bh1',
 		'description' => __( 'Add widgets here to appear in your sidebar.', 'shopno2' ),
-		'before_widget' => '<div id="fbf"><div id="fbf1" class="widget-container %2$s">',
+		'before_widget' => '<div id="bh1"><div id="bh1" class="widget-container %2$s">',
 		'after_widget' => '</div></div>',
 		'before_title' => '<h3 class="widget-title">',
 		'after_title' => '</h3>',
 	) );
 
-add_action( 'genesis_before_footer', 'shopno2_sidebar_3fbf1' );
+add_action( 'genesis_after_header', 'shopno2_sidebar_bh1' );
 
-function shopno2_sidebar_3fbf1() {
+function shopno2_sidebar_bh1() {
 if (is_front_page()){
-	if ( !function_exists( 'dynamic_sidebar' ) || !dynamic_sidebar( '3fbf1' ) ) {}}}
+	if ( !function_exists( 'dynamic_sidebar' ) || !dynamic_sidebar( 'bh1' ) ) {}}}
 
-/*/ 2
+// 2
 	register_sidebar( array(
-		'name' => __( 'Full Width BF2', 'shopno2' ),
-		'id' => '3fbf2',
+		'name' => __( 'BH2', 'shopno2' ),
+		'id' => 'bh2',
 		'description' => __( 'Add widgets here to appear in your sidebar.', 'shopno2' ),
-		'before_widget' => '<div id="fbfwrap2"><div id="fbf2" class="widget-container %2$s">',
+		'before_widget' => '<div id="bhwrap2"><div id="bh2" class="widget-container %2$s">',
 		'after_widget' => '</div></div>',
 		'before_title' => '<h3 class="widget-title">',
 		'after_title' => '</h3>',
 	) );
-add_action( 'genesis_before_footer', 'shopno2_sidebar_3fbf2' );//location of sidebar 2
+add_action( 'genesis_after_header', 'shopno2_sidebar_bh2' );//location of sidebar 2
 
-function shopno2_sidebar_3fbf2() {
+function shopno2_sidebar_bh2() {
 	if (is_front_page()){
-	if ( !function_exists( 'dynamic_sidebar' ) || !dynamic_sidebar( '3fbf2' ) ) {} }}
+	if ( !function_exists( 'dynamic_sidebar' ) || !dynamic_sidebar( 'bh2' ) ) {} }}
 
-/*3 
+// 3
 	register_sidebar( array(
-		'name' => __( 'Full Width BF3', 'shopno2' ),
-		'id' => '3fbf3',
+		'name' => __( 'BH3', 'shopno2' ),
+		'id' => 'bh3',
 		'description' => __( 'Add widgets here to appear in your sidebar.', 'shopno2' ),
-		'before_widget' => '<div id="fbfwrap3"><div id="fbf3" class="widget-container %2$s">',
+		'before_widget' => '<div id="bhwrap3"><div id="bh3" class="widget-container %2$s">',
 		'after_widget' => '</div></div>',
 		'before_title' => '<h3 class="widget-title">',
 		'after_title' => '</h3>',
 	) );
-add_action( 'genesis_before_footer', 'shopno2_sidebar_3fbf3' );//location of sidebar 2
+add_action( 'genesis_after_header', 'shopno2_sidebar_bh3' );//location of sidebar 2
 
-function shopno2_sidebar_3fbf3() {
+function shopno2_sidebar_bh3() {
 	if (is_front_page()){
-	if ( !function_exists( 'dynamic_sidebar' ) || !dynamic_sidebar( '3fbf3' ) ) {} }}
+	if ( !function_exists( 'dynamic_sidebar' ) || !dynamic_sidebar( 'bh3' ) ) {} }}
 
 //Loads StyleSheet for Above Widgets
 /* 
