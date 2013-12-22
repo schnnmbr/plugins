@@ -1,6 +1,6 @@
 <?php
 /*
-Plugin Name: Shopno2 3 Full Widgets After Header
+Plugin Name: Shopno2 Full Widgets After Header
 Plugin URI: http://shopno2.com
 Description: Responsive Widgets For Your Site
 Use Boxes to add and display your boxes to your site.
