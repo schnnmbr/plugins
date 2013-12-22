@@ -10,6 +10,23 @@ Version: 0.1
 */
 //WIDGETS
 
+//Genesis Sidebar Code
+	
+genesis_register_sidebar(array(
+	'name'=>'gs',
+	'id' => 'gs',
+	'description' => 'This is a gs sidebar',
+	'before_widget' => '<div id="%1$s"><div class="widget %2$s">',
+	'after_widget'  => "</div></div>\n",
+	'before_title'  => '<h4><span>',
+	'after_title'   => "</span></h4>\n"
+));
+
+add_action( 'genesis_after_header', 'child_do_sidebar' );
+
+function child_do_sidebar() {
+	if (is_front_page()) {
+	if ( !function_exists( 'dynamic_sidebar' ) || !dynamic_sidebar( 'gs' ) ) {}}}
 // 1
 	register_sidebar( array(
 		'name' => __( 'AH1', 'shopno2' ),
