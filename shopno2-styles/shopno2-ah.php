@@ -12,7 +12,7 @@ Version: 0.1
 
 //Genesis Sidebar Code
 	
-genesis_register_sidebar(array(
+/*genesis_register_sidebar(array(
 	'name'=>'gs',
 	'id' => 'gs',
 	'description' => 'This is a gs sidebar',
@@ -27,6 +27,7 @@ add_action( 'genesis_after_header', 'child_do_sidebar' );
 function child_do_sidebar() {
 	if (is_front_page()) {
 	if ( !function_exists( 'dynamic_sidebar' ) || !dynamic_sidebar( 'gs' ) ) {}}}
+*/
 // 1
 	register_sidebar( array(
 		'name' => __( 'AH1', 'shopno2' ),
