@@ -15,7 +15,7 @@ Version: 0.1
 		'name' => __( 'Full Width BF1', 'shopno2' ),
 		'id' => '3fbf1',
 		'description' => __( 'Add widgets here to appear in your sidebar.', 'shopno2' ),
-		'before_widget' => '<div id="fbfwrap1"><div id="fbf1" class="widget-container %2$s">',
+		'before_widget' => '<div id="fbf"><div id="fbf1" class="widget-container %2$s">',
 		'after_widget' => '</div></div>',
 		'before_title' => '<h3 class="widget-title">',
 		'after_title' => '</h3>',

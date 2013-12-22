@@ -10,12 +10,12 @@ Version: 0.1
 */
 //WIDGETS
 
-// 1
+/*/ 1
 	register_sidebar( array(
 		'name' => __( 'BS 1/2-1 FP Only', 'shopno2' ),
 		'id' => '2bsw1',
 		'description' => __( 'Add widgets here to appear in your sidebar.', 'shopno2' ),
-		'before_widget' => '<div id="twobsw1" class="widget-container %2$s">',
+		'before_widget' => '<div id="bsw" class="widget-container %2$s">',
 		'after_widget' => '</div>',
 		'before_title' => '<h3 class="widget-title">',
 		'after_title' => '</h3>',
@@ -41,4 +41,4 @@ add_action( 'genesis_before_content_sidebar_wrap', 'shopno2_sidebar_2bsw2' );//l
 
 function shopno2_sidebar_2bsw2() {
 	if (is_front_page()){
-	if ( !function_exists( 'dynamic_sidebar' ) || !dynamic_sidebar( '2bsw2' ) ) {} }}
+	if ( !function_exists( 'dynamic_sidebar' ) || !dynamic_sidebar( '2bsw2' ) ) {} }}*/

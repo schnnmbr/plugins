@@ -27,7 +27,7 @@ function shopno2_sidebar_3bsw1() {
 if (is_front_page()){
 	if ( !function_exists( 'dynamic_sidebar' ) || !dynamic_sidebar( '3bsw1' ) ) {}}}
 
-// 2
+/*/ 2
 	register_sidebar( array(
 		'name' => __( 'Before Sidewrap 1/3-2', 'shopno2' ),
 		'id' => '3bsw2',
@@ -59,3 +59,4 @@ function shopno2_sidebar_3bsw3() {
 	if (is_front_page()){
 	if ( !function_exists( 'dynamic_sidebar' ) || !dynamic_sidebar( '3bsw3' ) ) {} }}
 
+*/

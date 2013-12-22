@@ -15,7 +15,7 @@ Version: 0.1
 		'name' => __( 'Before Header 1/3-1', 'shopno2' ),
 		'id' => '3bh1',
 		'description' => __( 'Add widgets here to appear in your sidebar.', 'shopno2' ),
-		'before_widget' => '<div id="bh1" class="widget-container %2$s">',
+		'before_widget' => '<div id="bh" class="widget-container %2$s">',
 		'after_widget' => '</div>',
 		'before_title' => '<h3 class="widget-title">',
 		'after_title' => '</h3>',
@@ -24,10 +24,10 @@ Version: 0.1
 add_action( 'genesis_before_header', 'shopno2_sidebar_3bh1' );
 
 function shopno2_sidebar_3bh1() {
-//if (is_front_page()){
-	if ( !function_exists( 'dynamic_sidebar' ) || !dynamic_sidebar( '3bh1' ) ) {}}//}
+if (is_front_page()){
+	if ( !function_exists( 'dynamic_sidebar' ) || !dynamic_sidebar( '3bh1' ) ) {}}}
 
-// 2
+/*/ 2
 	register_sidebar( array(
 		'name' => __( 'BH 1/3-2 FP Only', 'shopno2' ),
 		'id' => '3bh2',

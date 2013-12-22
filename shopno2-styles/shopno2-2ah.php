@@ -15,7 +15,7 @@ Version: 0.1
 		'name' => __( 'AH 1/2-1 FP Only', 'shopno2' ),
 		'id' => '2ah1',
 		'description' => __( 'Add widgets here to appear in your sidebar.', 'shopno2' ),
-		'before_widget' => '<div id="fahwrap1"><div id="twoah1" class="widget-container %2$s">',
+		'before_widget' => '<div id="fah1"><div id="twoah1" class="widget-container %2$s">',
 		'after_widget' => '</div></div>',
 		'before_title' => '<h3 class="widget-title">',
 		'after_title' => '</h3>',
@@ -27,7 +27,7 @@ function shopno2_sidebar_2ah1() {
 if (is_front_page()){
 	if ( !function_exists( 'dynamic_sidebar' ) || !dynamic_sidebar( '2ah1' ) ) {}}}
 
-// 2
+/*/ 2
 	register_sidebar( array(
 		'name' => __( 'AH 1/2-2 FP Only', 'shopno2' ),
 		'id' => '2ah2',
@@ -42,3 +42,4 @@ add_action( 'genesis_after_header', 'shopno2_sidebar_2ah2' );//location of sideb
 function shopno2_sidebar_2ah2() {
 	if (is_front_page()){
 	if ( !function_exists( 'dynamic_sidebar' ) || !dynamic_sidebar( '2ah2' ) ) {} }}
+	*/
