@@ -1,9 +1,8 @@
 <?php
 /*
-Plugin Name: Shopno2 Full Widgets Before Footer
+Plugin Name: Shopno2 Before Footer FrontPage Widgets
 Plugin URI: http://shopno2.com
-Description: Full Widgets Before Footer
-Use Boxes to add and display your boxes to your site.
+Description: Used when you need content Before Footer
 Author: sachin nambiar
 Author URI: sachinnambiar.com
 Version: 0.1
@@ -12,22 +11,33 @@ Version: 0.1
 
 // 1
 	register_sidebar( array(
-		'name' => __( 'BF1', 'shopno2' ),
-		'id' => 'bf1',
+		'name' => __( 'BF', 'shopno2' ),
+		'id' => 'bf',
 		'description' => __( 'Add widgets here to appear in your sidebar.', 'shopno2' ),
-		'before_widget' => '<div id="%1$s"><div id="fbf1" class="widget-container %2$s">',
-		'after_widget' => '</div>',
+		'before_widget' => '<div id="%1$s" class="widget-container %2$s">',
+		'after_widget' => '',
 		'before_title' => '<h3 class="widget-title">',
 		'after_title' => '</h3>',
 	) );
+//add_action('genesis_before_footer','shopno2_wraps_bf1_before');
+add_action( 'genesis_before_footer', 'shopno2_sidebar_bf' );
+//add_action('genesis_before_footer','shopno2_wraps_bf1_after');
 
-add_action( 'genesis_before_footer', 'shopno2_sidebar_bf1' );
-
-function shopno2_sidebar_bf1() {
+function shopno2_sidebar_bf() {
 if (is_front_page()){
-	if ( !function_exists( 'dynamic_sidebar' ) || !dynamic_sidebar( 'bf1' ) ) {}}}
+	if ( !function_exists( 'dynamic_sidebar' ) || !dynamic_sidebar( 'bf' ) ) {}}}
+/*
+/Wraps On Sidebars
+function shopno2_wraps_bf1_before(){
+echo '<div id="bf1">';
+}
 
-// 2
+function shopno2_wraps_bf1_after(){
+echo '</div>';
+}
+
+/*
+/ 2
 	register_sidebar( array(
 		'name' => __( 'BF2', 'shopno2' ),
 		'id' => 'bf2',
@@ -37,13 +47,27 @@ if (is_front_page()){
 		'before_title' => '<h3 class="widget-title">',
 		'after_title' => '</h3>',
 	) );
+
+add_action('genesis_before_footer','shopno2_wraps_bf2_before');
 add_action( 'genesis_before_footer', 'shopno2_sidebar_bf2' );//location of sidebar 2
+add_action('genesis_before_footer','shopno2_wraps_bf2_after');
 
 function shopno2_sidebar_bf2() {
 	if (is_front_page()){
 	if ( !function_exists( 'dynamic_sidebar' ) || !dynamic_sidebar( 'bf2' ) ) {} }}
 
-//3 
+//Wraps On Sidebars
+function shopno2_wraps_bf2_before(){
+echo '<div id="bf2">';
+}
+
+function shopno2_wraps_bf2_after(){
+echo '</div>';
+
+
+}
+/*
+/3 
 	register_sidebar( array(
 		'name' => __( 'BF3', 'shopno2' ),
 		'id' => 'fbf3',

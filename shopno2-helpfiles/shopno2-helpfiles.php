@@ -62,3 +62,4 @@ function be_grid_loop_on_helpfile( $grid, $query ) {
 	return $grid;
 }
 add_filter( 'genesis_grid_loop_section', 'be_grid_loop_on_helpfile', 10, 2 );
+

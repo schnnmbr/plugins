@@ -1,8 +1,8 @@
 <?php
 /*
-Plugin Name: Shopno2 Full Widgets Before Header
+Plugin Name: Shopno2 Before Header FrontPage Widgets
 Plugin URI: http://shopno2.com
-Description: Full Widgets Before Header
+Description: Used when you need content Before Header.
 Author: sachin nambiar
 Author URI: sachinnambiar.com
 Version: 0.1
@@ -11,8 +11,8 @@ Version: 0.1
 
 // 1
 	register_sidebar( array(
-		'name' => __( 'BH1', 'shopno2' ),
-		'id' => 'bh1',
+		'name' => __( 'BH', 'shopno2' ),
+		'id' => 'bh',
 		'description' => __( 'Add widgets here to appear in your sidebar.', 'shopno2' ),
 		'before_widget' => '<div id="%1$s" class="widget-container %2$s">',
 		'after_widget' => '</div>',
@@ -20,13 +20,15 @@ Version: 0.1
 		'after_title' => '</h3>',
 	) );
 
-add_action( 'genesis_after_header', 'shopno2_sidebar_bh1' );
+add_action( 'genesis_before_header', 'shopno2_sidebar_bh' );
 
-function shopno2_sidebar_bh1() {
+
+function shopno2_sidebar_bh() {
 if (is_front_page()){
-	if ( !function_exists( 'dynamic_sidebar' ) || !dynamic_sidebar( 'bh1' ) ) {}}}
+	if ( !function_exists( 'dynamic_sidebar' ) || !dynamic_sidebar( 'bh' ) ) {}}}
 
-// 2
+/*
+/ 2
 	register_sidebar( array(
 		'name' => __( 'BH2', 'shopno2' ),
 		'id' => 'bh2',
@@ -36,7 +38,7 @@ if (is_front_page()){
 		'before_title' => '<h3 class="widget-title">',
 		'after_title' => '</h3>',
 	) );
-add_action( 'genesis_after_header', 'shopno2_sidebar_bh2' );//location of sidebar 2
+add_action( 'genesis_before_header', 'shopno2_sidebar_bh2' );//location of sidebar 2
 
 function shopno2_sidebar_bh2() {
 	if (is_front_page()){
@@ -52,7 +54,7 @@ function shopno2_sidebar_bh2() {
 		'before_title' => '<h3 class="widget-title">',
 		'after_title' => '</h3>',
 	) );
-add_action( 'genesis_after_header', 'shopno2_sidebar_bh3' );//location of sidebar 2
+add_action( 'genesis_before_header', 'shopno2_sidebar_bh3' );//location of sidebar 2
 
 function shopno2_sidebar_bh3() {
 	if (is_front_page()){

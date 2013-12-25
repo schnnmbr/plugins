@@ -24,8 +24,8 @@ function shopno2_customer() {
 		'edit_item'           => __( 'Edit Customer', 'text_domain' ),
 		'update_item'         => __( 'Update Customer', 'text_domain' ),
 		'search_items'        => __( 'Search customers', 'text_domain' ),
-		'not_found'           => __( 'No customer found', 'text_domain' ),
-		'not_found_in_trash'  => __( 'No customers found in Trash', 'text_domain' ),
+		'not_found'           => __( 'No Customer found', 'text_domain' ),
+		'not_found_in_trash'  => __( 'No Customers found in Trash', 'text_domain' ),
 	);
 	$args = array(
 		'label'               => __( 'customer', 'text_domain' ),

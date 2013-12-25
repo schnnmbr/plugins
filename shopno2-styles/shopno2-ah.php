@@ -1,9 +1,8 @@
 <?php
 /*
-Plugin Name: Shopno2 Widgets After Header
+Plugin Name: Shopno2 After Header FrontPage Widgets
 Plugin URI: http://shopno2.com
-Description: Responsive Widgets For Your Site
-Use Boxes to add and display your boxes to your site.
+Description: Used when you need content After Header.
 Author: sachin nambiar
 Author URI: sachinnambiar.com
 Version: 0.1
@@ -21,11 +20,23 @@ Version: 0.1
 		'after_title' => '</h3>',
 	) );
 
-add_action( 'genesis_after_header', 'shopno2_sidebar_ah1' );
+
+add_action('genesis_after_header','shopno2_wraps_ah1_before');
+add_action('genesis_after_header', 'shopno2_sidebar_ah1' );
+add_action('genesis_after_header','shopno2_wraps_ah1_after');	
 
 function shopno2_sidebar_ah1() {
 if (is_front_page()){
 	if ( !function_exists( 'dynamic_sidebar' ) || !dynamic_sidebar( 'ah1' ) ) {}}}
+
+//Wraps On Sidebars
+function shopno2_wraps_ah1_before(){
+echo '<div id="ah1">';
+}
+
+function shopno2_wraps_ah1_after(){
+echo '</div>';
+}
 
 // 2
 	register_sidebar( array(
@@ -37,13 +48,23 @@ if (is_front_page()){
 		'before_title' => '<h3 class="widget-title">',
 		'after_title' => '</h3>',
 	) );
-add_action( 'genesis_after_header', 'shopno2_sidebar_ah2' );//location of sidebar 2
-
+add_action('genesis_after_header','shopno2_wraps_ah2_before');	
+add_action( 'genesis_after_header', 'shopno2_sidebar_ah2');//location of sidebar 2
+add_action('genesis_after_header','shopno2_wraps_ah2_after');
 function shopno2_sidebar_ah2() {
 	if (is_front_page()){
 	if ( !function_exists( 'dynamic_sidebar' ) || !dynamic_sidebar( 'ah2' ) ) {} }}
 
-//3
+//Wraps On Sidebars
+function shopno2_wraps_ah2_before(){
+echo '<div id="ah2">';
+}
+
+function shopno2_wraps_ah2_after(){
+echo '</div>';
+}
+
+/*/3
 	register_sidebar( array(
 		'name' => __( 'AH3', 'shopno2' ),
 		'id' => 'ah3',
@@ -53,7 +74,7 @@ function shopno2_sidebar_ah2() {
 		'before_title' => '<h3 class="widget-title">',
 		'after_title' => '</h3>',
 	) );
-add_action( 'genesis_after_header', 'shopno2_sidebar_ah3' );//location of sidebar 2
+add_action( 'genesis_after_header', 'shopno2_sidebar_ah3', 25 );//location of sidebar 2
 
 function shopno2_sidebar_ah3() {
 	if (is_front_page()){
