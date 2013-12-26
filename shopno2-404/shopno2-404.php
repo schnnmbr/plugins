@@ -1,6 +1,6 @@
 <?php
 /*
-Plugin Name: Shopno2 Services
+Plugin Name: Shopno2 404
 Plugin URI: http://shopno2.com
 Description: Services For Your Site
 Use Services to add and display your services to your site.
