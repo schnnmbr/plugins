@@ -88,7 +88,7 @@ border-color: #0055cc #0055cc #003580;
 border-color: rgba(0,0,0,0.1) rgba(0,0,0,0.1) rgba(0,0,0,0.25);
 filter: progid:DXImageTransform.Microsoft.gradient(enabled=false);
 }
-.entry-content .bluebutton a {color:white;}
+.entry-content .bluebutton a {color:white;border:0;}
 
 .greenbutton {
 font-size: 20px;
@@ -113,7 +113,7 @@ border-color: #51a351 #51a351 #387038;
 border-color: rgba(0,0,0,0.1) rgba(0,0,0,0.1) rgba(0,0,0,0.25);
 filter: progid:DXImageTransform.Microsoft.gradient(enabled=false);
 }
-.entry-content .greenbutton a {color:white;}
+.entry-content .greenbutton a {color:white;border:0;}
 .yellowbutton {
 font-size: 20px;
 font-weight: normal;
@@ -137,7 +137,7 @@ border-color: #f89406 #f89406 #ad6704;
 border-color: rgba(0,0,0,0.1) rgba(0,0,0,0.1) rgba(0,0,0,0.25);
 filter: progid:DXImageTransform.Microsoft.gradient(enabled=false);
 }
-.entry-content .yellowbutton a {color:white;}
+.entry-content .yellowbutton a {color:white;border:0;}
 .redbutton {
 font-size: 20px;
 font-weight: normal;
@@ -161,7 +161,7 @@ border-color: #bd362f #bd362f #802420;
 border-color: rgba(0,0,0,0.1) rgba(0,0,0,0.1) rgba(0,0,0,0.25);
 filter: progid:DXImageTransform.Microsoft.gradient(enabled=false);
 }
-.entry-content .redbutton a {color:white;}
+.entry-content .redbutton a {color:white;border:0;}
 .blackbutton {
 font-size: 20px;
 font-weight: normal;
@@ -185,7 +185,7 @@ border-color: #222 #222 #000000;
 border-color: rgba(0,0,0,0.1) rgba(0,0,0,0.1) rgba(0,0,0,0.25);
 filter: progid:DXImageTransform.Microsoft.gradient(enabled=false);
 }
-.entry-content .blackbutton a {color:white;}
+.entry-content .blackbutton a {color:white;border:0;}
 
 .impact {font-family: impact;font-size:500%;}
 .highlight {background: #EEE; padding: 10px;border: 1px solid #E9E9E9;}/*To use without the huge bottom margins -  ideal for use inside pages*/
