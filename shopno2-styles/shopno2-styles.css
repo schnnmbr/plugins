@@ -233,6 +233,31 @@ filter: progid:DXImageTransform.Microsoft.gradient(enabled=false);
 
 
 }
+/*
+Clear fix for column classes
+---------------------------------------------------------------------------------------------------- */
+.clear-line:after {
+  	content: ".";
+	display: block;
+	clear: both;
+	visibility: hidden;
+	line-height: 0;
+	height: 0;
+}
+ 
+.clear-line {
+	display: inline-block;
+	width: 100%;
+}
+ 
+html[xmlns] .clear-line {
+	display: block;
+}
+ 
+* html .clear-line {
+	height: 1%;
+}
+
 /*3 Grid Widgets*/
 
 @media (max-width:980px){
@@ -243,19 +268,15 @@ filter: progid:DXImageTransform.Microsoft.gradient(enabled=false);
 
 }
 @media all and (max-width:580px){
- 
+
+/* === 2 columns === */
+
+/* $x = 52.5 */
+@media all and (max-width:580px){    
 }
+/* === 3 columns === */
 
-} }}
-
-/*Full Width Widgets*/
-#ah1,#ah2,#ah3,#bh1,#bh2,#bh3,#bf1,#bf2,#bf3,#fbs1,#bs2,#bs3,#bg1,#bg2,#bg3 {
-
- 
+/* $x = 35 */
+@media all and (max-width:580px){  
 }
-#bf1,#bf2,#bf3,#bs1,#bs2,#bs3 {
-
-}
-#ah1,#ah2,#ah3,#bg1,#bg2,#bg3 {
-
-}
+/* === 4 columns === */
