@@ -15,7 +15,7 @@ Version: 0.1
 		'id' => 'bf',
 		'description' => __( 'Add widgets here to appear in your sidebar.', 'shopno2' ),
 		'before_widget' => '<div id="%1$s" class="widget-container %2$s">',
-		'after_widget' => '',
+		'after_widget' => '</div>',
 		'before_title' => '<h3 class="widget-title">',
 		'after_title' => '</h3>',
 	) );
