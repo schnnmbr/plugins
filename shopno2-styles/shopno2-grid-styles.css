@@ -1,5 +1,6 @@
 /* Custom Post Type Responsive Grid
 -------------------------------------------------------------*/
+.featured-post {max-width:90%;margin:auto;}
 .type-product {
  display:inline-block;
   width: 20%;
