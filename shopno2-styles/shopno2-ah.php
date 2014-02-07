@@ -1,6 +1,6 @@
 <?php
 /*
-Plugin Name: Shopno2 After Header FrontPage Widgets
+Plugin Name: Shopno2 FrontPage Widgets After Header 
 Plugin URI: http://shopno2.com
 Description: Used when you need content After Header.
 Author: sachin nambiar

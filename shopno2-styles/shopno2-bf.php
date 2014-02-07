@@ -1,6 +1,6 @@
 <?php
 /*
-Plugin Name: Shopno2 Before Footer FrontPage Widgets
+Plugin Name: Shopno2 FrontPage Widgets Before Footer 
 Plugin URI: http://shopno2.com
 Description: Used when you need content Before Footer
 Author: sachin nambiar

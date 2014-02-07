@@ -1,6 +1,6 @@
 <?php
 /*
-Plugin Name: Shopno2 Before Header FrontPage Widgets
+Plugin Name: Shopno2 FrontPage Widgets Before Header 
 Plugin URI: http://shopno2.com
 Description: Used when you need content Before Header.
 Author: sachin nambiar

@@ -1,6 +1,6 @@
 <?php
 /*
-Plugin Name: Shopno2 Fix Menu On Top
+Plugin Name: Shopno2 Menu Fix On Top
 Plugin URI: http://shopno2.com
 Description: Fixes Primary Menu on Top of Page
 Author: shopno2.com
@@ -28,4 +28,4 @@ function shopno2_fixed_menu() {
             wp_enqueue_style( 'shopno2-fixed-menu', plugin_dir_url( __FILE__ ) . 'shopno2-fixed-menu.css', array(), '0.1', 'screen' );
         }
 }
-add_action( 'wp_enqueue_scripts', 'shopno2_fixed_menu', 20 );
+add_action( 'wp_enqueue_scripts', 'shopno2_fixed_menu', 5 );
