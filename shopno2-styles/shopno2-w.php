@@ -1,6 +1,6 @@
 <?php
 /*
-Plugin Name: Shopno2 Widgetized FrontPage
+Plugin Name: Shopno2 Widgetized Page
 Plugin URI: http://shopno2.com
 Description: Used when you need content Before Footer
 Author: sachin nambiar
