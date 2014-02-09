@@ -2,7 +2,7 @@
 /*
 Plugin Name: Shopno2 Widgetized Page
 Plugin URI: http://shopno2.com
-Description: Used when you need content Before Footer
+Description: The right set of widgets to make your site awesome!
 Author: sachin nambiar
 Author URI: sachinnambiar.com
 Version: 0.1
