@@ -11,5 +11,10 @@ Version: 0.1
 /** Remove Header */
 
 
-remove_action( 'genesis_site_title', 'genesis_seo_title' ); 
-remove_action( 'genesis_site_description', 'genesis_site_description' ); 
+/** Genesis - Remove header and header markup */
+function shopno2_hide_header() {
+remove_action( 'genesis_header', 'genesis_header_markup_open', 5 );
+remove_action( 'genesis_header', 'genesis_do_header' );
+remove_action( 'genesis_header', 'genesis_header_markup_close', 15 );
+}
+add_action ('genesis_before_header','shopno2_hide_header');
