@@ -72,7 +72,7 @@ function shono2_category_archive_product( $query ) {
 	}
     // include our stream type on home page
 	if ( is_home() && $query->is_main_query() ) {
-		$query->query_vars['post_type'] = array( 'post', 'Product' );
+		$query->query_vars['post_type'] = array( 'post' );
 		return;
 	}
 }
