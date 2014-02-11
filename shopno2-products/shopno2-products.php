@@ -76,5 +76,5 @@ function shono2_category_archive_product( $query ) {
 		return;
 	}
 }
-add_post_type_support( 'the_video', 'genesis-layouts' );
+add_post_type_support( 'shopno2_product', 'genesis-layouts' );
 add_action ( 'pre_get_posts', 'shono2_category_archive_product' );
