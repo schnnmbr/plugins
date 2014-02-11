@@ -18,7 +18,7 @@ if (basename($_SERVER['PHP_SELF']) == basename (__FILE__)) {
 //shopno2 Admin Screen Branding
 function shopno2_custom_logo() {
   echo '<style type="text/css">
-    #header-logo { background-image: url('.content_url('').'/shopno2-functions/s2logo-72.png) !important; }
+    #header-logo { background-image: url('.content_url('').'/themes/1/s2logo-72.png) !important; }
     </style>';
 }
 
@@ -26,9 +26,7 @@ add_action('admin_head', 'shopno2_custom_logo');
 
 /*shopno2 Login Screen*/
 function shopno2_custom_login_logo() {
-    echo '<style type="text/css">
-        h1 a { background-image:url('.content_url('').'/shopno2-functions/s2logo-72.png) !important; }
-    </style>';
+    echo '<link rel="stylesheet" type="text/css" href="' . get_bloginfo('stylesheet_directory') . '/customlogin.css" />';
 }
 
 add_action('login_head', 'shopno2_custom_login_logo');
