@@ -46,7 +46,7 @@ function shopno2_service() {
 		'exclude_from_search' => false,
 		'publicly_queryable'  => true,
 		'capability_type'     => 'page',
-		'supports' => array( 'title', 'editor', 'genesis-seo', 'thumbnail','genesis-cpt-archives-settings','excerpt' ),
+		'supports' => array( 'title', 'editor', 'genesis-seo', 'thumbnail','genesis-cpt-archives-settings','excerpt', 'genesis-layouts' ),
 	);
 	register_post_type( 'service', $args );
 
@@ -54,3 +54,26 @@ function shopno2_service() {
 
 // Hook into the 'init' action
 add_action( 'init', 'shopno2_service', 0 );
+
+function shono2_category_archive_service( $query ) {
+	// we don't want this running on the admin side
+	if ( is_admin() )
+		return;
+	// include our stream type on tag pages
+	if ( is_tag() && $query->is_main_query() ) {
+		$query->query_vars['post_type'] = array( 'post', 'Service' );
+		return;
+	}
+    // include our stream type on category pages
+    if ( is_category() && $query->is_main_query() ) {
+		$query->query_vars['post_type'] = array( 'post', 'Service' );
+		return;
+	}
+    // include our stream type on home page
+	if ( is_home() && $query->is_main_query() ) {
+		$query->query_vars['post_type'] = array( 'post' );
+		return;
+	}
+}
+
+add_action ( 'pre_get_posts', 'shono2_category_archive_service' );
