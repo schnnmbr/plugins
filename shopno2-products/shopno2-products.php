@@ -47,7 +47,7 @@ function shopno2_product() {
 		'exclude_from_search' => false,
 		'publicly_queryable'  => true,
 		'capability_type'     => 'page',
-		'supports' => array( 'title', 'editor', 'genesis-seo', 'thumbnail','genesis-cpt-archives-settings','excerpt' ),
+		'supports' => array( 'title', 'editor', 'genesis-seo', 'thumbnail','genesis-cpt-archives-settings','excerpt', 'genesis-layouts' ),
 	);
 	register_post_type( 'product', $args );
 
@@ -76,5 +76,5 @@ function shono2_category_archive_product( $query ) {
 		return;
 	}
 }
-add_post_type_support( 'shopno2_product', 'genesis-layouts' );
+
 add_action ( 'pre_get_posts', 'shono2_category_archive_product' );
