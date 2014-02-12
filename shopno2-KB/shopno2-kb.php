@@ -56,6 +56,29 @@ function shopno2_kb() {
 // Hook into the 'init' action
 add_action( 'init', 'shopno2_kb', 0 );
 
+function shono2_category_archive_kb( $query ) {
+	// we don't want this running on the admin side
+	if ( is_admin() )
+		return;
+	// include our stream type on tag pages
+	if ( is_tag() && $query->is_main_query() ) {
+		$query->query_vars['post_type'] = array( 'post', 'kb' );
+		return;
+	}
+    // include our stream type on category pages
+    if ( is_category() && $query->is_main_query() ) {
+		$query->query_vars['post_type'] = array( 'post', 'kb' );
+		return;
+	}
+    // include our stream type on home page
+	if ( is_home() && $query->is_main_query() ) {
+		$query->query_vars['post_type'] = array( 'post' );
+		return;
+	}
+}
+
+add_action ( 'pre_get_posts', 'shono2_category_archive_kb' );
+
 //Activate Grid For This Post Type
 function be_grid_loop_on_kb( $grid, $query ) {
 	if( is_post_type_archive( 'kb' ) )
