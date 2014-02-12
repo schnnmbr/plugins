@@ -60,12 +60,12 @@ function shono2_category_archive_helpfile( $query ) {
 		return;
 	// include our stream type on tag pages
 	if ( is_tag() && $query->is_main_query() ) {
-		$query->query_vars['post_type'] = array( 'post', 'Helpfile' );
+		$query->query_vars['post_type'] = array( 'post', 'helpfiles' );
 		return;
 	}
     // include our stream type on category pages
     if ( is_category() && $query->is_main_query() ) {
-		$query->query_vars['post_type'] = array( 'post', 'Helpfile' );
+		$query->query_vars['post_type'] = array( 'post', 'helpfiles' );
 		return;
 	}
     // include our stream type on home page
