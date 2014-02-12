@@ -53,7 +53,7 @@ function shopno2_helpfile() {
 
 // Hook into the 'init' action
 add_action( 'init', 'shopno2_helpfile', 0 );
-
+add_post_type_support( 'helpfiles', 'genesis-layouts' );
 function shono2_category_archive_helpfile( $query ) {
 	// we don't want this running on the admin side
 	if ( is_admin() )
