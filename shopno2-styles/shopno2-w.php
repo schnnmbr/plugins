@@ -31,47 +31,47 @@ if (is_page_template('shopno2_widgetized_page.php')){
 
 // Before Content For Widgetized Page
 	register_sidebar( array(
-		'name' => __( 'Before Content', 'shopno2' ),
-		'id' => 'bc',
+		'name' => __( 'Before Content SW', 'shopno2' ),
+		'id' => 'bcsw',
 		'description' => __( 'Add widgets here to appear in your sidebar.', 'shopno2' ),
-		'before_widget' => '<div id="bc"><div id="%1$s" class="widget-container %2$s">',
+		'before_widget' => '<div id="bcsw"><div id="%1$s" class="widget-container %2$s">',
 		'after_widget' => '</div></div>',
 		'before_title' => '<h3 class="widget-title">',
 		'after_title' => '</h3>',
 	) );
 
 
-add_action('genesis_before_content', 'shopno2_sidebar_bc' );
+add_action('genesis_before_content_sidebar_wrap', 'shopno2_sidebar_bcsw' );
 
 
-function shopno2_sidebar_bc() {
+function shopno2_sidebar_bcsw() {
 if (is_page_template('shopno2_widgetized_page.php')){
-	if ( !function_exists( 'dynamic_sidebar' ) || !dynamic_sidebar( 'bc' ) ) {}}}
+	if ( !function_exists( 'dynamic_sidebar' ) || !dynamic_sidebar( 'bcsw' ) ) {}}}
 
 // After Content For Widgetized Page
 	register_sidebar( array(
-		'name' => __( 'After Content', 'shopno2' ),
-		'id' => 'ac',
+		'name' => __( 'After Content SW', 'shopno2' ),
+		'id' => 'acsw',
 		'description' => __( 'Add widgets here to appear in your sidebar.', 'shopno2' ),
-		'before_widget' => '<div id="ac"><div id="%1$s" class="widget-container %2$s">',
+		'before_widget' => '<div id="acsw"><div id="%1$s" class="widget-container %2$s">',
 		'after_widget' => '</div></div>',
 		'before_title' => '<h3 class="widget-title">',
 		'after_title' => '</h3>',
 	) );
 
-add_action( 'genesis_after_content', 'shopno2_sidebar_ac' );
+add_action( 'genesis_after_content_sidebar_wrap', 'shopno2_sidebar_acsw' );
 
 
-function shopno2_sidebar_ac() {
+function shopno2_sidebar_acsw() {
 if (is_page_template('shopno2_widgetized_page.php')){
-	if ( !function_exists( 'dynamic_sidebar' ) || !dynamic_sidebar( 'ac' ) ) 
+	if ( !function_exists( 'dynamic_sidebar' ) || !dynamic_sidebar( 'acsw' ) ) 
 
 {}}}
 
 // Before Footer For Widgetized Page
 	register_sidebar( array(
 		'name' => __( 'Before Footer', 'shopno2' ),
-		'id' => 'bft',
+		'id' => 'bf',
 		'description' => __( 'Add widgets here to appear in your sidebar.', 'shopno2' ),
 		'before_widget' => '<div id="bf"><div id="%1$s" class="widget-container %2$s">',
 		'after_widget' => '</div></div>',
@@ -79,9 +79,9 @@ if (is_page_template('shopno2_widgetized_page.php')){
 		'after_title' => '</h3>',
 	) );
 
-add_action( 'genesis_before_footer', 'shopno2_sidebar_bft' );
+add_action( 'genesis_before_footer', 'shopno2_sidebar_bf' );
 
 
-function shopno2_sidebar_bft() {
+function shopno2_sidebar_bf() {
 if (is_page_template('shopno2_widgetized_page.php')){
-	if ( !function_exists( 'dynamic_sidebar' ) || !dynamic_sidebar( 'bft' ) ) {}}}
+	if ( !function_exists( 'dynamic_sidebar' ) || !dynamic_sidebar( 'bf' ) ) {}}}
