@@ -15,8 +15,8 @@ Version: 0.1
 		'name' => __( 'After Header', 'shopno2' ),
 		'id' => 'aht',
 		'description' => __( 'Add widgets here to appear in your sidebar.', 'shopno2' ),
-		'before_widget' => '<div id="ah"><div id="%1$s" class="widget-container %2$s">',
-		'after_widget' => '</div></div>',
+		'before_widget' => '<div id="%1$s" class="widget-container %2$s">',
+		'after_widget' => '</div>',
 		'before_title' => '<h3 class="widget-title">',
 		'after_title' => '</h3>',
 	) );
@@ -34,8 +34,8 @@ if (is_page_template('shopno2_widgetized_page.php')){
 		'name' => __( 'Before Content SW', 'shopno2' ),
 		'id' => 'bcsw',
 		'description' => __( 'Add widgets here to appear in your sidebar.', 'shopno2' ),
-		'before_widget' => '<div id="bcsw"><div id="%1$s" class="widget-container %2$s">',
-		'after_widget' => '</div></div>',
+		'before_widget' => '<div id="%1$s" class="widget-container %2$s">',
+		'after_widget' => '</div>',
 		'before_title' => '<h3 class="widget-title">',
 		'after_title' => '</h3>',
 	) );
@@ -44,7 +44,7 @@ if (is_page_template('shopno2_widgetized_page.php')){
 add_action('genesis_before_content_sidebar_wrap', 'shopno2_sidebar_bcsw' );
 
 
-function shopno2_sidebar_bcsw() {
+function shopno2_sidebar_csw() {
 if (is_page_template('shopno2_widgetized_page.php')){
 	if ( !function_exists( 'dynamic_sidebar' ) || !dynamic_sidebar( 'bcsw' ) ) {}}}
 
@@ -53,14 +53,14 @@ if (is_page_template('shopno2_widgetized_page.php')){
 		'name' => __( 'After Content SW', 'shopno2' ),
 		'id' => 'acsw',
 		'description' => __( 'Add widgets here to appear in your sidebar.', 'shopno2' ),
-		'before_widget' => '<div id="acsw"><div id="%1$s" class="widget-container %2$s">',
-		'after_widget' => '</div></div>',
+		'before_widget' => '<div id="%1$s" class="widget-container %2$s">',
+		'after_widget' => '</div>',
 		'before_title' => '<h3 class="widget-title">',
 		'after_title' => '</h3>',
 	) );
 
 add_action( 'genesis_after_content_sidebar_wrap', 'shopno2_sidebar_acsw' );
-
+function wraps
 
 function shopno2_sidebar_acsw() {
 if (is_page_template('shopno2_widgetized_page.php')){
