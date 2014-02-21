@@ -60,7 +60,6 @@ if (is_page_template('shopno2_widgetized_page.php')){
 	) );
 
 add_action( 'genesis_after_content_sidebar_wrap', 'shopno2_sidebar_acsw' );
-function wraps
 
 function shopno2_sidebar_acsw() {
 if (is_page_template('shopno2_widgetized_page.php')){
