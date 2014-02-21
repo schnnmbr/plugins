@@ -13,7 +13,7 @@ Version: 0.1
 // After Header For Widgetized Page
 	register_sidebar( array(
 		'name' => __( 'After Header', 'shopno2' ),
-		'id' => 'aht',
+		'id' => 'ah',
 		'description' => __( 'Add widgets here to appear in your sidebar.', 'shopno2' ),
 		'before_widget' => '<div id="%1$s" class="widget-container %2$s">',
 		'after_widget' => '</div>',
@@ -22,12 +22,12 @@ Version: 0.1
 	) );
 
 
-add_action('genesis_after_header', 'shopno2_sidebar_aht' );
+add_action('genesis_after_header', 'shopno2_sidebar_ah' );
 
 
-function shopno2_sidebar_aht() {
+function shopno2_sidebar_ah() {
 if (is_page_template('shopno2_widgetized_page.php')){
-	if ( !function_exists( 'dynamic_sidebar' ) || !dynamic_sidebar( 'aht' ) ) {}}}
+	if ( !function_exists( 'dynamic_sidebar' ) || !dynamic_sidebar( 'ah' ) ) {}}}
 
 // Before Content For Widgetized Page
 	register_sidebar( array(
@@ -44,7 +44,7 @@ if (is_page_template('shopno2_widgetized_page.php')){
 add_action('genesis_before_content_sidebar_wrap', 'shopno2_sidebar_bcsw' );
 
 
-function shopno2_sidebar_csw() {
+function shopno2_sidebar_bcsw() {
 if (is_page_template('shopno2_widgetized_page.php')){
 	if ( !function_exists( 'dynamic_sidebar' ) || !dynamic_sidebar( 'bcsw' ) ) {}}}
 
@@ -73,8 +73,8 @@ if (is_page_template('shopno2_widgetized_page.php')){
 		'name' => __( 'Before Footer', 'shopno2' ),
 		'id' => 'bf',
 		'description' => __( 'Add widgets here to appear in your sidebar.', 'shopno2' ),
-		'before_widget' => '<div id="bf"><div id="%1$s" class="widget-container %2$s">',
-		'after_widget' => '</div></div>',
+		'before_widget' => '<div id="%1$s" class="widget-container %2$s">',
+		'after_widget' => '</div>',
 		'before_title' => '<h3 class="widget-title">',
 		'after_title' => '</h3>',
 	) );
