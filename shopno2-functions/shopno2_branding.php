@@ -25,12 +25,23 @@ function shopno2_custom_logo() {
 add_action('admin_head', 'shopno2_custom_logo');
 
 /*shopno2 Login Screen*/
-function shopno2_custom_login_logo() {
+function shopno2_custom_login() {
+        /** Enqueue Style Sheets */
+        // Only enqueue if available
+        if ( is_readable( plugin_dir_path( __FILE__ ) . 'customlogin.css' ) )
+                            {
+            wp_enqueue_style( 'shopno2_custom_login', plugin_dir_url( __FILE__ ) . 'customlogin.css', array(), '0.1', 'screen' );
+        }
+}
+add_action( 'wp_enqueue_scripts', 'shopno2_custom_login', true );
+
+
+/*function shopno2_custom_login_logo() {
     echo '<link rel="stylesheet" type="text/css" href="' . get_bloginfo('stylesheet_directory') . '/customlogin.css" />';
 }
 
 add_action('login_head', 'shopno2_custom_login_logo');
-
+*/
 //Custom Footer Text
 function shopno2_remove_footer_admin () {
   echo '<i>Thank you for being our Customer! :) </i>';
