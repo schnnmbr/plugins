@@ -29,7 +29,7 @@ add_action('admin_head', 'shopno2_custom_logo');
 
 
 function shopno2_custom_login_logo() {
-    echo '<link rel="stylesheet" type="text/css" href="/var/www/wp-content/plugins/shopno2-functions/customlogin.css" />';
+    echo '<link rel="stylesheet" type="text/css" href="/wp-content/plugins/shopno2-functions/customlogin.css" />';
 }
 
 add_action('login_head', 'shopno2_custom_login_logo');
