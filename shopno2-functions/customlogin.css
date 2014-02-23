@@ -1,4 +1,4 @@
-body.login {background: url('angkor.jpg') no-repeat;background-size:1680px 1120px;}
+body.login {background: black url('angkor.jpg') no-repeat;background-size:1680px 1120px;}
 #login {width:320px;margin:0;background: transparent;padding:50px 0;}
 .login h1 a {background:none;}
 #loginform {opacity: 0.8;}
