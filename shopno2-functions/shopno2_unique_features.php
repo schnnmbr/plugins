@@ -58,6 +58,17 @@ add_option("large_crop", "1"); }
 else {
 update_option("large_crop", "1");
 }
+//Add Super and Subscript buttons to TinyMCE
+function my_mce_buttons_2($buttons) { 
+  /**
+   * Add in a core button that's disabled by default
+   */
+  $buttons[] = 'sup';
+  $buttons[] = 'sub';
+
+  return $buttons;
+}
+add_filter('mce_buttons_2', 'my_mce_buttons_2');
 
 //Uncomment Below Line To Hide Admin Bar For Logged In Users
 /*add_filter ('show_admin_bar', 'shopno2_custom_admin_bar_setting');
