@@ -11,7 +11,7 @@ Version: 0.1
 function shopno2_grid_styles() {
         /** Enqueue Style Sheets */
         // Only enqueue if available
-      if ( is_readable( plugin_dir_path( __FILE__ ) . 'shopno2-grid-styles.css' ) OR is_archive() OR is_front_page('') OR !is_home(''))
+      if ( is_readable( plugin_dir_path( __FILE__ ) . 'shopno2-grid-styles.css' ) OR is_archive() OR is_front_page('') OR !is_home('') AND !is_singular(''))
         					{
             wp_enqueue_style( 'shopno2_grid_styles', plugin_dir_url( __FILE__ ) . 'shopno2-grid-styles.css', array(), '0.1', 'screen' );
         }
