@@ -67,21 +67,5 @@ if (is_page_template('shopno2_widgetized_page.php')){
 
 {}}}
 
-// Before Footer For Widgetized Page
-	register_sidebar( array(
-		'name' => __( 'Before Footer', 'shopno2' ),
-		'id' => 'bf',
-		'description' => __( 'Add widgets here to appear in your sidebar.', 'shopno2' ),
-		'before_widget' => '<div id="%1$s" class="widget-container %2$s">',
-		'after_widget' => '</div>',
-		'before_title' => '<h3 class="widget-title">',
-		'after_title' => '</h3>',
-	) );
 
-add_action( 'genesis_before_footer', 'shopno2_sidebar_bf' );
-
-
-function shopno2_sidebar_bf() {
-if (is_page_template('shopno2_widgetized_page.php')){
-	if ( !function_exists( 'dynamic_sidebar' ) || !dynamic_sidebar( 'bf' ) ) {}}}
 
