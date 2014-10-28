@@ -23,5 +23,5 @@ Version: 0.1
 add_action( 'genesis_after_content', 'shopno2_sidebar_ap' );
 
 function shopno2_sidebar_ap() {
-if (is_single($post)){
+if (is_single()){
 	if ( !function_exists( 'dynamic_sidebar' ) || !dynamic_sidebar( 'ap' ) ) {}}}
