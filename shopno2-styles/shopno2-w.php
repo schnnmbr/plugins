@@ -84,3 +84,4 @@ add_action( 'genesis_before_footer', 'shopno2_sidebar_bf' );
 function shopno2_sidebar_bf() {
 if (is_page_template('shopno2_widgetized_page.php')){
 	if ( !function_exists( 'dynamic_sidebar' ) || !dynamic_sidebar( 'bf' ) ) {}}}
+

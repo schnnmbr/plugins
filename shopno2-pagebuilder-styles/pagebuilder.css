@@ -1,12 +1,18 @@
 
  
-.panel-row-style-highlight{
-  /*padding:10px 20px; */
-  background: #2E4BB0; 
-  color: #FFF;
+.panel-row-style-highlight.panel-row-style{
+  padding:100px 20px; 
+  background: #2843A0; 
+
 }
-.panel-grid.panel-row-style-highlight .entry-content p{
+.layout-full .panel-row-style-highlight .entry-content p{
   color: #FFF;
+   background: #2843A0; 
+}
+ {
+.panel-grid .panel-row-style-highlight .entry-content p{
+  color: #FFF;
+   background: #2843A0; 
 }
 
 
