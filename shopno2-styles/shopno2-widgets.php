@@ -20,7 +20,7 @@ Version: 0.1
 		'after_title' => '</h3>',
 	) );
 
-add_action( 'genesis_after_content', 'shopno2_sidebar_ap' );
+add_action( 'genesis_after_entry', 'shopno2_sidebar_ap' );
 
 function shopno2_sidebar_ap() {
 if (is_singular()){
