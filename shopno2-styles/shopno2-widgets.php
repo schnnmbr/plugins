@@ -24,8 +24,8 @@ add_action('genesis_after_header', 'shopno2_sidebar_ah' );
 
 
 function shopno2_sidebar_ah() {
-if (is_singular()){
-	if ( !function_exists( 'dynamic_sidebar' ) || !dynamic_sidebar( 'ah' ) ) {}}}
+
+	if ( !function_exists( 'dynamic_sidebar' ) || !dynamic_sidebar( 'ah' ) ) {}}
 
 
 // Before Footer For Widgetized Page
