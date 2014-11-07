@@ -1,6 +1,6 @@
 <?php
 /*
-Plugin Name: Shopno2 Hide Header
+Plugin Name: 10 - Hide Header
 Plugin URI: http://shopno2.com
 Description: Hides Header
 Author: shopno2.com

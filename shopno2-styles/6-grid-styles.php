@@ -1,6 +1,6 @@
 <?php
 /*
-Plugin Name: Shopno2 Custom Post Type Grid
+Plugin Name: Custom Post Type Grid Styles
 Plugin URI: http://shopno2.com
 Description: Grid Styles for shopno2 sites. This plugin will provide a responsive grid to your Custom Post Types
 Author: sachin nambiar

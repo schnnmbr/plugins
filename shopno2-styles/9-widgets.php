@@ -1,6 +1,6 @@
 <?php
 /*
-Plugin Name: Shopno2 Widgets
+Plugin Name: 9-Widgets
 Plugin URI: http://shopno2.com
 Description: The right set of widgets to make your site awesome!
 Author: sachin nambiar

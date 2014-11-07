@@ -1,6 +1,6 @@
 <?php
 /*
-Plugin Name: Shopno2 Move Primary Navigation
+Plugin Name: 4 - Move Primary Navigation
 Plugin URI: http://shopno2.com
 Description:  Menu Above Header
 Use Boxes to add and display your boxes to your site.

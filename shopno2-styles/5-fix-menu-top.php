@@ -1,6 +1,6 @@
 <?php
 /*
-Plugin Name: Shopno2 Menu Fix On Top
+Plugin Name: 5-Menu Fix On Top
 Plugin URI: http://shopno2.com
 Description: Fixes Primary Menu on Top of Page
 Author: shopno2.com
