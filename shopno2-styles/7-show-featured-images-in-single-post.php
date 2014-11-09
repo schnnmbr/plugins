@@ -18,7 +18,7 @@ function s2_show_featured_image_single_posts() {
 	}
  
 	$image_args = array(
-		'size' => 'large',
+		'size' => '',
 		'attr' => array(
 			'class' => 'aligncenter',
 		),
