@@ -28,3 +28,5 @@ filter: progid:DXImageTransform.Microsoft.gradient(startColorstr='#6e9ed2',endCo
 
 .genesis-nav-menu a {padding:1.5rem 1.5rem; color: #FFF;font-weight: 600;}
 .site-header{margin-top: 50px;}
+.content {margin-top: 50px;}
+.sidebar {margin-top: 70px;}/*Added 20 px to equalise with content block*/
