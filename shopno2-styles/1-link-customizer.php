@@ -82,7 +82,7 @@ function s2_register_content_link_color( $wp_customize ) {
     $wp_customize->add_control(
         new WP_Customize_Color_Control(
             $wp_customize,
-            'link_color',
+            'headerbg_color',
             array(
                 'label'      => __( 'HeaderBG Color', 's2' ),
                 'section'    => 'colors',
