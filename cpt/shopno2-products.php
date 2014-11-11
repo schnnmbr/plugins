@@ -1,7 +1,7 @@
 <?php 
 
 /*
-Plugin Name: Shopno2 Products
+Plugin Name: 13-Products
 Plugin URI: http://shopno2.com
 Description: Products Custom Post Type For Use Through Out The Site
 Use Products to add and display products to your site.
