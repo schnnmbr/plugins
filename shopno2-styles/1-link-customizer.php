@@ -14,7 +14,7 @@ function s2_register_content_link_color( $wp_customize ) {
     $wp_customize->add_setting(
         's2_link_color',
         array(
-            'default'     => '#000000'
+            'default'     => '#FF00FF'
 
         )
     );
@@ -31,6 +31,7 @@ function s2_register_content_link_color( $wp_customize ) {
     
         )
     );
+
     $wp_customize->add_setting(
         's2_postinfo_color',
         array(
@@ -91,6 +92,47 @@ function s2_register_content_link_color( $wp_customize ) {
     
         )
     );
+     $wp_customize->add_setting(
+        's2_nav_primary_color',
+        array(
+            'default'     => '#000000'
+
+        )
+    );
+
+    $wp_customize->add_control(
+        new WP_Customize_Color_Control(
+            $wp_customize,
+            'navprimarybg_color',
+            array(
+                'label'      => __( 'NavPrimaryBG Color', 's2' ),
+                'section'    => 'colors',
+                'settings'   => 's2_nav_primary_color'
+            )
+    
+        )
+    );
+
+     $wp_customize->add_setting(
+        's2_nav_primary_link_color',
+        array(
+            'default'     => '#000000'
+
+        )
+    );
+
+    $wp_customize->add_control(
+        new WP_Customize_Color_Control(
+            $wp_customize,
+            'navprimarylink_color',
+            array(
+                'label'      => __( 'NavPrimaryLink Color', 's2' ),
+                'section'    => 'colors',
+                'settings'   => 's2_nav_primary_link_color'
+            )
+    
+        )
+    );
 
 }
 add_action( 'customize_register', 's2_register_content_link_color' );
@@ -109,9 +151,9 @@ function s2_customizer_css() {
         .genesis-nav-menu a:hover,
         .genesis-nav-menu .current-menu-item > a,
         .genesis-nav-menu .sub-menu .current-menu-item > a:hover {color: <?php echo get_theme_mod( 's2_link_color' ); ?>;}
-        .nav-primary {background-color: <?php echo get_theme_mod( 's2_entrytitle_color' ); ?>;}
+        .nav-primary {background-color: <?php echo get_theme_mod( 's2_nav_primary_color' ); ?>;}
         .site-header {background-color: <?php echo get_theme_mod( 's2_headerbg_color' ); ?>;}
-    
+       .nav-primary .genesis-nav-menu a {color: <?php echo get_theme_mod( 's2_nav_primary_link_color' ); ?>;}
     </style>
     <?php
 }
