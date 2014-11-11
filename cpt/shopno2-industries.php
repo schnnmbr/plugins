@@ -1,7 +1,7 @@
 <?php 
 
 /*
-Plugin Name:12-Industries
+Plugin Name:12-s2Industries
 Plugin URI: http://shopno2.com
 Description: Industries Custom Post Type For Use Through Out The Site
 Use Industries to add and display industries to your site.
