@@ -14,7 +14,7 @@ function s2_register_content_link_color( $wp_customize ) {
     $wp_customize->add_setting(
         's2_link_color',
         array(
-            'default'     => '#FF00FF'
+            'default'     => 'transparent'
 
         )
     );
@@ -35,7 +35,7 @@ function s2_register_content_link_color( $wp_customize ) {
     $wp_customize->add_setting(
         's2_postinfo_color',
         array(
-            'default'     => '#000000'
+            'default'     => 'transparent'
 
         )
     );
@@ -55,7 +55,7 @@ function s2_register_content_link_color( $wp_customize ) {
     $wp_customize->add_setting(
         's2_entrytitle_color',
         array(
-            'default'     => '#000000'
+            'default'     => 'transparent'
 
         )
     );
@@ -75,7 +75,7 @@ function s2_register_content_link_color( $wp_customize ) {
       $wp_customize->add_setting(
         's2_headerbg_color',
         array(
-            'default'     => '#000000'
+            'default'     => 'transparent'
 
         )
     );
@@ -95,7 +95,7 @@ function s2_register_content_link_color( $wp_customize ) {
      $wp_customize->add_setting(
         's2_nav_primary_color',
         array(
-            'default'     => '#000000'
+            'default'     => 'transparent'
 
         )
     );
@@ -116,7 +116,7 @@ function s2_register_content_link_color( $wp_customize ) {
      $wp_customize->add_setting(
         's2_nav_primary_link_color',
         array(
-            'default'     => '#000000'
+            'default'     => 'transparent'
 
         )
     );
