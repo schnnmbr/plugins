@@ -48,6 +48,7 @@ function shopno2_product() {
 		'publicly_queryable'  => true,
 		'capability_type'     => 'page',
 		'supports' => array( 'title', 'editor', 'genesis-seo', 'thumbnail','genesis-cpt-archives-settings','excerpt', 'genesis-layouts' ),
+		'supports' => array( 'title', 'editor', 'author', 'thumbnail', 'excerpt', 'comments', 'headway-seo'),
 	);
 	register_post_type( 'product', $args );
 
