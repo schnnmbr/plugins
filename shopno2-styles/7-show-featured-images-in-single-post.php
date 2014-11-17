@@ -8,7 +8,7 @@ Author URI: sachinnambiar.com
 Version: 0.1
 */
 
-add_action( 'genesis_after_header', 's2_show_featured_image_single_posts', 9 );
+add_action( 'genesis_before_content_sidebar_wrap', 's2_show_featured_image_single_posts', 9 );
 /**
  * Display Featured Image floated to the right in single Posts.
  */
