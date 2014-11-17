@@ -13,7 +13,7 @@ Version: 0.1
 
 /** Genesis - Remove header and header markup */
 function shopno2_hide_header() {
-if(is_singular($post)) {
+if(!is_front_page()) {
 remove_action( 'genesis_header', 'genesis_header_markup_open', 5 );
 remove_action( 'genesis_header', 'genesis_do_header' );
 remove_action( 'genesis_header', 'genesis_header_markup_close', 15 );
