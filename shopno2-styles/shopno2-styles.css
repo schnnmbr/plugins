@@ -5,6 +5,15 @@
 .m {margin:100px 0;}
 
 /*BOXES*/
+.whitebox {
+	background:#FFF;
+	padding:10px;
+	border: 1px solid #CCC;
+	margin: 20px 0 50px 0; 
+	color: #2b2b2b;
+	text-shadow: 0 1px 0 rgba(255,255,255,0.5);
+	border-radius: 4px;
+}
 .bluebox {
 	background:#d9edf7;
 	padding:10px;
