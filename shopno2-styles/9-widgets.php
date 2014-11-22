@@ -43,8 +43,8 @@ add_action( 'genesis_before_footer', 'shopno2_sidebar_bf' );
 
 
 function shopno2_sidebar_bf() {
-	if (is_singular()){
-	if ( !function_exists( 'dynamic_sidebar' ) || !dynamic_sidebar( 'bf' ) ) {}}}
+	//if (is_singular()){
+	if ( !function_exists( 'dynamic_sidebar' ) || !dynamic_sidebar( 'bf' ) ) {}}
 // After entry on Single Page
 	register_sidebar( array(
 		'name' => __( 'After Post', 'shopno2' ),
