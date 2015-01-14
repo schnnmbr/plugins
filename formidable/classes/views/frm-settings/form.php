@@ -13,7 +13,7 @@
         <div id="contextual-help-back"></div>
         <div id="contextual-help-columns">
         <div class="contextual-help-tabs">
-        <ul class="frm-category-tabs <?php if(version_compare( $GLOBALS['wp_version'], '3.3.0', '<')) echo 'category-tabs id="category-tabs'; ?>">
+        <ul class="frm-category-tabs">
             <?php $a = isset($_GET['t']) ? $_GET['t'] : 'general_settings'; ?>
         	<li <?php echo ($a == 'general_settings') ? 'class="tabs active"' : '' ?>><a href="#general_settings" style="cursor:pointer"><?php _e('General', 'formidable') ?></a></li>
             <?php foreach($sections as $sec_name => $section){ ?>
@@ -63,7 +63,7 @@
             <div class="menu-settings">
             <h3 class="frm_no_bg"><?php _e('reCAPTCHA', 'formidable'); ?> <span class="frm_help frm_icon_font frm_tooltip_icon" title="<?php _e('reCAPTCHA is a free, accessible CAPTCHA service that helps to digitize books while blocking spam on your blog. reCAPTCHA asks commenters to retype two words scanned from a book to prove that they are a human. This verifies that they are not a spambot.', 'formidable') ?>" ></span></h3>
             
-            <p class="howto">reCAPTCHA requires an API key, consisting of a "public" and a "private" key. You can sign up for a <a href="https://www.google.com/recaptcha/admin/create">free reCAPTCHA key</a>.</p>
+            <p class="howto">reCAPTCHA requires an API key, consisting of a "public" and a "private" key. You can sign up for a <a href="https://www.google.com/recaptcha/admin/create" target="_blank">free reCAPTCHA key</a>.</p>
 			
 			<!-- reCAPTCHA public key -->
 			<p><label class="frm_left_label"><?php _e('Public Key', 'formidable') ?></label>
@@ -75,9 +75,11 @@
 
 		    <p><label class="frm_left_label"><?php _e('reCAPTCHA Theme', 'formidable') ?></label>
 			<select name="frm_re_theme" id="frm_re_theme">
-			<?php foreach(array('red' => __('Red', 'formidable'), 'white' => __('White', 'formidable'), 'blackglass' => __('Black Glass', 'formidable'), 'clean' => __('Clean', 'formidable')) as $theme_value => $theme_name){ ?>
+			<?php foreach($recaptcha_themes as $theme_value => $theme_name){ ?>
 			<option value="<?php echo esc_attr($theme_value) ?>" <?php selected($frm_settings->re_theme, $theme_value) ?>><?php echo $theme_name ?></option>
-			<?php } ?>
+			<?php } 
+			unset($recaptcha_themes, $theme_value, $theme_name);
+			?>
 			</select></p>
     		
 		    <p><label class="frm_left_label"><?php _e('reCAPTCHA Language', 'formidable') ?></label>
@@ -91,6 +93,9 @@
             <div class="menu-settings">
             <h3 class="frm_no_bg"><?php _e('Default Messages', 'formidable'); ?> <span class="frm_help frm_icon_font frm_tooltip_icon" title="<?php _e('You can override the success message and submit button settings on individual forms.', 'formidable') ?>" ></span></h3>
             
+            <p><label class="frm_left_label"><?php _e('Failed/Duplicate Entry', 'formidable'); ?> <span class="frm_help frm_icon_font frm_tooltip_icon" title="<?php _e('The message seen when a form is submitted and passes validation, but something goes wrong.', 'formidable') ?>" ></span></label>
+                <input type="text" id="frm_failed_msg" name="frm_failed_msg" class="frm_with_left_label" value="<?php echo esc_attr($frm_settings->failed_msg) ?>" /></p>
+            
             <p><label class="frm_left_label"><?php _e('Blank Field', 'formidable'); ?> <span class="frm_help frm_icon_font frm_tooltip_icon" title="<?php _e('The message seen when a required field is left blank.', 'formidable') ?>" ></span></label>
             <input type="text" id="frm_blank_msg" name="frm_blank_msg" class="frm_with_left_label" value="<?php echo esc_attr($frm_settings->blank_msg) ?>" /></p>
 
@@ -103,15 +108,10 @@
 <?php }else{ ?>
     <input type="hidden" id="frm_unique_msg" name="frm_unique_msg" value="<?php echo esc_attr($frm_settings->unique_msg) ?>" />    
 <?php } ?>    
-
-            <p><label class="frm_left_label"><?php _e('Success Message', 'formidable'); ?> <span class="frm_help frm_icon_font frm_tooltip_icon" title="<?php _e('The default message seen after a form is submitted.', 'formidable') ?>" ></span></label>
+        <input type="hidden" id="frm_login_msg" name="frm_login_msg" class="frm_with_left_label" value="<?php echo esc_attr($frm_settings->login_msg) ?>" />
+        
+        <p><label class="frm_left_label"><?php _e('Success Message', 'formidable'); ?> <span class="frm_help frm_icon_font frm_tooltip_icon" title="<?php _e('The default message seen after a form is submitted.', 'formidable') ?>" ></span></label>
             <input type="text" id="frm_success_msg" name="frm_success_msg" class="frm_with_left_label" value="<?php echo esc_attr($frm_settings->success_msg) ?>" /></p>
-
-            <p><label class="frm_left_label"><?php _e('Failed/Duplicate Entry', 'formidable'); ?> <span class="frm_help frm_icon_font frm_tooltip_icon" title="<?php _e('The message seen when a form is submitted and passes validation, but something goes wrong.', 'formidable') ?>" ></span></label>
-            <input type="text" id="frm_failed_msg" name="frm_failed_msg" class="frm_with_left_label" value="<?php echo esc_attr($frm_settings->failed_msg) ?>" /></p>
-
-        <p><label class="frm_left_label"><?php _e('Login Message', 'formidable'); ?> <span class="frm_help frm_icon_font frm_tooltip_icon" title="<?php _e('The message seen when a user who is not logged-in views a form only logged-in users can submit.', 'formidable') ?>" ></span></label>
-            <input type="text" id="frm_login_msg" name="frm_login_msg" class="frm_with_left_label" value="<?php echo esc_attr($frm_settings->login_msg) ?>" /></p>
 
         <p><label class="frm_left_label"><?php _e('Default Submit Button', 'formidable'); ?></label>
             <input type="text" value="<?php echo esc_attr($frm_settings->submit_value) ?>" id="frm_submit_value" name="frm_submit_value" class="frm_with_left_label" /></p>
@@ -143,7 +143,7 @@
            
         <?php foreach($sections as $sec_name => $section){ 
             if($a == $sec_name .'_settings'){ ?>
-<style type="text/css">.<?php echo $sec_name ?>_settings{display:block !important;}</style><?php }?>
+<style type="text/css">.<?php echo $sec_name ?>_settings{display:block;}</style><?php }?>
             <div id="<?php echo $sec_name ?>_settings" class="<?php echo $sec_name ?>_settings tabs-panel" style="display:<?php echo ($a == $sec_name .'_settings') ? 'block' : 'none'; ?>;"><?php
                 if(isset($section['class'])){
                     call_user_func(array($section['class'], $section['function'])); 
@@ -153,7 +153,10 @@
             </div>
         <?php } ?>
         
-        <p class="alignright frm_uninstall" style="padding-top:1.25em;"><a href="javascript:frm_uninstall_now()"><?php _e('Uninstall Formidable', 'formidable') ?></a></p>
+        <p class="alignright frm_uninstall" style="padding-top:1.25em;">
+            <a href="javascript:frm_uninstall_now()"><?php _e('Uninstall Formidable', 'formidable') ?></a>
+            <span class="spinner frm_spinner"></span>
+        </p>
         <p class="submit">
         <input class="button-primary" type="submit" value="<?php _e('Update Options', 'formidable') ?>" />
         </p>

@@ -3,8 +3,8 @@ Contributors: billerickson
 Donate link: https://www.paypal.com/cgi-bin/webscr?cmd=_s-xclick&hosted_button_id=EDYM76U6BTE5L
 Tags: genesis, genesiswp, title, 
 Requires at least: 3.0
-Tested up to: 3.5.1
-Stable tag: 1.5
+Tested up to: 4.0
+Stable tag: 1.6.2
 
 Turn on/off page titles on a per page basis, and set sitewide defaults from Theme Settings. Must be using the Genesis theme.
 
@@ -39,6 +39,16 @@ Finally, if you're comfortable with code you can use the `be_title_toggle_post_t
 3. If you check "hide" on Theme Settings, this metabox is displayed on the Edit screen.
 
 == Changelog ==
+
+= 1.6.2 = 
+* Fix issue when you have all titles disabled by default
+
+= 1.6.1 = 
+* Fix issue with HTML5 themes using post formats
+
+= 1.6 =
+* Updated the metabox code to prevent conflicts with other plugins
+* General refresh of the code to make it cleaner and easier to read
 
 = 1.5 = 
 * Add HTML5 Support for Genesis 2.0

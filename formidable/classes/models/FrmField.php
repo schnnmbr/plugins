@@ -13,13 +13,14 @@ class FrmField{
         $key = isset($values['field_key']) ? $values['field_key'] : $values['name'];
         $new_values['field_key'] = FrmAppHelper::get_unique_key($key, $wpdb->prefix .'frm_fields', 'field_key');
 
-        foreach (array('name', 'description', 'type', 'default_value') as $col)
-            $new_values[$col] = stripslashes_deep($values[$col]);
+        foreach ( array('name', 'description', 'type', 'default_value') as $col ) {
+            $new_values[$col] = $values[$col];
+        }
         
         $new_values['options'] = $values['options'];
 
         $new_values['field_order'] = isset($values['field_order']) ? (int)$values['field_order'] : NULL;
-        $new_values['required'] = isset($values['required']) ? (int)$values['required'] : NULL;
+        $new_values['required'] = isset($values['required']) ? (int)$values['required'] : 0;
         $new_values['form_id'] = isset($values['form_id']) ? (int)$values['form_id'] : NULL;
         $new_values['field_options'] = $values['field_options'];
         $new_values['created_at'] = current_time('mysql', 1);
@@ -80,8 +81,18 @@ class FrmField{
         if (isset($values['field_key']))
             $values['field_key'] = FrmAppHelper::get_unique_key($values['field_key'], $wpdb->prefix .'frm_fields', 'field_key', $id);
 
+        if ( isset($values['required']) ) {
+            $values['required'] = (int) $values['required'];
+        }
+        
+        if (isset($values['default_value']) and is_array($values['default_value']))
+            $values['default_value'] = serialize($values['default_value']);
+        
         if (isset($values['field_options']) and is_array($values['field_options']))
             $values['field_options'] = serialize($values['field_options']);
+            
+        if (isset($values['options']) and is_array($values['options']))
+            $values['options'] = serialize($values['options']);
         
         $query_results = $wpdb->update( $wpdb->prefix .'frm_fields', $values, array( 'id' => $id ) );
         
@@ -111,6 +122,10 @@ class FrmField{
       
       wp_cache_delete( $id, 'frm_field' );
       $field = $this->getOne($id);
+      if ( !$field ) {
+          return false;
+      }
+      
       delete_transient('frm_all_form_fields_'. $field->form_id);
       
       $wpdb->query("DELETE FROM {$wpdb->prefix}frm_item_metas WHERE field_id='$id'");
@@ -203,9 +218,12 @@ class FrmField{
                     $results[$r_key]->options = maybe_unserialize($result->options);
                     $results[$r_key]->default_value = maybe_unserialize($result->default_value);
                     $form_id = $result->form_id;
+                    
+                    unset($r_key, $result);
                 }
                 if(isset($save_cache))
                     set_transient('frm_all_form_fields_'. $form_id, $results, 60*60*6);
+                unset($form_id);
             }else{
                 wp_cache_set($results->id, $results, 'frm_field');
                 wp_cache_set($results->field_key, $results, 'frm_field');
@@ -222,13 +240,18 @@ class FrmField{
 
     function getIds($where = '', $order_by = '', $limit = ''){
         global $wpdb;
+        
+        if ( !empty($order_by) && !preg_match("/ORDER BY/", $order_by) ){
+            $order_by = ' ORDER BY '. $order_by;
+        }
+        
         $query = "SELECT fi.id  FROM {$wpdb->prefix}frm_fields fi " .
                  "LEFT OUTER JOIN {$wpdb->prefix}frm_forms fr ON fi.form_id=fr.id" . 
                  FrmAppHelper::prepend_and_or_where(' WHERE ', $where) . $order_by . $limit;
         if ($limit == ' LIMIT 1' or $limit == 1)
-            $results = $wpdb->get_row($query);
+            $results = $wpdb->get_var($query);
         else
-            $results = $wpdb->get_results($query);
+            $results = $wpdb->get_col($query);
         return $results;
     }
 }

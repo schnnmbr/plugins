@@ -1,6 +1,6 @@
 <?php 
 global $frm_vars, $frm_settings;
-$frm_vars['forms_loaded'][] = $form; 
+FrmFormsHelper::form_loaded($form);
 if($values['custom_style']) $frm_vars['load_css'] = true;
 
 if((!isset($frm_vars['css_loaded']) || !$frm_vars['css_loaded']) && $frm_vars['load_css']){
@@ -15,7 +15,7 @@ echo FrmFormsHelper::replace_shortcodes($values['before_html'], $form, $title, $
 <input type="hidden" name="frm_action" value="<?php echo esc_attr($form_action) ?>" />
 <input type="hidden" name="form_id" value="<?php echo esc_attr($form->id) ?>" />
 <input type="hidden" name="form_key" value="<?php echo esc_attr($form->form_key) ?>" />
-<?php wp_nonce_field('frm_submit_entry_nonce', 'frm_submit_entry'); ?>
+<?php wp_nonce_field('frm_submit_entry_nonce', 'frm_submit_entry_'. $form->id); ?>
 
 <?php if (isset($id)){ ?><input type="hidden" name="id" value="<?php echo esc_attr($id) ?>" /><?php } ?>
 <?php if (isset($controller) && isset($plugin)){ ?>
@@ -29,7 +29,7 @@ foreach($values['fields'] as $field){
     if (apply_filters('frm_show_normal_field_type', true, $field['type']))
         echo FrmFieldsHelper::replace_shortcodes($field['custom_html'], $field, $errors, $form);
     else
-        do_action('frm_show_other_field_type', $field, $form);
+        do_action('frm_show_other_field_type', $field, $form, array('action' => $form_action));
     
     do_action('frm_get_field_scripts', $field, $form);
 }    
@@ -60,10 +60,9 @@ global $wp_filter;
 if(isset($wp_filter['frm_entries_footer_scripts']) and !empty($wp_filter['frm_entries_footer_scripts'])){ ?>
 <script type="text/javascript">
 <?php do_action('frm_entries_footer_scripts', $values['fields'], $form); ?>
-</script><?php } ?>
+</script><?php }
 
-<?php if (!$form->is_template and $form->status == 'published' and (!is_admin() or defined('DOING_AJAX'))){
+if ( !$form->is_template && $form->status == 'published' && (!is_admin() || defined('DOING_AJAX')) ) {
     unset($values['fields']);
     FrmFormsHelper::get_custom_submit($values['submit_html'], $form, $submit, $form_action, $values);
 }
-?>

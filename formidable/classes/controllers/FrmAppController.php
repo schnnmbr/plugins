@@ -2,16 +2,17 @@
 /**
  * @package Formidable
  */
-if(!defined('ABSPATH')) die(__('You are not allowed to call this page directly.', 'formidable'));
+if(!defined('ABSPATH')) die('You are not allowed to call this page directly.');
 
 if(class_exists('FrmAppController'))
     return;
 
 class FrmAppController{
-    function FrmAppController(){
+    public static function load_hooks(){
         add_action('admin_menu', 'FrmAppController::menu', 1);
         add_action( 'admin_enqueue_scripts', 'FrmAppController::load_wp_admin_style' );
         add_filter('plugin_action_links_formidable/formidable.php', 'FrmAppController::settings_link', 10, 2 );
+        add_filter('update_plugin_complete_actions', 'FrmAppController::update_action_links', 10, 2 );
         add_action('admin_notices', 'FrmAppController::pro_get_started_headline');
         add_filter('the_content', 'FrmAppController::page_route', 10);
         add_action('plugins_loaded', 'FrmAppController::load_lang');
@@ -27,16 +28,12 @@ class FrmAppController{
         add_action('init', 'FrmAppController::parse_standalone_request', 40);
         // Update the session data
         add_action('init', 'FrmAppController::referer_session', 1);
-        
-        //Shortcodes
-        add_shortcode('formidable', 'FrmAppController::get_form_shortcode');
-        add_filter( 'widget_text', 'FrmAppController::widget_text_filter', 9 );
     }
     
     public static function menu(){
         global $frm_vars, $frm_settings;
         
-        if(is_super_admin() and !current_user_can('frm_view_forms')){
+        if ( current_user_can('administrator') && !current_user_can('frm_view_forms') ) {
             global $current_user;
             $frm_roles = FrmAppHelper::frm_capabilities();
             foreach($frm_roles as $frm_role => $frm_role_description)
@@ -60,7 +57,7 @@ class FrmAppController{
     }
     
     public static function load_wp_admin_style(){
-        wp_enqueue_style( 'custom_wp_admin_css',  FrmAppHelper::plugin_url() .'/css/frm_fonts.css', array(), FrmAppHelper::plugin_version());
+        wp_enqueue_style( 'frm_fonts',  FrmAppHelper::plugin_url() .'/css/frm_fonts.css', array(), FrmAppHelper::plugin_version());
     }
     
     public static function get_form_nav($id, $show_nav=false){
@@ -89,26 +86,56 @@ class FrmAppController{
         
         return $links;
     }
+    
+    public static function update_action_links( $actions, $plugin ) {
+        
+    	if ( 'formidable/formidable.php' != $plugin )
+    		return $actions;
+        
+        global $frm_vars;
+        
+        $db_version = get_option('frm_db_version');
+        $pro_db_version = $frm_vars['pro_is_installed'] ? get_option('frmpro_db_version') : false;
+        
+        if ( ( (int) $db_version < (int) FrmAppHelper::$db_version ) ||
+            ( $frm_vars['pro_is_installed'] && (int) $pro_db_version < (int) FrmAppHelper::$pro_db_version ) ) {
+                
+            return sprintf( '<a href="%s">%s</a>', add_query_arg(array('upgraded' => 'true'), menu_page_url( 'formidable', 0 )), __( 'Click here to complete the upgrade', 'formidable' ) );
+                
+    	} else {
+    	    return $actions;
+    	}
+    }
 
     public static function pro_get_started_headline(){
+        if ( isset($_GET['page']) && 'formidable' == $_GET['page'] && isset( $_REQUEST['upgraded'] ) && 'true' == $_REQUEST['upgraded'] ) {
+            self::install();
+            ?>
+<div id="message" class="frm_message updated"><?php _e('Congratulations! Formidable is ready to roll.', 'formidable') ?></div>
+<?php
+            return;
+        }
+        
         // Don't display this error as we're upgrading the thing... cmon
         if(isset($_GET['action']) and $_GET['action'] == 'upgrade-plugin')
             return;
     
-        if (is_multisite() and !is_super_admin())
+        if ( is_multisite() && !current_user_can('administrator') ) {
             return;
-         
+        }
+        
         if(!isset($_GET['activate'])){  
             global $frm_vars;
             $db_version = get_option('frm_db_version');
             $pro_db_version = ($frm_vars['pro_is_installed']) ? get_option('frmpro_db_version') : false;
-            if(((int)$db_version < (int)FrmAppHelper::$db_version) or ($frm_vars['pro_is_installed'] and (int)$pro_db_version < 23)){ //this number should match the db_version in FrmDb.php
+            if ( ( (int) $db_version < (int) FrmAppHelper::$db_version ) ||
+                ( $frm_vars['pro_is_installed'] && (int) $pro_db_version < (int) FrmAppHelper::$pro_db_version ) ) {
             ?>
-<div class="error" id="frm_install_message" style="padding:7px;"><?php _e('Your Formidable database needs to be updated.<br/>Please deactivate and reactivate the plugin to fix this or', 'formidable'); ?> <a id="frm_install_link" href="javascript:void(0)"><?php _e('Update Now', 'formidable') ?></a></div>
+<div class="error" id="frm_install_message" style="padding:7px;"><?php _e('Your update is not complete yet.<br/>Please deactivate and reactivate the plugin to complete the update or', 'formidable'); ?> <a id="frm_install_link" href="javascript:void(0)"><?php _e('Update Now', 'formidable') ?></a></div>
 <script type="text/javascript">
-jQuery(document).ready(function($){ $('#frm_install_link').click(function(){frm_install_now()}); });
+jQuery(document).ready(function($){ $('#frm_install_link').click(frm_install_now); });
 function frm_install_now(){
-	jQuery('#frm_install_link').replaceWith('<img src="<?php echo FrmAppHelper::plugin_url() ?>/images/wpspin_light.gif" alt="<?php _e('Loading&hellip;') ?>" />');
+	jQuery('#frm_install_message').html('<div style="line-height:24px;"><?php _e("Please wait while your site updates.", "formidable") ?><div class="spinner frm_spinner" style="float:left;display:block;"></div></div>');
 	jQuery.ajax({
 		type:"POST",url:ajaxurl,data:"action=frm_install",
 		success:function(msg){jQuery("#frm_install_message").fadeOut("slow");}
@@ -129,7 +156,7 @@ function frm_deauthorize_now(){
 if(!confirm("<?php esc_attr_e('Are you sure you want to deauthorize Formidable Pro on this site?', 'formidable') ?>"))
 	return false;
 jQuery('.frm_deauthorize_link').html('<span class="spinner" style="display:inline-block;margin-top:0;float:none;"></span>');
-jQuery.ajax({type:'POST',url:ajaxurl,data:'action=frm_deauthorize',
+jQuery.ajax({type:'POST',url:ajaxurl,data:'action=frm_deauthorize&nonce='+wp_create_nonce('frm_ajax'),
 success:function(msg){jQuery('.error').fadeOut('slow');}
 });
 return false;
@@ -141,11 +168,18 @@ return false;
     
     public static function admin_js(){
         global $pagenow;
+        
+        if ( 'admin-ajax.php' == $pagenow && isset($_GET['action']) && $_GET['action'] != 'frm_import_choices' ) {
+            return;
+        }
+        
         wp_enqueue_script('jquery');
         wp_enqueue_script('jquery-ui-core');
-        wp_register_script('bootstrap_tooltip', FrmAppHelper::plugin_url() .'/js/bootstrap.min.js', array('jquery'), '3.0.2');
+        wp_register_script('bootstrap_tooltip', FrmAppHelper::plugin_url() .'/js/bootstrap.min.js', array('jquery'), '3.0.3');
         
-        if(isset($_GET) and (isset($_GET['page']) and preg_match('/formidable*/', $_GET['page'])) or ($pagenow == 'edit.php' and isset($_GET) and isset($_GET['post_type']) and $_GET['post_type'] == 'frm_display')){
+        if ( isset($_GET) && ((isset($_GET['page']) && strpos($_GET['page'], 'formidable') === 0 ) ||
+            ($pagenow == 'edit.php' && isset($_GET['post_type']) && $_GET['post_type'] == 'frm_display'))
+        ) {
             $version = FrmAppHelper::plugin_version();
             add_filter('admin_body_class', 'FrmAppController::admin_body_class');
             
@@ -153,8 +187,8 @@ return false;
             wp_enqueue_script('jquery-ui-draggable');
             wp_enqueue_script('admin-widgets');
             wp_enqueue_style('widgets');
-            wp_enqueue_script('formidable_admin', FrmAppHelper::plugin_url() .'/js/formidable_admin.js', array('jquery', 'jquery-ui-draggable'), $version);
             wp_enqueue_script('formidable');
+            wp_enqueue_script('formidable_admin', FrmAppHelper::plugin_url() .'/js/formidable_admin.js', array('formidable', 'jquery', 'jquery-ui-draggable', 'bootstrap_tooltip'), $version, true);
             self::localize_script('admin');
             
             wp_enqueue_style('formidable-admin', FrmAppHelper::plugin_url() .'/css/frm_admin.css', array(), $version);
@@ -162,7 +196,7 @@ return false;
             
             wp_register_script('formidable-editinplace', FrmAppHelper::plugin_url() .'/js/jquery/jquery.editinplace.packed.js', array('jquery'), '2.3.0');
             wp_register_script('jquery-frm-themepicker', FrmAppHelper::plugin_url() .'/js/jquery/jquery-ui-themepicker.js', array('jquery'), $version);
-            wp_enqueue_script('bootstrap_tooltip');
+            
             
         }else if($pagenow == 'post.php' or ($pagenow == 'post-new.php' and isset($_REQUEST['post_type']) and $_REQUEST['post_type'] == 'frm_display')){
             if(isset($_REQUEST['post_type'])){
@@ -179,9 +213,8 @@ return false;
             if($post_type == 'frm_display'){
                 $version = FrmAppHelper::plugin_version();
                 wp_enqueue_script('jquery-ui-draggable');
-                wp_enqueue_script('formidable_admin', FrmAppHelper::plugin_url() . '/js/formidable_admin.js', array('jquery', 'jquery-ui-draggable'), $version);
+                wp_enqueue_script('formidable_admin', FrmAppHelper::plugin_url() . '/js/formidable_admin.js', array('formidable', 'jquery', 'jquery-ui-draggable', 'bootstrap_tooltip'), $version);
                 wp_enqueue_style('formidable-admin', FrmAppHelper::plugin_url(). '/css/frm_admin.css', array(), $version);
-                wp_enqueue_script('bootstrap_tooltip');
                 self::localize_script('admin');
             }
         }
@@ -215,34 +248,41 @@ return false;
 
         if (is_multisite()){
             global $frm_vars;
-            
             $old_db_version = get_option('frm_db_version');
             $pro_db_version = ($frm_vars['pro_is_installed']) ? get_option('frmpro_db_version') : false;
-            if(((int)$old_db_version < (int)FrmAppHelper::$db_version) or ($frm_vars['pro_is_installed'] and (int)$pro_db_version < 23))
+            if ( ( (int) $old_db_version < (int) FrmAppHelper::$db_version ) ||
+                ( $frm_vars['pro_is_installed'] && (int) $pro_db_version < (int) FrmAppHelper::$pro_db_version ) ) {
                 self::install($old_db_version);
+            }
         }
         
         $version = FrmAppHelper::plugin_version();
         wp_register_script('formidable', FrmAppHelper::plugin_url() . '/js/formidable.min.js', array('jquery'), $version, true);
-        if(!is_admin() or defined('DOING_AJAX'))
-            self::localize_script('front');
-        
-        wp_register_script('recaptcha-ajax', 'http'. (is_ssl() ? 's' : '').'://www.google.com/recaptcha/api/js/recaptcha_ajax.js', '', true);
-        wp_enqueue_script('jquery');
         wp_register_script('jquery-placeholder', FrmAppHelper::plugin_url() .'/js/jquery/jquery.placeholder.js', array('jquery'), '2.0.7', true);
+        wp_register_script('recaptcha-ajax', 'http'. (is_ssl() ? 's' : '').'://www.google.com/recaptcha/api/js/recaptcha_ajax.js', '', true);
+        
+        if ( is_admin() && !defined('DOING_AJAX') ) {
+            // don't load this in back-end
+            return;
+        }
+        
+        self::localize_script('front');
+        
+        wp_enqueue_script('jquery');
         
         $style = apply_filters('get_frm_stylesheet', array('frm-forms' => FrmAppHelper::plugin_url() .'/css/frm_display.css'));
         if($style){
             foreach((array)$style as $k => $file){
                 wp_register_style($k, $file, array(), $version);
-                if((!is_admin() or defined('DOING_AJAX')) and $frm_settings->load_style == 'all')
+                if ( 'all' == $frm_settings->load_style ) {
                     wp_enqueue_style($k);
-                unset($k);
-                unset($file);
+                }
+                unset($k, $file);
             }
         }
+        unset($style);
         
-        if((!is_admin() or defined('DOING_AJAX')) and $frm_settings->load_style == 'all'){                
+        if ( $frm_settings->load_style == 'all' ) {                
             global $frm_vars;
             $frm_vars['css_loaded'] = true;
         }
@@ -253,28 +293,31 @@ return false;
             'ajax_url'  => admin_url( 'admin-ajax.php' ),
             'images_url' => FrmAppHelper::plugin_url() .'/images',
             'loading'   => __('Loading&hellip;'),
-            'remove'    => __('Remove', 'formidable') 
+            'remove'    => __('Remove', 'formidable'),
+            'offset'    => apply_filters('frm_scroll_offset', 4),
         ));
         
         if($location == 'admin'){
             global $frm_settings;
             wp_localize_script('formidable_admin', 'frm_admin_js', array(
-                'templates_updated' => __('Templates Updated', 'formidable'),
                 'confirm_uninstall' => __('Are you sure you want to do this? Clicking OK will delete all forms, form data, and all other Formidable data. There is no Undo.', 'formidable'),
-                'get_page' => (isset($_GET) and isset($_GET['page'])) ? $_GET['page'] : '',
-                'desc' => __('(Click here to add a description or instructions)', 'formidable'),
-                'blank' => __('(Blank)', 'formidable'),
-                'saving' => esc_attr(__('Saving', 'formidable')),
-                'saved' => esc_attr(__('Saved', 'formidable')),
-                'ok'    => __('OK'),
-                'cancel' => __('Cancel'),
-                'clear_default' => __('Clear default value when typing', 'formidable'),
-                'no_clear_default' => __('Do not clear default value when typing', 'formidable'),
-                'valid_default' => __('Default value will pass form validation', 'formidable'),
-                'no_valid_default' => __('Default value will NOT pass form validation', 'formidable'),
-                'deauthorize' => __('Are you sure you want to deactivate Formidable Pro on this site?', 'formidable'),
-                'confirm' => __('Are you sure?', 'formidable'),
-                'default_unique' => $frm_settings->unique_msg
+                'get_page'          => (isset($_GET) && isset($_GET['page'])) ? $_GET['page'] : '',
+                'desc'              => __('(Click here to add a description or instructions)', 'formidable'),
+                'blank'             => __('(Blank)', 'formidable'),
+                'saving'            => esc_attr(__('Saving', 'formidable')),
+                'saved'             => esc_attr(__('Saved', 'formidable')),
+                'ok'                => __('OK'),
+                'cancel'            => __('Cancel', 'formidable'),
+                'clear_default'     => __('Clear default value when typing', 'formidable'),
+                'no_clear_default'  => __('Do not clear default value when typing', 'formidable'),
+                'valid_default'     => __('Default value will pass form validation', 'formidable'),
+                'no_valid_default'  => __('Default value will NOT pass form validation', 'formidable'),
+                'deauthorize'       => __('Are you sure you want to deactivate Formidable Pro on this site?', 'formidable'),
+                'confirm'           => __('Are you sure?', 'formidable'),
+                'default_unique'    => $frm_settings->unique_msg,
+                'import_complete'   => __('Import Complete', 'formidable'),
+                'updating'          => __('Please wait while your site updates.', 'formidable'),
+                'nonce'             => wp_create_nonce('frm_ajax'),
             ));
         }
     }
@@ -312,11 +355,13 @@ return false;
     }
     
     public static function uninstall(){
-        if(is_super_admin()){
+        check_ajax_referer( 'frm_ajax', 'nonce' );
+        
+        if ( current_user_can('administrator') ) {
             global $frmdb;
             $frmdb->uninstall();
             echo true;
-        }else{
+        } else {
             global $frm_settings;
             wp_die($frm_settings->admin_permission);
         }
@@ -337,8 +382,12 @@ return false;
     public static function referer_session() {
     	global $frm_settings;
     	
-    	if(!isset($frm_settings->track) or !$frm_settings->track or defined('WP_IMPORTING'))
+    	if ( !isset($frm_settings->track) || !$frm_settings->track || defined('WP_IMPORTING') ) {
     	    return;
+    	}
+    	
+    	// keep the page history below 100
+    	$max = 100;
     	    
     	if ( !isset($_SESSION) )
     		session_start();
@@ -362,10 +411,10 @@ return false;
     	if ($_SESSION['frm_http_pages'] and !empty($_SESSION['frm_http_pages']) and (end($_SESSION['frm_http_pages']) != "http://". $_SERVER['SERVER_NAME']. $_SERVER['REQUEST_URI']))
     		$_SESSION['frm_http_pages'][] = "http://". $_SERVER['SERVER_NAME']. $_SERVER['REQUEST_URI'];
     		
-    	//keep the page history below 100
-    	if(count($_SESSION['frm_http_pages']) > 100){
+    	//keep the page history below the max
+    	if(count($_SESSION['frm_http_pages']) > $max){
     	    foreach($_SESSION['frm_http_pages'] as $pkey => $ppage){
-    	        if(count($_SESSION['frm_http_pages']) <= 100)
+    	        if(count($_SESSION['frm_http_pages']) <= $max)
     	            break;
     	            
     		    unset($_SESSION['frm_http_pages'][$pkey]);
@@ -374,12 +423,14 @@ return false;
     }
 
     public static function parse_standalone_request(){
-        $plugin     = FrmAppHelper::get_param('plugin');
+        $plugin = FrmAppHelper::get_param('plugin');
         $action = isset($_REQUEST['frm_action']) ? 'frm_action' : 'action';
         $action = FrmAppHelper::get_param($action);  
         $controller = FrmAppHelper::get_param('controller');
         
         if( !empty($plugin) and $plugin == 'formidable' and !empty($controller) ){
+            _deprecated_function( __FUNCTION__, '1.07.02', 'wp_ajax_nopriv()' );
+            
             if($controller == 'forms')
                 FrmFormsController::preview(FrmAppHelper::get_param('form'));
             else
@@ -392,26 +443,9 @@ return false;
     
     //formidable shortcode
     public static function get_form_shortcode($atts){
-        global $frm_vars;
-        if(isset($frm_vars['skip_shortcode']) and $frm_vars['skip_shortcode']){
-            $sc = '[formidable';
-            foreach($atts as $k => $v)
-                $sc .= ' '. $k .'="'. $v .'"';
-            return $sc .']';
-        }
-        
-        $shortcode_atts = shortcode_atts(array('id' => '', 'key' => '', 'title' => false, 'description' => false, 'readonly' => false, 'entry_id' => false, 'fields' => array(), 'exclude_fields' => array()), $atts);
-        do_action('formidable_shortcode_atts', $shortcode_atts, $atts);
-        extract($shortcode_atts);
-        return FrmEntriesController::show_form($id, $key, $title, $description); 
+        _deprecated_function( __FUNCTION__, '1.07.05', 'FrmFormsController::get_form_shortcode()' );
+        return FrmFormsController::get_form_shortcode($atts); 
     }
-
-    //filter form shortcode in text widgets
-    public static function widget_text_filter( $content ){
-    	$regex = '/\[\s*formidable\s+.*\]/';
-    	return preg_replace_callback( $regex, 'FrmAppController::widget_text_filter_callback', $content );
-    }
-
 
     public static function widget_text_filter_callback( $matches ) {
         return do_shortcode( $matches[0] );
@@ -436,11 +470,13 @@ return false;
         return get_site_option('frmpro-authorized');
     }
     
-    function deauthorize(){
+    public static function deauthorize(){
+        check_ajax_referer( 'frm_ajax', 'nonce' );
+        
         delete_option('frmpro-credentials');
         delete_option('frmpro-authorized');
         delete_site_option('frmpro-credentials');
         delete_site_option('frmpro-authorized');
+        die();
     }
-
 }
