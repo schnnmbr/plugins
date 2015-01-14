@@ -1,7 +1,7 @@
 <?php
 
 /*
-Plugin Name: Shopno2 Testimonials
+Plugin Name: 15 - Shopno2 Testimonials
 Plugin URI: http://shopno2.com
 Description: Testimonial Custom Post Type For Use Through Out The Site 
 Author: sachin nambiar

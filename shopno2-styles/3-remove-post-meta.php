@@ -1,6 +1,6 @@
 <?php
 /*
-Plugin Name: 2 - remove post meta
+Plugin Name: 3 - remove post meta
 Plugin URI: http://shopno2.com
 Description: The right set of widgets to make your site awesome!
 Author: sachin nambiar

@@ -1,6 +1,6 @@
 <?php
 /*
-Plugin Name: 4 - Move Secondary Navigation
+Plugin Name: 7 - Move Secondary Navigation
 Plugin URI: http://shopno2.com
 Description:  SubMenu Above Header
 Author: shopno2

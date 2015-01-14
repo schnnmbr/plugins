@@ -1,6 +1,6 @@
 <?php
 /*
-Plugin Name: 10 - Hide Header except on front page
+Plugin Name: 11 - Hide Header except on front page
 Plugin URI: http://shopno2.com
 Description: Hides Header
 Author: shopno2.com

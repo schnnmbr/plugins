@@ -1,6 +1,6 @@
 <?php
 /*
-Plugin Name: Shopno2 Widgetized Page
+Plugin Name: 6 - Shopno2 Widgetized Page
 Plugin URI: http://shopno2.com
 Description: The right set of widgets to make your site awesome!
 Author: sachin nambiar

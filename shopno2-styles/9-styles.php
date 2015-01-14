@@ -1,6 +1,6 @@
 <?php
 /*
-Plugin Name: 8 - Styles
+Plugin Name: 9 - Styles
 Plugin URI: http://shopno2.com
 Description: Styles for shopno2 sites. Styles are enqueued to be used inside posts.
 Author: sachin nambiar

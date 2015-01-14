@@ -1,7 +1,7 @@
 <?php 
 
 /*
-Plugin Name:11-s2Customers
+Plugin Name:12 - s2Customers
 Plugin URI: http://shopno2.com
 Description: Customers Custom Post Type For Use Through Out The Site
 Use Customers to add and display customers to your site.
