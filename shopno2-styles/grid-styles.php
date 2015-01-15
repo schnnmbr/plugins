@@ -11,8 +11,8 @@ Version: 0.1
 function shopno2_grid_styles() {
         /** Enqueue Style Sheets */
         // Only enqueue if available
-     if ( is_readable( plugin_dir_path( __FILE__ ) . 'shopno2-grid-styles.css' ) AND ! is_singular('') OR is_archive() OR is_front_page('') )fbbfbfvb 
-        					{```````````11111Q	22QQ											``````		```````	`	``	`````					`qaœqqœq
+     if ( is_readable( plugin_dir_path( __FILE__ ) . 'shopno2-grid-styles.css' ) AND ! is_singular('') OR is_archive() OR is_front_page('') ) 
+        					{
             wp_enqueue_style( 'shopno2_grid_styles', plugin_dir_url( __FILE__ ) . 'shopno2-grid-styles.css', array(), '0.1', 'screen' );
         }
 }
