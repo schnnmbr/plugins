@@ -86,16 +86,6 @@
 
 <div class="wrap">
   <h2>SumoMe WordPress Plugin</h2>
-  <form method="post" action="options.php">
-    <?php settings_fields('sumome'); ?>
-    <div class="sumome-instructions">
-If you already have a site ID from a previous installation and you wish to retain all your settings then enter the site ID above otherwise you may use a new site ID to perform a new installation.
-    </div>
-    <table class="form-table">
-      <?php do_settings_fields('sumome', 'sumome-settings') ?>
-    </table>
-    <?php submit_button(); ?>
-  </form>
 </div>
 
 <!-- Second Band (Image Right with Text) -->
@@ -105,7 +95,7 @@ If you already have a site ID from a previous installation and you wish to retai
     <h4>Step 1. Welcome to the family! Let's register your account</h4>
     <div class="row">
       <div class="large-12 columns">
-        <p>Go to your site now and click on the SumoMe badge in the the top right of your site.</p>
+        <p>Click the blue tab on the top right of your screen. It may be tiny, but it's there. Way over there ===></p>
 
         <p>Sign up to register your account.</p>
 
@@ -183,6 +173,20 @@ If you already have a site ID from a previous installation and you wish to retai
   <div class="large-12 columns">
     <hr />
   </div>
+</div>
+
+<div class="row">
+<form method="post" action="options.php">
+    <?php settings_fields('sumome'); ?>
+    <table class="form-table">
+      <?php do_settings_fields('sumome', 'sumome-settings') ?>
+    </table>
+    <?php submit_button(); ?>
+  </form>
+    <div class="sumome-instructions">
+If you already have a site ID from a previous installation and you wish to retain all your settings then enter the site ID below otherwise you may use a new site ID to perform a new installation.  Changing the site ID will lose all settings, apps and purchases.
+    </div>
+
 </div>
 
 <!-- Sixth Band (Image right with Text) -->

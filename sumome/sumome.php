@@ -3,7 +3,7 @@
 Plugin Name: SumoMe
 Plugin URI: http://sumome.com
 Description: Free Tools to grow your email list from SumoMe.com
-Version: 1.8
+Version: 1.10
 Author: SumoMe
 Author URI: http://www.SumoMe.com
 */
@@ -120,18 +120,21 @@ EOF;
     $site_id = get_option('sumome_site_id');
 
     if ($site_id) {
-      echo('<script src="//load.sumome.com/" data-sumo-site-id="' . esc_attr($site_id) . '" async></script>');
+      echo('<script data-cfasync="false" src="//load.sumome.com/" data-sumo-site-id="' . esc_attr($site_id) . '" async></script>');
     }
   }
 
   public function append_admin_script_code()
   {
+    if (defined('XMLRPC_REQUEST') || defined('DOING_AJAX') || defined('IFRAME_REQUEST'))
+      return false;
+
     $this->check_generate_site_id();
 
     $site_id = get_option('sumome_site_id');
 
     if ($site_id) {
-      echo('<script src="//load.sumome.com/" data-sumo-mode="admin" data-sumo-site-id="' . esc_attr($site_id) . '" async></script>');
+      echo('<script data-cfasync="false" src="//load.sumome.com/" data-sumo-mode="admin" data-sumo-site-id="' . esc_attr($site_id) . '" async></script>');
     }
   }
 }

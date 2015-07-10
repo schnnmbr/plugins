@@ -2,7 +2,7 @@
 Tags: css, design, edit, customize
 Requires at least: 3.9
 Tested up to: 4.2.2
-Stable tag: 1.0
+Stable tag: 1.0.1
 License: GPLv3 or later
 Contributors: gpriday
 
@@ -51,7 +51,19 @@ We're actively developing SiteOrigin CSS. Keep track of what's happening over on
 3. A full CSS editor that works in real-time with a preview of your site.
 4. Code completion for all your theme's selectors.
 
+== Documentation ==
+
+[Documentation](https://siteorigin.com/css/getting-started/) is available on SiteOrigin.
+
+== Support ==
+
+We offer free support on the [SiteOrigin support forums](https://siteorigin.com/thread/).
+
 == Changelog ==
+
+= 1.0.2 =
+* Dequeue functionality the conflicted with WordPress color picker, if it's enqueued.
+* Removed wp_styles for compatibility with older versions of WordPress
 
 = 1.0.1 =
 * Fixed conflicts with CSS editor in SiteOrigin themes.

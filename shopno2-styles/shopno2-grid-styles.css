@@ -1,5 +1,6 @@
 /* Custom Post Type Responsive Grid
 -------------------------------------------------------------*/
+.entry-title h2{font-size: 80%;}
 .featured-post {max-width:90%;margin:auto;}
 .type-product {
  display:inline-block;
@@ -63,21 +64,32 @@ display:inline-block;
   border-top: 1px solid #EEE;
 
 }
+.archive .post {
+display:inline-block;
+  width: 23%;
+  padding: 1%;
+  margin:0 1%;
+  display: inline-block;
+  vertical-align: bottom;
+  min-height: 180px;
+}
 
 @media (max-width:980px){
-.type-customer, .type-service, .type-testimonial, .type-product, .type-helpfiles{
+.type-customer, .type-service, .type-testimonial, .type-product, .type-helpfiles, .archive .post{
 width: 29%;
 
 
 }
+.full-width-content .content {padding-left:10%;}
 @media all and (max-width:840px){
-.type-customer, .type-service, .type-testimonial, .type-product, .type-helpfiles{
-	width: 40%;
+.type-customer, .type-service, .type-testimonial, .type-product, .type-helpfiles, .archive .post{
+	width: 43%;
 
 }
+.full-width-content .content {padding-left:10%;}
 @media all and (max-width:700px){
-.type-customer, .type-service, .type-testimonial, .type-product, .type-helpfiles{
+.type-customer, .type-service, .type-testimonial, .type-product, .type-helpfiles, .archive .post{
 	width: 90%;
 }
-
+.full-width-content .content {padding-left:10%;}
 } }}
