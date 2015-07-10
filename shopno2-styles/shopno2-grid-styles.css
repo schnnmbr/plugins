@@ -1,6 +1,6 @@
 /* Custom Post Type Responsive Grid
 -------------------------------------------------------------*/
-.entry-title h2{font-size: 80%;}
+.entry-title {font-size: 2rem;}
 .featured-post {max-width:90%;margin:auto;}
 .type-product {
  display:inline-block;
