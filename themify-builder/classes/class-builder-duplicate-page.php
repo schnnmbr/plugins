@@ -33,6 +33,7 @@ class ThemifyBuilderDuplicatePage {
 	function __construct() {
 		// Actions
 		add_action( 'init', array( &$this, 'init' ), 10 );
+		add_action( 'admin_init', array( &$this, 'init' ), 10 );
 	}
 
 	/**

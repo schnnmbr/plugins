@@ -1,0 +1,28 @@
+/* force overflow to show
+***************************/
+.block-type-utility-block {
+	overflow: visible;
+}
+
+/* default logo size 
+***************************/
+.logo-utility a {
+	color: #555555;
+    font-family: Helvetica;
+    font-size: 29px;
+}
+
+/* social elements
+***************************/
+.social-utility {
+	margin: 0;
+	padding: 0;
+	display: block;
+}
+.social-utility li {
+	list-style: none;
+	float: left;
+}
+.social-utility li.first {
+	margin-left: 0!important;
+}

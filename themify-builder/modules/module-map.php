@@ -10,8 +10,6 @@ class TB_Map_Module extends Themify_Builder_Module {
 			'name' => __('Map', 'themify'),
 			'slug' => 'map'
 		));
-
-		add_action( 'wp_enqueue_scripts', array( $this, 'load_map_script' ) );
 	}
 
 	public function get_title( $module ) {
@@ -545,11 +543,6 @@ class TB_Map_Module extends Themify_Builder_Module {
 			)
 		);
 		return $styling;
-	}
-
-	function load_map_script() {
-		//Register map scripts
-		wp_register_script( 'themify-builder-map-script', themify_https_esc( 'http://maps.google.com/maps/api/js' ) . '?sensor=false', array(), false, true );
 	}
 }
 

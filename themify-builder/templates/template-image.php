@@ -7,6 +7,9 @@ if ( ! defined( 'ABSPATH' ) ) exit; // Exit if accessed directly
  * @author Themify
  */
 
+// Load styles and scripts registered in Themify_Builder::register_frontend_js_css()
+$GLOBALS['ThemifyBuilder']->load_templates_js_css( array( 'icons-fa' => true ) );
+
 $fields_default = array(
 	'mod_title_image' => '',
 	'style_image' => '',
@@ -42,8 +45,6 @@ $container_class = implode(' ',
 $lightbox = in_array( 'lightbox', $param_image ) ? true : false;
 $zoom = in_array( 'zoom', $param_image ) ? true : false;
 $newtab = in_array( 'newtab', $param_image ) ? true : false;
-$link_attr = $lightbox ? 'class="lightbox-builder lightbox"' : '';
-$link_attr .= $newtab ? ' target="_blank"' : '';
 $image_alt = '' != $alt_image ? esc_attr( $alt_image ) : wp_strip_all_tags( $caption_image );
 $image_alt = '' != $image_alt ? $image_alt : esc_attr( $title_image );
 
@@ -76,14 +77,14 @@ if ( ! empty( $link_image ) ) {
 <div id="<?php echo esc_attr( $module_ID ); ?>" class="<?php echo esc_attr( $container_class ); ?>">
 	
 	<?php if ( $mod_title_image != '' ): ?>
-	<h3 class="module-title"><?php echo wp_kses_post( $mod_title_image ); ?></h3>
+		<?php echo $mod_settings['before_title'] . wp_kses_post( apply_filters( 'themify_builder_module_title', $mod_title_image, $fields_args ) ) . $mod_settings['after_title']; ?>
 	<?php endif; ?>
 
 	<?php do_action( 'themify_builder_before_template_content_render' ); ?>
 
 	<div class="image-wrap">
 		<?php if ( ! empty( $link_image ) ): ?>
-		<a href="<?php echo esc_url( $link_image ); ?>" <?php echo $link_attr; ?>>
+		<a href="<?php echo esc_url( $link_image ); ?>" <?php if ( $lightbox ) : echo 'class="lightbox-builder lightbox"'; endif; ?> <?php if ( $newtab ) : echo 'target="_blank"'; endif; ?>>
 			<?php if ( $zoom ): ?>
 			<span class="zoom fa fa-search"></span>
 			<?php endif; ?>
@@ -103,7 +104,7 @@ if ( ! empty( $link_image ) ) {
 		<?php if ( ! empty( $title_image ) ): ?>
 		<h3 class="image-title">
 			<?php if ( ! empty( $link_image ) ): ?>
-			<a href="<?php echo esc_url( $link_image ); ?>" <?php echo $link_attr; ?>>
+			<a href="<?php echo esc_url( $link_image ); ?>" <?php if ( $lightbox ) : echo 'class="lightbox-builder lightbox"'; endif; ?> <?php if ( $newtab ) : echo 'target="_blank"'; endif; ?>>
 				<?php echo wp_kses_post( $title_image ); ?>
 			</a>
 			<?php else: ?>

@@ -19,12 +19,13 @@
 
 		var defaults = {
 			// If you want to use a single mp4 source, set as true
-			useFlashForFirefox:true,
+			useFlashForFirefox:false,
 			// If you are doing a playlist, the video won't play the first time
 			// on a touchscreen unless the play event is attached to a user click
 			forceAutoplay:false,
 			controls:false,
 			doLoop:true,
+			ambient: true,
 			container: element ? $(element) : $('body'),
 			shrinkable:false,
 			poster: ''
@@ -50,6 +51,8 @@
 		var settings = $.extend({}, defaults, options);
 		var container = settings.container;
 		var vid = container.find(vidEl);
+
+		isAmbient = settings.ambient;
 
 		function updateSize() {
 			var $body = $('body'),
@@ -303,6 +306,12 @@
 					updateSize();
 				});
 
+				player.on('playing', function(e) {
+					if ( 'undefined' !== typeof tbLocalScript && '' === tbLocalScript.isTouch && navigator.userAgent.indexOf('Safari') !== -1 && navigator.userAgent.indexOf('Chrome') === -1 ) {
+						$(e.target).attr('poster', '');
+					}
+				});
+
 				player.on('loadedmetadata', function(data) {
 					if (container.find('object[id*=_flash_api]').length) {
 						// use flash callback to get mediaAspect ratio
@@ -340,8 +349,12 @@
 			if (!source && container.data('video') !== '') {
 				source = container.data('video');
 			}
-			isAmbient = options.ambient === true;
-			if (isAmbient || options.doLoop) settings.doLoop = true;
+			isAmbient = ( options.ambient ) ? options.ambient === true : settings.ambient;
+			if ( isAmbient ) {
+				if ( options.doLoop ) {
+					settings.doLoop = true;
+				}
+			} 
 			if (typeof(source) === 'string') {
 				var ext = source.substring(source.lastIndexOf('.')+1);
 				if (ext === 'jpg' || ext === 'gif' || ext === 'png') {

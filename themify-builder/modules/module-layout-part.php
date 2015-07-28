@@ -64,11 +64,11 @@ class TB_Layout_Part_Module extends Themify_Builder_Module {
 				}
 				$output .= '</select><br/>';
 				$output .= sprintf( '<a href="%s" target="_blank" class="add_new"><span class="themify_builder_icon add"></span> %s</a>',
-					admin_url('post-new.php?post_type=' . $Themify_Builder_Layouts->layout_part->post_type_name),
+					esc_url( add_query_arg( 'post_type', $Themify_Builder_Layouts->layout_part->post_type_name, admin_url('post-new.php') ) ),
 					__( 'New Layout Part', 'themify' )
 				);
 				$output .= sprintf( '<a href="%s" target="_blank" class="add_new"><span class="themify_builder_icon ti-folder"></span> %s</a>',
-					admin_url('edit.php?post_type=' . $Themify_Builder_Layouts->layout_part->post_type_name),
+					esc_url( add_query_arg( 'post_type', $Themify_Builder_Layouts->layout_part->post_type_name, admin_url('edit.php') ) ),
 					__( 'Manage Layout Part', 'themify' )
 				);
 			break;

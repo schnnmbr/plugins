@@ -510,4 +510,43 @@ final class Themify_Builder_Model {
 			return false;
 		}
 	}
+
+	/**
+	 * Get attachment ID for image from its url.
+	 * 
+	 * @since 2.2.5
+	 *
+	 * @param string $url
+	 * @param string $base_url
+	 *
+	 * @return bool|null|string
+	 */
+	public static function get_attachment_id_by_url( $url = '', $base_url = '' ) {
+		// If this is the URL of an auto-generated thumbnail, get the URL of the original image
+		$url = preg_replace( '/-\d+x\d+(?=\.(jpg|jpeg|png|gif)$)/i', '', str_replace( $base_url . '/', '', $url ) );
+
+		// Finally, run a custom database query to get the attachment ID from the modified attachment URL
+		global $wpdb;
+		return $wpdb->get_var( $wpdb->prepare( "SELECT wposts.ID FROM $wpdb->posts wposts, $wpdb->postmeta wpostmeta WHERE wposts.ID = wpostmeta.post_id AND wpostmeta.meta_key = '_wp_attached_file' AND wpostmeta.meta_value = '%s' AND wposts.post_type = 'attachment'", $url ) );
+	}
+
+	/**
+	 * Get alt text defined in WP Media attachment by a given URL
+	 *
+	 * @since 2.2.5
+	 * 
+	 * @param string $image_url
+	 * 
+	 * @return string
+	 */
+	public static function get_alt_by_url( $image_url ) {
+		$upload_dir = wp_upload_dir();
+		$attachment_id = self::get_attachment_id_by_url( $image_url, $upload_dir['baseurl'] );
+		if ( $attachment_id ) {
+			if ( $alt = get_post_meta( $attachment_id, '_wp_attachment_image_alt', true ) ) {
+				return $alt;	
+			}
+		}
+		return '';
+	}
 }

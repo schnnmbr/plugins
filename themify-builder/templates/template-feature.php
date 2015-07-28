@@ -7,7 +7,9 @@ if ( ! defined( 'ABSPATH' ) ) exit; // Exit if accessed directly
  * @author Themify
  */
 
-wp_enqueue_script( 'themify-easy-pie-chart' );
+// Load styles and scripts registered in Themify_Builder::register_frontend_js_css()
+$GLOBALS['ThemifyBuilder']->load_templates_js_css( array( 'chart' => true, 'icons-fa' => true ) );
+
 $chart_vars = apply_filters('themify_chart_init_vars', array(
 	'trackColor' => 'rgba(0,0,0,.1)',
 	'scaleColor' => 0,
@@ -54,16 +56,17 @@ if( $circle_size_feature == 'large' ) {
 }
 
 $chart_class = ( $circle_percentage_feature == '' ) ? 'no-chart' : 'with-chart';
+$circle_percentage_feature = do_shortcode( $circle_percentage_feature );
 if( '' == $circle_percentage_feature ) {
 	$circle_percentage_feature = '0';
 	$chart_vars['trackColor'] = 'rgba(0,0,0,0)'; // transparent
 }
-
+$link_type = '';
 if( '' != $link_feature ) {
 	if( in_array( 'lightbox', $param_feature ) ) {
-		$link_feature = themify_get_lightbox_iframe_link( $link_feature ) . '" class="lightbox';
+		$link_type = 'lightbox';
 	} elseif( in_array( 'newtab', $param_feature ) ) {
-		$link_feature = $link_feature . '" target="_blank';
+		$link_type = 'newtab';
 	}
 }
 
@@ -78,7 +81,7 @@ $container_class = implode(' ',
 <div id="<?php echo esc_attr( $module_ID ); ?>" class="<?php echo esc_attr( $container_class ); ?>">
 
 	<?php if ( $mod_title_feature != '' ): ?>
-	<h3 class="module-title"><?php echo wp_kses_post( $mod_title_feature ); ?></h3>
+		<?php echo $mod_settings['before_title'] . wp_kses_post( apply_filters( 'themify_builder_module_title', $mod_title_feature, $fields_args ) ) . $mod_settings['after_title']; ?>
 	<?php endif; ?>
 
 	<?php do_action( 'themify_builder_before_template_content_render' ); ?>
@@ -86,7 +89,7 @@ $container_class = implode(' ',
 	<figure class="module-feature-image">
 
 		<?php if( '' != $link_feature ) : ?>
-			<a href="<?php echo $link_feature; ?>">
+			<a href="<?php echo esc_url( 'lightbox' == $link_type ? themify_get_lightbox_iframe_link( $link_feature ) : $link_feature ); ?>" <?php if ( 'lightbox' == $link_type ) : echo 'class="lightbox"'; endif; if ( 'newtab' == $link_type ) : echo 'target="_blank"'; endif; ?>>
 		<?php endif; ?>
 
 		<?php if( '' != $circle_percentage_feature ) : ?>
@@ -115,7 +118,7 @@ $container_class = implode(' ',
 		<?php if( '' != $title_feature ) : ?>
 			<h3 class="module-feature-title">
 			<?php if( '' != $link_feature ) : ?>
-				<a href="<?php echo esc_url( $link_feature ); ?>">
+				<a href="<?php echo esc_url( 'lightbox' == $link_type ? themify_get_lightbox_iframe_link( $link_feature ) : $link_feature ); ?>" <?php if ( 'lightbox' == $link_type ) : echo 'class="lightbox"'; endif; if ( 'newtab' == $link_type ) : echo 'target="_blank"'; endif; ?>>
 			<?php endif; ?>
 
 			<?php echo wp_kses_post( $title_feature ); ?>

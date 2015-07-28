@@ -33,13 +33,13 @@ extract( $settings, EXTR_SKIP );
 					$img = themify_get_image( "ignore=true&src={$img[0]}&w={$thumb_w_gallery}&h={$thumb_h_gallery}" );
 				}
 
-				echo $link_before . $img . $link_after;
+				echo !empty( $img ) ? $link_before . $img . $link_after : '';
 				?>
 			</dt>
 
 			<?php if( isset( $image->post_excerpt ) && '' != $image->post_excerpt ) : ?>
 			<dd class="wp-caption-text gallery-caption">
-				<?php echo $image->post_excerpt; ?>
+				<?php echo wp_kses_post( $image->post_excerpt ); ?>
 			</dd>
 			<?php endif; ?>
 

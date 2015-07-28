@@ -1,0 +1,85 @@
+/******************************************************************
+ Main Navigation - default and superfish
+******************************************************************/
+
+/* Tiny Nav */
+@media only screen and (max-width : 600px) {			
+	.responsive-grid-active .block-type-utility-block .selectnav { display: block; }
+	.responsive-grid-active .block-type-utility-block ul.menu.selectnav-active { display: none; }
+}
+
+.block-type-utility-block .selectnav { 
+	margin: 10px 2%;
+	width: 96%;
+	font-size: 16px; 
+	display: none;
+}
+
+/* base for all menus */
+nav.menu-utility {display:inline-block;overflow: visible;}
+nav.menu-utility ul.menu,
+nav.menu-utility ul.menu *{margin:0;padding:0;list-style:none;}
+nav.menu-utility ul.menu {line-height:100%;}
+nav.menu-utility ul.menu li {float:left;position:relative;}
+nav.menu-utility ul.menu a {display:block;position:relative;font-size: 1em;text-decoration:none;}
+
+/* positions to right of logo if in main header 
+nav-inside-mainheader nav.menu-utility {float: right;position: absolute;right: 0;top: 42px;z-index: 2;}*/
+
+nav.menu-utility.basic-nav.menu-utility ul.menu li ul.sub-menu {display: none;}
+
+/* superfish layer */
+nav.menu-utility .superfish .menu ul{position:absolute;top:-999em;width:15em;/* left offset of submenus need to match (see below) */}
+nav.menu-utility .superfish .menu ul li{width:100%;}
+nav.menu-utility .superfish .menu li:hover ul,
+nav.menu-utility .superfish .menu li.sfHover ul{left:0;top:99%;z-index:99;}
+nav.menu-utility .superfish .menu li:hover li ul,
+nav.menu-utility .superfish .menu li.sfHover li ul{top:-999em;}
+nav.menu-utility .superfish .menu li li:hover ul,
+nav.menu-utility .superfish .menu li li.sfHover ul{left:0; /* match ul width */ top:1em;}
+nav.menu-utility .superfish .menu li li:hover li ul,
+nav.menu-utility .superfish .menu li li.sfHover li ul{top:-999em;}
+nav.menu-utility .superfish .menu li li li:hover ul,
+nav.menu-utility .superfish .menu li li li.sfHover ul{left:0;/* match ul width */ top:1em;}
+
+/* vertical orientation */
+nav.menu-utility.nav-vertical .superfish{ position: relative; }
+nav.menu-utility.nav-vertical .superfish ul li { width: 100%; }
+nav.menu-utility.nav-vertical .superfish ul li a {
+	height: auto;
+	line-height: 20px;
+}
+
+.nav-align-left ul 		{ text-align: left;   }
+.nav-align-right ul 	{ text-align: right;  }
+.nav-align-center ul 	{ text-align: center; }
+
+/* Top Level */
+/* Hover */
+nav.menu-utility .superfish .menu li:hover,
+nav.menu-utility .superfish .menu li.sfHover,
+nav.menu-utility .superfish .menu a:focus,
+nav.menu-utility .superfish .menu a:hover,
+nav.menu-utility .superfish .menu a:active {outline:0;}
+
+/* styles for drop down text */
+nav.menu-utility .superfish .menu li ul li a,
+nav.menu-utility .superfish nav.menu-utility .superfish .menu li ul li a:link,
+nav.menu-utility .superfish nav.menu-utility .superfish .menu li ul li a:visited {line-height:1.2em;padding:.9em;}
+
+/* superfish subchild indicators */
+nav.menu-utility .superfish .menu li a.sf-with-ul span.sf-sub-indicator {
+	background:transparent url(../images/topnav-arrow-sprite.png) -10px -101px;
+	display:block;
+	height:8px;
+	right:43%;
+	position:absolute;
+	width:9px;
+	text-indent: -9999px;
+}
+
+nav.menu-utility .superfish .menu ul a.sf-with-ul span.sf-sub-indicator {
+	background-position: 0 0;
+	right: 5px;
+	top: 38%;
+}

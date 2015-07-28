@@ -266,7 +266,27 @@ html[xmlns] .clear-line {
 	height: 1%;
 }
 
+
+/*GRID*/
+.type-post.category-customers, .type-post.category-product, .type-post.category-industry
+{
+    width:29%;
+    padding:1%;
+    margin:1%;
+    display:inline-block;
+    vertical-align:bottom;
+    border-bottom:1px dotted #CCC;
+    }
 /*3 Grid Widgets*/
+@media (max-width:640px) {
+    .type-post.category-customers, .type-post.category-product, .type-post.category-industry
+    
+    {
+        width:90%;
+        padding:4%;
+        margin:4%;
+        }
+}
 
 @media (max-width:980px){
 

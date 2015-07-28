@@ -1,4 +1,4 @@
-<?php 
+	<?php 
 
 /*
 Plugin Name: 14 - s2Products
@@ -47,9 +47,9 @@ function shopno2_product() {
 		'exclude_from_search' => false,
 		'publicly_queryable'  => true,
 		'capability_type'     => 'page',
-		'supports' => array( 'title', 'editor', 'genesis-seo', 'thumbnail','genesis-cpt-archives-settings','excerpt', 'genesis-layouts' ),
-		//'supports' => array( 'title', 'editor', 'author', 'thumbnail', 'excerpt', 'comments', 'headway-seo'),
-	);
+		'supports' => array( 'title', 'editor', 'thumbnail', 'excerpt', 'custom-fields', 'genesis-seo', 'thumbnail','genesis-cpt-archives-settings', 'genesis-layouts' ), );
+		//'supports' => array( 'title', 'editor', 'thumbnail', 'excerpt','custom-fields'), );
+	
 	register_post_type( 'product', $args );
 
 }

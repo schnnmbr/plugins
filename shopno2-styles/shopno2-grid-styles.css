@@ -93,3 +93,23 @@ width: 29%;
 }
 .full-width-content .content {padding-left:10%;}
 } }}
+
+/*Category Grid*/
+.type-post.category-customers, .type-post.category-product, .type-post.category-industry
+{
+    width:29%;
+    padding:1%;
+    margin:1%;
+    display:inline-block;
+    vertical-align:bottom;
+    border-bottom:1px dotted #CCC;
+    }
+@media (max-width:640px) {
+    .type-post.category-customers, .type-post.category-product, .type-post.category-industry
+    
+    {
+        width:90%;
+        padding:4%;
+        margin:4%;
+        }
+}

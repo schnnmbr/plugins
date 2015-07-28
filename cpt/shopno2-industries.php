@@ -47,9 +47,11 @@ function shopno2_industry() {
 		'exclude_from_search' => false,
 		'publicly_queryable'  => true,
 		'capability_type'     => 'page',
-		'supports' => array( 'title', 'editor', 'genesis-seo', 'thumbnail','genesis-cpt-archives-settings','excerpt', 'genesis-layouts' ),
-		//'supports' => array( 'title', 'editor', 'author', 'thumbnail', 'excerpt', 'comments', 'headway-seo'),
-	);
+		'supports' => array( 'title', 'editor', 'thumbnail', 'excerpt', 'custom-fields', 'genesis-seo', 'thumbnail','genesis-cpt-archives-settings', 'genesis-layouts' ), );
+		//'supports' => array( 'title', 'editor', 'author', 'thumbnail', 'excerpt', 'comments', 'headway-seo','custom-fields'),
+	//);
+		//'supports' => array( 'title', 'editor', 'thumbnail', 'excerpt','custom-fields'), );
+
 	register_post_type( 'industry', $args );
 
 }

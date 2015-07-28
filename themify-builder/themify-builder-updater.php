@@ -220,7 +220,11 @@ log</a> for details.</p>', 'themify'),
 			die();
 		}
 
+		$plugin_basename = plugin_basename( __FILE__ );
+		$plugin_data = get_plugin_data( trailingslashit( plugin_dir_path( __FILE__ ) ) . basename( $plugin_basename ) );
+
 		$subs = json_decode($response['body'], true);
+
 		$sub_match = 'false';
 
 		foreach ($subs as $key => $value) {
@@ -230,11 +234,15 @@ log</a> for details.</p>', 'themify'),
 					break;
 				}
 			}
-			if ( isset( $_POST['nicename_short'] ) && stripos($value['title'], isset( $_POST['nicename_short'] ) ) !== false ) {
+			if ( isset( $_POST['nicename_short'] ) && stripos($value['title'], $_POST['nicename_short'] ) !== false ) {
 				$sub_match = 'true';
 				break;
 			}
 			if(stripos($value['title'], 'Master Club') !== false){
+				$sub_match = 'true';
+				break;
+			}
+			if(stripos($value['title'], $plugin_data['Name']) !== false){
 				$sub_match = 'true';
 				break;
 			}
@@ -308,7 +316,7 @@ function themify_builder_updater(){
 }
 
 function themify_builder_upgrade_complete($update_actions, $plugin) {
-	if ( defined( 'THEMIFY_BUILDER_SLUG' ) && $plugin == THEMIFY_BUILDER_SLUG ) {
+	if ( ( defined( 'THEMIFY_BUILDER_SLUG' ) && $plugin == THEMIFY_BUILDER_SLUG ) || ( stripos( $plugin, 'builder-' ) !== false ) ){
 		$update_actions['themify_complete'] = '<a href="' . self_admin_url('admin.php?page=themify-builder') . '" title="' . __('Return to Builder Settings', 'themify') . '" target="_parent">' . __('Return to Builder Settings', 'themify') . '</a>';
 	} elseif ( defined( 'THEMIFY_VERSION' ) ) {
 		$update_actions['plugins_page'] = '<a href="' . esc_url( self_admin_url( 'admin.php?page=themify' ) ) . '" title="' . __( 'Return to Themify Panel', 'themify' ) . '" target="_parent">' . __( 'Return to Themify Panel', 'themify' ) . '</a>';

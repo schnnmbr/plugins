@@ -25,7 +25,7 @@ $container_class = implode(' ',
 <!-- module template_part -->
 <div id="<?php echo esc_attr( $module_ID ); ?>" class="<?php echo esc_attr( $container_class ); ?>">
 	<?php if ( $mod_title_layout_part != '' ): ?>
-	<h3 class="module-title"><?php echo wp_kses_post( $mod_title_layout_part ); ?></h3>
+		<?php echo $mod_settings['before_title'] . wp_kses_post( apply_filters( 'themify_builder_module_title', $mod_title_layout_part, $fields_args ) ) . $mod_settings['after_title']; ?>
 	<?php endif; ?>
 	
 	<?php do_action( 'themify_builder_before_template_content_render' ); ?>

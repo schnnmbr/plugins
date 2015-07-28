@@ -30,7 +30,8 @@ $fields_default = array(
 	'left_margin_slider' => '',
 	'right_margin_slider' => '',
 	'css_slider' => '',
-	'animation_effect' => ''
+	'animation_effect' => '',
+	'height_slider' => 'variable'
 );
 
 if ( isset( $settings['auto_scroll_opt_slider'] ) )	
@@ -73,7 +74,7 @@ switch ( $speed_opt_slider ) {
 <div id="<?php echo esc_attr( $module_ID ); ?>" class="<?php echo esc_attr( $container_class ); ?>">
 
 	<?php if ( $mod_title_slider != '' ): ?>
-	<h3 class="module-title"><?php echo wp_kses_post( $mod_title_slider ); ?></h3>
+		<?php echo $settings['before_title'] . wp_kses_post( apply_filters( 'themify_builder_module_title', $mod_title_slider, $fields_args ) ) . $settings['after_title']; ?>
 	<?php endif; ?>
 	
 	<ul class="themify_builder_slider" 
@@ -86,6 +87,7 @@ switch ( $speed_opt_slider ) {
 		data-arrow="<?php echo esc_attr( $arrow ); ?>"
 		data-pagination="<?php echo esc_attr( $pagination ); ?>"
 		data-effect="<?php echo esc_attr( $effect ); ?>" 
+		data-height="<?php echo esc_attr( $height_slider ); ?>" 
 		data-pause-on-hover="<?php echo esc_attr( $pause_on_hover_slider ); ?>" >
 		
 		<?php foreach ( $img_content_slider as $content ): ?>
@@ -97,7 +99,12 @@ switch ( $speed_opt_slider ) {
 				$image_w = $img_w_slider;
 				$image_h = $img_h_slider;
 				$image_title = isset( $content['img_title_slider'] )? $content['img_title_slider'] : '';
-				$param_image_src = 'src='.$image_url.'&w='.$image_w .'&h='.$image_h.'&alt='.$image_title.'&ignore=true';
+				if ( $alt_by_url = Themify_Builder_Model::get_alt_by_url( $image_url ) ) {
+					$image_alt = $alt_by_url;
+				} else {
+					$image_alt = $image_title;
+				}
+				$param_image_src = 'src='.$image_url.'&w='.$image_w .'&h='.$image_h.'&alt='.$image_alt.'&ignore=true';
 				if ( $this->is_img_php_disabled() ) {
 					// get image preset
 					$preset = $image_size_slider != '' ? $image_size_slider : themify_get('setting-global_feature_size');
@@ -108,13 +115,13 @@ switch ( $speed_opt_slider ) {
 						$image_w = $image_w != '' ? $image_w : get_option($preset.'_size_w');
 						$image_h = $image_h != '' ? $image_h : get_option($preset.'_size_h');
 					}
-					$image = '<img src="' . esc_url( $image_url ) . '" alt="' . esc_attr( $image_title ) . '" width="' . esc_attr( $image_w ) . '" height="' . esc_attr( $image_h ) . '">';
+					$image = '<img src="' . esc_url( $image_url ) . '" alt="' . esc_attr( $image_alt ) . '" width="' . esc_attr( $image_w ) . '" height="' . esc_attr( $image_h ) . '">';
 				} else {
 					$image = themify_get_image( $param_image_src );
 				}
 				?>
 				<?php if ( ! empty( $content['img_link_slider'] ) ): ?>
-				<a href="<?php echo esc_url( $content['img_link_slider'] ); ?>" alt="<?php echo esc_attr( $image_title ); ?>"<?php echo 'yes' == $open_link_new_tab_slider ? ' target="_blank"': ''; ?>>
+				<a href="<?php echo esc_url( $content['img_link_slider'] ); ?>" alt="<?php echo esc_attr( $image_alt ); ?>"<?php echo 'yes' == $open_link_new_tab_slider ? ' target="_blank"': ''; ?>>
 					<?php echo wp_kses_post( $image ); ?>
 				</a>
 				<?php else: ?>

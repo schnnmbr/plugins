@@ -3,16 +3,16 @@
 Plugin Name: Themify Builder
 Plugin URI: http://themify.me/
 Description: Build responsive layouts that work for desktop, tablets, and mobile using intuitive &quot;what you see is what you get&quot; drag &amp; drop framework with live edits and previews.
-Version: 1.3.9
+Version: 1.4.2
 Author: Themify
 Author URI: http://themify.me
 */
 
-if ( ! defined( 'ABSPATH' ) ) exit; // Exit if accessed directly
+if ( ! defined( 'ABSPATH' ) ) exit; // Exit if accessed directly 
 
 // Hook loaded
 add_action( 'after_setup_theme', 'themify_builder_themify_dependencies' );
-add_action( 'after_setup_theme', 'themify_builder_plugin_init', 10 );
+add_action( 'after_setup_theme', 'themify_builder_plugin_init' );
 
 /**
  * Load themify functions
@@ -21,7 +21,7 @@ function themify_builder_themify_dependencies(){
 	if ( class_exists( 'Themify_Builder' ) ) return;
 
 	if ( ! defined( 'THEMIFY_DIR' ) ) {
-		define( 'THEMIFY_VERSION', '2.2.3' );
+		define( 'THEMIFY_VERSION', themify_builder_get_plugin_version() );
 		define( 'THEMIFY_DIR', plugin_dir_path( __FILE__ ) . 'themify' );
 		define( 'THEMIFY_URI', plugin_dir_url( __FILE__ ) . 'themify' );
 		require_once( THEMIFY_DIR . '/themify-database.php' );
@@ -32,6 +32,7 @@ function themify_builder_themify_dependencies(){
 			require_once( THEMIFY_DIR . '/themify-wpajax.php' );
 		}
 	}
+	add_action( 'wp_head', 'themify_html_js_class', 0 );
 }
 
 /**
@@ -46,7 +47,7 @@ function themify_builder_plugin_init() {
 	/**
 	 * Define builder constant
 	 */
-	define( 'THEMIFY_BUILDER_VERSION', '1.3.6' );
+	define( 'THEMIFY_BUILDER_VERSION', themify_builder_get_plugin_version() );
 	define( 'THEMIFY_BUILDER_VERSION_KEY', 'themify_builder_version' );
 	define( 'THEMIFY_BUILDER_NAME', trim( dirname( plugin_basename( __FILE__) ), '/' ) );
 	define( 'THEMIFY_BUILDER_SLUG', trim( plugin_basename( __FILE__), '/' ) );
@@ -54,7 +55,7 @@ function themify_builder_plugin_init() {
 	/**
 	 * Layouts Constant
 	 */
-	define( 'THEMIFY_BUILDER_LAYOUTS_VERSION', '1.0.1' );
+	define( 'THEMIFY_BUILDER_LAYOUTS_VERSION', '1.1.1' );
 	
 	// File Path
 	define( 'THEMIFY_BUILDER_DIR', dirname(__FILE__) );
@@ -85,6 +86,7 @@ function themify_builder_plugin_init() {
 		// instantiate the plugin class
 		$Themify_Builder_Layouts = new Themify_Builder_Layouts();
 		$ThemifyBuilder = new Themify_Builder();
+		$ThemifyBuilder->init();
 		$themify_builder_plugin_compat = new Themify_Builder_Plugin_Compat();
 		$themify_builder_import_export = new Themify_Builder_Import_Export();
 
@@ -126,6 +128,24 @@ function themify_builder_plugin_init() {
 	}
 }
 
+if ( ! function_exists( 'themify_builder_get_plugin_version' ) ) {
+	/**
+	 * Return plugin version.
+	 * 
+	 * @since 1.4.2
+	 * 
+	 * @return string
+	 */
+	function themify_builder_get_plugin_version() {
+		static $version;
+		if ( ! isset( $version ) ) {
+			$data = get_file_data( __FILE__, array( 'Version' ) );
+			$version = $data[0];
+		}
+		return $version;
+	}
+}
+
 if ( ! function_exists('themify_builder_edit_module_panel') ) {
 	/**
 	 * Hook edit module frontend panel
@@ -146,7 +166,7 @@ if ( ! function_exists( 'themify_builder_grid_lists' ) ) {
 		$gutters = Themify_Builder_Model::get_grid_settings( 'gutter' );
 		$selected_gutter = is_null( $set_gutter ) ? '' : $set_gutter; ?>
 		<div class="grid_menu" data-handle="<?php echo esc_attr( $handle ); ?>">
-			<div class="grid_icon ti-layout-column3"></div>
+	    <div class="grid_icon ti-layout-column3"></div>
 			<div class="themify_builder_grid_list_wrapper">
 				<ul class="themify_builder_grid_list clearfix">
 					<?php foreach( $grid_lists as $row ): ?>

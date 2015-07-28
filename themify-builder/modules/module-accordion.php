@@ -32,8 +32,8 @@ class TB_Accordion_Module extends Themify_Builder_Module {
 				'type' => 'layout',
 				'label' => __('Accordion layout', 'themify'),
 				'options' => array(
-					array('img' => 'accordion-default.png', 'value' => 'default', 'label' => __('Plus Icon Button', 'themify')),
-					array('img' => 'accordion-separate.png', 'value' => 'separate', 'label' => __('Pipe', 'themify'))
+					array('img' => 'accordion-default.png', 'value' => 'default', 'label' => __('Contiguous Panels', 'themify')),
+					array('img' => 'accordion-separate.png', 'value' => 'separate', 'label' => __('Separated Panels', 'themify'))
 				)
 			),
 			array(

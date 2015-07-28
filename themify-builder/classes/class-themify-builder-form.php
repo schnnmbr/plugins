@@ -126,7 +126,7 @@ final class Themify_Builder_Form {
 			break;
 
 			case 'color': ?>
-				<span class="builderColorSelect"><span></span></span> 
+				<span class="builderColorSelect"><span></span></span>
 				<input type="text" class="<?php echo esc_attr( $field['class'] ); ?> colordisplay"/>
 				<input id="<?php echo esc_attr( $field['id'] ); ?>" name="<?php echo esc_attr( $field['id'] ); ?>" value="" class="builderColorSelectInput tfb_lb_option" type="text" />
 			<?php

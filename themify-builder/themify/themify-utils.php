@@ -594,25 +594,25 @@ function themify_get_css() {
 									if( isset( $v['value']['checkbox'] ) && $v['value']['checkbox'] ) {
 										$temp .= "border: ".$v['value']['same']."px ".$v['value']['same_style']." #".$v['value']['same_color'].";\n";
 									} else {
-										if($v['value']['top'] != '' && $v['value']['top_style'] != '' && $v['value']['top_color'] != ''){
+										if( isset( $v['value']['top'] ) && isset( $v['value']['top_style'] ) && isset( $v['value']['top_color'] ) && $v['value']['top'] != '' && $v['value']['top_style'] != '' && $v['value']['top_color'] != '' ) {
 											$temp .= "border-top: ".$v['value']['top']."px ".$v['value']['top_style']." #".$v['value']['top_color'].";\n";
 										}
-										if($v['value']['right'] != '' && $v['value']['right_style'] != '' && $v['value']['right_color'] != ''){
+										if ( isset( $v['value']['right'] ) && isset( $v['value']['right_style'] ) && isset( $v['value']['right_color'] ) && $v['value']['right'] != '' && $v['value']['right_style'] != '' && $v['value']['right_color'] != '' ) {
 											$temp .= "border-right: ".$v['value']['right']."px ".$v['value']['right_style']." #".$v['value']['right_color'].";\n";
 										}
-										if($v['value']['bottom'] != '' && $v['value']['bottom_style'] != '' && $v['value']['bottom_color'] != ''){
+										if ( isset( $v['value']['bottom'] ) && isset( $v['value']['bottom_style'] ) && isset( $v['value']['bottom_color'] ) && $v['value']['bottom'] != '' && $v['value']['bottom_style'] != '' && $v['value']['bottom_color'] != '' ) {
 
 											$temp .= "border-bottom: ".$v['value']['bottom']."px ".$v['value']['bottom_style']." #".$v['value']['bottom_color'].";\n";
 										}
-										if($v['value']['left'] != '' && $v['value']['left_style'] != '' && $v['value']['left_color'] != ''){
+										if ( isset( $v['value']['left'] ) && isset( $v['value']['left_style'] ) && isset( $v['value']['left_color'] ) && $v['value']['left'] != '' && $v['value']['left_style'] != '' && $v['value']['left_color'] != '' ) {
 											$temp .= "border-left: ".$v['value']['left']."px ".$v['value']['left_style']." #".$v['value']['left_color'].";\n";
 										}
 									}
 								break;
 								case "background-position":
-									if($v['value']['x'] != '' && $v['value']['y']){
-										foreach($v['value'] as $key => $val){
-											if($val == ''){
+									if ( isset( $v['value']['x'] ) && isset( $v['value']['y'] ) && $v['value']['x'] != '' && $v['value']['y'] ) {
+										foreach ( $v['value'] as $key => $val ) {
+											if ( $val == '' ) {
 												$v['value'][$key] = 0;
 											}
 										}
@@ -621,80 +621,74 @@ function themify_get_css() {
 									}
 								break;
 								case "padding":
-									if( isset( $v['value']['checkbox'] ) && $v['value']['checkbox'] ) {
+									if ( isset( $v['value']['checkbox'] ) && $v['value']['checkbox'] ) {
 										$temp .= $attribute.": ";
 										$temp .= $v['value']['same']."px".";\n";
 									} else {
-										if($v['value']['top'] != '' || $v['value']['right'] != '' || $v['value']['bottom'] != '' || $v['value']['left'] != ''){
-											if($v['value']['top'] != ''){
-												$temp .= "padding-top: ".$v['value']['top']."px;\n";
-											}
-											if($v['value']['right'] != ''){
-												$temp .= "padding-right: ".$v['value']['right']."px;\n";
-											}
-											if($v['value']['bottom'] != ''){
-												$temp .= "padding-bottom: ".$v['value']['bottom']."px;\n";
-											}
-											if($v['value']['left'] != ''){
-												$temp .= "padding-left: ".$v['value']['left']."px;\n";
-											}
+										if ( isset( $v['value']['top'] ) &&  $v['value']['top'] != '' ) {
+											$temp .= "padding-top: ".$v['value']['top']."px;\n";
+										}
+										if ( isset( $v['value']['right'] ) &&  $v['value']['right'] != '' ) {
+											$temp .= "padding-right: ".$v['value']['right']."px;\n";
+										}
+										if ( isset( $v['value']['bottom'] ) &&  $v['value']['bottom'] != '' ) {
+											$temp .= "padding-bottom: ".$v['value']['bottom']."px;\n";
+										}
+										if ( isset( $v['value']['left'] ) &&  $v['value']['left'] != '' ) {
+											$temp .= "padding-left: ".$v['value']['left']."px;\n";
 										}
 									}
 								break;
 								case "margin":
-									if( isset( $v['value']['checkbox'] ) && $v['value']['checkbox'] ) {
+									if ( isset( $v['value']['checkbox'] ) && $v['value']['checkbox'] ) {
 										$temp .= $attribute.": ";
 										$temp .= $v['value']['same']."px".";\n";
 									} else {
-										if($v['value']['top'] != '' || $v['value']['right'] != '' || $v['value']['bottom'] != '' || $v['value']['left'] != ''){
-											if($v['value']['top'] != ''){
-												$temp .= "margin-top: ".$v['value']['top']."px;\n";
-											}
-											if($v['value']['right'] != ''){
-												$temp .= "margin-right: ".$v['value']['right']."px;\n";
-											}
-											if($v['value']['bottom'] != ''){
-												$temp .= "margin-bottom: ".$v['value']['bottom']."px;\n";
-											}
-											if($v['value']['left'] != ''){
-												$temp .= "margin-left: ".$v['value']['left']."px;\n";
-											}
+										if ( isset( $v['value']['top'] ) && $v['value']['top'] != '' ) {
+											$temp .= "margin-top: ".$v['value']['top']."px;\n";
+										}
+										if ( isset( $v['value']['right'] ) && $v['value']['right'] != '' ) {
+											$temp .= "margin-right: ".$v['value']['right']."px;\n";
+										}
+										if ( isset( $v['value']['bottom'] ) && $v['value']['bottom'] != '' ) {
+											$temp .= "margin-bottom: ".$v['value']['bottom']."px;\n";
+										}
+										if ( isset( $v['value']['left'] ) && $v['value']['left'] != '' ) {
+											$temp .= "margin-left: ".$v['value']['left']."px;\n";
 										}
 									}
 								break;
 								case "color":
-									if($v['value']['value'] != '' && $v['value']['value'] != ' '){
+									if ( isset( $v['value']['value'] ) && $v['value']['value'] != '' && $v['value']['value'] != ' ' ) {
 										$temp .= $attribute.": ";
 										$temp .= "#".$v['value']['value'].";\n";
 									}
 								break;
 								case "background-color":
-									if( isset( $v['value']['transparent'] ) && $v['value']['transparent'] ) {
+									if ( isset( $v['value']['transparent'] ) && $v['value']['transparent'] ) {
 										$temp .= $attribute.": transparent;\n";
-									} else {
-										if($v['value']['value'] != '' && $v['value']['value'] != ' '){
-											$temp .= $attribute.": ";
-											$temp .= "#".$v['value']['value'].";\n";
-										}
+									} elseif ( isset( $v['value']['value'] ) && $v['value']['value'] != '' && $v['value']['value'] != ' ' ) {
+										$temp .= $attribute.": ";
+										$temp .= "#".$v['value']['value'].";\n";
 									}
 								break;
 								case "background-image":
-									if($v['value']['value'] != '' && $v['value']['value'] != ' '){
+									if ( isset( $v['value']['value'] ) && $v['value']['value'] != '' && $v['value']['value'] != ' ' ) {
 										$temp .= $attribute.": ";
 										$temp .= "url(".$v['value']['value'].")".";\n";
-									} elseif( isset( $v['value']['none'] ) && 'on' == $v['value']['none'] ) {
+									} elseif ( isset( $v['value']['none'] ) && 'on' == $v['value']['none'] ) {
 										$temp .= $attribute.": ";
 										$temp .= "none;\n";
 									}
 								break;
 								case "background-repeat":
-									if($v['value']['value'] != '' && $v['value']['value'] != ' '){
+									if ( isset( $v['value']['value'] ) && $v['value']['value'] != '' && $v['value']['value'] != ' ' ) {
 										$temp .= $attribute.": ";
 										$temp .= $v['value']['value'].";\n";
 									}
 								break;
 								case "font-family":
-									if($v['value']['value'] != '' && $v['value']['value'] != ' '){
+									if ( isset( $v['value']['value'] ) && $v['value']['value'] != '' && $v['value']['value'] != ' ' ) {
 										$temp .= $attribute.": ";
 
 										// check google fonts
@@ -706,13 +700,13 @@ function themify_get_css() {
 									}
 								break;
 								case "line-height":
-									if($v['value']['value'] != '' && $v['value']['value'] != ' '){
+									if ( isset( $v['value']['value'] ) && $v['value']['value'] != '' && $v['value']['value'] != ' ' ) {
 										$temp .= $attribute.": ";
 										$temp .= $v['value']['value'].$v['value']['unit'].";\n";
 									}
 								break;
 								case "position":
-									if($v['value']['value'] != '' && $v['value']['value'] != ' '){
+									if ( isset( $v['value']['value'] ) && $v['value']['value'] != '' && $v['value']['value'] != ' ' ) {
 										$temp .= $attribute.": ";
 										$temp .= $v['value']['value'].";\n";
 										if($v['value']['value'] == 'absolute' || $v['value']['value'] == 'fixed'){
@@ -726,7 +720,7 @@ function themify_get_css() {
 									}
 								break;
 								default:
-									if($v['value']['value'] != '' && $v['value']['value'] != ' '){
+									if ( isset( $v['value']['value'] ) && $v['value']['value'] != '' && $v['value']['value'] != ' ' ) {
 										$temp .= $attribute.": ";
 										$temp .= $v['value']['value'];
 										if(isset($v['value']['unit'])){
@@ -921,11 +915,24 @@ function themify_enqueue_scripts($page){
 	$types = themify_post_types();
 	$pages = apply_filters( 'themify_top_pages', array( 'post.php', 'post-new.php', 'toplevel_page_themify', 'nav-menus.php' ) );
 	$pagenows = apply_filters( 'themify_pagenow', array( 'themify' ) );
-	
+
+	wp_register_script( 'meta-box-tabs', THEMIFY_URI . '/js/meta-box-tabs.js', array('jquery'), '1.0', true );
+	wp_register_script( 'media-library-browse', THEMIFY_URI . '/js/media-lib-browse.js', array('jquery'), '1.0', true );
+	wp_register_style( 'themify-ui',  THEMIFY_URI . '/css/themify-ui.css', array(), THEMIFY_VERSION );
+	wp_register_style( 'themify-ui-rtl',  THEMIFY_URI . '/css/themify-ui-rtl.css', array(), THEMIFY_VERSION );
+	wp_register_style( 'colorpicker', THEMIFY_URI . '/css/jquery.minicolors.css', array(), THEMIFY_VERSION );
+	wp_register_script( 'validate', THEMIFY_URI . '/js/jquery.validate.pack.js', array('jquery'), THEMIFY_VERSION );
+	wp_register_script( 'colorpicker-js', THEMIFY_URI . '/js/jquery.minicolors.js', array('jquery'), THEMIFY_VERSION );
+	wp_register_script( 'themify-scripts', THEMIFY_URI . '/js/scripts.js', array('jquery'), THEMIFY_VERSION );
+	wp_register_script( 'themify-plupload', THEMIFY_URI . '/js/plupload.js', array('jquery', 'themify-scripts'), THEMIFY_VERSION);
+	wp_register_script( 'gallery-shortcode', THEMIFY_URI . '/js/gallery-shortcode.js', array('jquery', 'themify-scripts'), THEMIFY_VERSION, true );
+	wp_register_style ( 'magnific', THEMIFY_URI . '/css/lightbox.css', array(), THEMIFY_VERSION );
+	wp_register_script( 'magnific', THEMIFY_URI . '/js/lightbox.js', array('jquery'), THEMIFY_VERSION, true );
+
 	// Custom Write Panel
 	if( ($page == 'post.php' || $page == 'post-new.php') && in_array($typenow, $types) ){
-		wp_enqueue_script( 'meta-box-tabs', THEMIFY_URI . '/js/meta-box-tabs.js', array('jquery'), '1.0', true );
-		wp_enqueue_script( 'media-library-browse', THEMIFY_URI . '/js/media-lib-browse.js', array('jquery'), '1.0', true );
+		wp_enqueue_script( 'meta-box-tabs' );
+		wp_enqueue_script( 'media-library-browse' );
 	}
 
 	// Register icon assets for later enqueueing.
@@ -940,11 +947,11 @@ function themify_enqueue_scripts($page){
 	}
 	if( in_array( $page, $pages ) ) {
 		//Enqueue styles
-		wp_enqueue_style( 'themify-ui',  THEMIFY_URI . '/css/themify-ui.css', array(), THEMIFY_VERSION );
+		wp_enqueue_style( 'themify-ui' );
 		if ( is_rtl() ) {
-			wp_enqueue_style( 'themify-ui-rtl',  THEMIFY_URI . '/css/themify-ui-rtl.css', array(), THEMIFY_VERSION );
+			wp_enqueue_style( 'themify-ui-rtl' );
 		}
-		wp_enqueue_style( 'colorpicker', THEMIFY_URI . '/css/jquery.minicolors.css', array(), THEMIFY_VERSION );
+		wp_enqueue_style( 'colorpicker' );
 		
 		//Enqueue scripts
 		wp_enqueue_script( 'jquery' );
@@ -952,18 +959,17 @@ function themify_enqueue_scripts($page){
 		wp_enqueue_script( 'jquery-ui-tabs' );
 		wp_enqueue_script( 'json2' );
 		wp_enqueue_script( 'plupload-all' );
-		wp_enqueue_script( 'validate', THEMIFY_URI . '/js/jquery.validate.pack.js', array('jquery'), THEMIFY_VERSION );
-		wp_enqueue_script( 'colorpicker-js', THEMIFY_URI . '/js/jquery.minicolors.js', array('jquery'), THEMIFY_VERSION );
+		wp_enqueue_script( 'validate' );
+		wp_enqueue_script( 'colorpicker-js' );
 		if( in_array($typenow, $types) || in_array( $pagenow, $pagenows ) ){
 			//Don't include Themify JavaScript if we're not in one of the Themify-managed pages
-			wp_enqueue_script( 'themify-scripts', THEMIFY_URI . '/js/scripts.js', array('jquery'), THEMIFY_VERSION );
-			wp_enqueue_script( 'themify-plupload', THEMIFY_URI . '/js/plupload.js', array('jquery', 'themify-scripts'), THEMIFY_VERSION);
-			wp_register_script( 'gallery-shortcode', THEMIFY_URI . '/js/gallery-shortcode.js', array('jquery', 'themify-scripts'), THEMIFY_VERSION, true );
+			wp_enqueue_script( 'themify-scripts' );
+			wp_enqueue_script( 'themify-plupload' );
 		}
 		// Enqueue font icon assets.
 		themify_font_icons_admin_assets();
-		wp_enqueue_style ( 'magnific', THEMIFY_URI . '/css/lightbox.css', array(), THEMIFY_VERSION );
-		wp_enqueue_script( 'magnific', THEMIFY_URI . '/js/lightbox.js', array('jquery'), THEMIFY_VERSION, true );
+		wp_enqueue_style ( 'magnific' );
+		wp_enqueue_script( 'magnific' );
 	}
 	//Inject variable values to scripts.js previously enqueued
 	wp_localize_script('themify-scripts', 'themify_js_vars', array(
@@ -2866,7 +2872,7 @@ function themify_get_image( $args ) {
 		'before' 	 => '',
 		'after' 	 => '',
 		'alt'		 => '',
-		'crop'		 => 'false',
+		'crop'		 => true,
 		'setting' 	 => '',
 		'field_name' => 'post_image,image,wp_thumb,feature_image',
 		'urlonly' 	 => false,
@@ -2944,7 +2950,7 @@ function themify_get_image( $args ) {
 		if ( '' == $width ) {
 			$width = $themify->width;
 		}
-		if ( '' == $height) {
+		if ( '' == $height && 0 != $height ) {
 			$height = $themify->height;
 		}
 	} else {
@@ -2960,23 +2966,7 @@ function themify_get_image( $args ) {
 		}
 	}
 
-	if ( ! themify_is_image_script_disabled() ) { // Use Image Script
-
-		if ( empty( $args['src'] ) ) {
-			foreach( explode( ',', $args['field_name'] ) as $field ) {
-				if ( $img_url = get_post_meta( $post_id, trim( $field ), true ) ) {
-					break;
-				}
-			}
-		} else {
-			$img_url = $args['src'];
-		}
-
-		// Set URL to use for final output.
-		$temp = themify_do_img( $img_url, $width, $height, $args['crop'] );
-		$img_url = $temp['url'];
-
-	} else { // Use WP standard image sizes
+	if ( themify_is_image_script_disabled() ) { // Use WP standard image sizes
 
 		if ( ! empty( $args['image_size'] ) ) { // If image_size parameter is set
 			$feature_size = $args['image_size'];
@@ -2994,7 +2984,7 @@ function themify_get_image( $args ) {
 					if ( empty( $feature_size ) || 'blank' == $feature_size ) {
 						$feature_size = themify_get( 'setting-image_post_feature_size' );
 					}
-				} elseif ( is_archive() || is_tax() || is_search() ) {
+				} elseif ( is_archive() || is_tax() || is_search() || is_home() ) {
 					$feature_size = themify_get( 'setting-image_post_feature_size' );
 				}
 			}
@@ -3008,11 +2998,34 @@ function themify_get_image( $args ) {
 
 		if ( empty( $args['src'] ) ) {
 			// Set URL to use for final output.
-			$temp = wp_get_attachment_image_src( get_post_thumbnail_id( $post_id ), $feature_size );
-			$img_url = $temp[0];
+			$img_url = themify_image_url( false, $feature_size );
 		} else {
 			$img_url = $args['src'];
 		}
+
+	} else { // Use Image Script
+
+		if ( empty( $args['src'] ) ) {
+			if ( has_post_thumbnail() ) {
+				$img_url = themify_image_url();
+			} else {
+				foreach( explode( ',', $args['field_name'] ) as $field ) {
+					if ( $img_url = get_post_meta( $post_id, trim( $field ), true ) ) {
+						break;
+					}
+				}
+			}
+		} else {
+			$img_url = $args['src'];
+		}
+
+		if ( 0 == $height ) {
+			$args['crop'] = false;
+		}
+
+		// Set URL to use for final output.
+		$temp = themify_do_img( $img_url, $width, $height, (bool) $args['crop'] );
+		$img_url = $temp['url'];
 
 	}
 
@@ -3029,9 +3042,18 @@ function themify_get_image( $args ) {
 				$ext = explode( '.', $temp['src'] );
 				$ext = strtolower( $ext[ count( $ext ) - 1 ] );
 				if ( strpos( $temp['src'], '.' ) && ( $ext == 'jpg' || $ext == 'jpeg' || $ext == 'gif' || $ext == 'png' ) ) {
-					$img_url = isset( $temp['src'] )? $temp['src'] : '';
+					$auto_image_url = isset( $temp['src'] )? $temp['src'] : '';
 					$args['class'] .= isset( $temp['class'] )? ' ' . $temp['class'] : '';
 					$args['alt'] = $temp['alt'];
+					if ( themify_is_image_script_disabled() ) {
+						$upload_dir = wp_upload_dir();
+						$img_url = themify_image_url( false, $feature_size, themify_get_attachment_id_from_url( $auto_image_url, $upload_dir['baseurl'] ) );
+						if ( empty( $img_url ) ) {
+							$img_url = esc_url( $auto_image_url );
+						}
+					} elseif ( $temp = themify_do_img( $auto_image_url, $width, $height, (bool) $args['crop'] ) ) {
+						$img_url = $temp['url'];
+					}
 					break;
 				}
 			}
@@ -3088,12 +3110,16 @@ if ( ! function_exists( 'themify_image_url' ) ) {
 	 * Returns the featured image url
 	 * @param bool $echo Specify to echo or return the url
 	 * @param string $size The image size to return
+	 * @param null|int $attachment_id ID of image to load.
 	 * @return void|string
 	 */
-	function themify_image_url( $echo = false, $size = 'full' ) {
+	function themify_image_url( $echo = false, $size = 'full', $attachment_id = null ) {
 		$url = '';
 		if ( has_post_thumbnail() ) {
 			$image = wp_get_attachment_image_src( get_post_thumbnail_id(), $size );
+			$url = $image[0];
+		} elseif ( ! is_null( $attachment_id ) ) {
+			$image = wp_get_attachment_image_src( $attachment_id, $size );
 			$url = $image[0];
 		}
 		$url = apply_filters( 'themify_image_url', $url );
@@ -3238,11 +3264,6 @@ function themify_excerpt($limit) {
 		$excerpt = preg_replace('`[[^]]*]`','',$excerpt);
 	return $excerpt;
 }
-
-///////////////////////////////////////
-// Load theme languages
-///////////////////////////////////////
-load_theme_textdomain( 'themify', THEME_DIR.'/languages' );
 
 /**
  * Echoes page navigation
@@ -4182,8 +4203,9 @@ function themify_get_google_fonts_file() {
  */
 function themify_grab_remote_google_fonts() {
 	$fonts_file_path = themify_get_google_fonts_file();
-	if(themify_check('setting-webfonts_subsets') && '' != themify_get('setting-webfonts_subsets')) {
-		$user_subsets = explode(',', str_replace(' ', '', themify_get('setting-webfonts_subsets')));
+	$setting_webfonts_subsets = sanitize_text_field( themify_get( 'setting-webfonts_subsets' ) );
+	if ( themify_check( 'setting-webfonts_subsets' ) && '' != $setting_webfonts_subsets ) {
+		$user_subsets = explode( ',', str_replace( ' ', '', $setting_webfonts_subsets ) );
 	} else {
 		$user_subsets = array();
 	}
@@ -5283,7 +5305,7 @@ if ( ! function_exists( 'themify_js_window_resize' ) ) {
 	 * @since 1.6.8
 	 */
 	function themify_js_window_resize() {
-		echo "\n<script>\n\tjQuery(window).load(function(){ jQuery(window).resize(); });\n</script>\n";
+		echo "\n<script>\n\tjQuery(window).load(function(){ jQuery(window).resize(); jQuery( 'body' ).addClass( 'page-loaded' ); });\n</script>\n";
 	}
 }
 
@@ -5648,6 +5670,8 @@ function themify_has_styling_data() {
  * @return string
  */
 function themify_get_lightbox_iframe_link( $uri ) {
+	if( preg_match( '/\.(jpe?g|gif|png)$/i', $uri ) )
+		return $uri;
 	$uri_segments = parse_url( $uri );
 	$query_args = isset( $uri_segments['query'] ) ? $uri_segments['query'] : '';
 	wp_parse_str( $query_args, $uri_args );
@@ -5769,7 +5793,7 @@ if ( ! function_exists( 'themify_get_available_menus' ) ) {
  * @since 1.9.9
  */
 function themify_html_js_class() {
-	echo '<script>document.documentElement.className += " js";</script>';
+	echo "<script>(function(html){ html.className = html.className.replace(/\bno-js\b/,'js'); if (html.classList) { html.classList.add( 'js' ); } else { html.className += ' js'; } })(document.documentElement);</script>";
 }
 
 /**
@@ -6095,6 +6119,10 @@ function themify_updater_notice_allowed_tags() {
  */
 function themify_allow_extra_protocols( $protocols ){
 	$protocols[] = 'skype';
+	$protocols[] = 'sms';
+	$protocols[] = 'comgooglemaps';
+	$protocols[] = 'comgooglemapsurl';
+	$protocols[] = 'comgooglemaps-x-callback';
 	return $protocols;
 }
 
@@ -6109,4 +6137,57 @@ function themify_get_fa_icon_classname( $icon ) {
 	}
 
 	return $icon;
+}
+
+/**
+ * Support for Sensei plugin
+ *
+ * @since 2.2.5
+ */
+function themify_sensei_support() {
+	if( function_exists( 'Sensei' ) ) {
+		global $woothemes_sensei;
+
+		add_theme_support( 'sensei' );
+		remove_action( 'sensei_before_main_content', array( $woothemes_sensei->frontend, 'sensei_output_content_wrapper' ), 10 );
+		remove_action( 'sensei_after_main_content', array( $woothemes_sensei->frontend, 'sensei_output_content_wrapper_end' ), 10 );
+		add_action( 'sensei_before_main_content', 'themify_sensei_wrapper_start', 10 );
+		add_action( 'sensei_after_main_content', 'themify_sensei_wrapper_end', 10 );
+	}
+}
+
+/**
+ * Display wrapper start for Sensei pages
+ *
+ * @since 2.2.5
+ */
+function themify_sensei_wrapper_start() {
+	echo '
+	<div id="layout" class="pagewidth clearfix">
+		<div id="content" class="clearfix">';
+}
+
+/**
+ * Display wrapper end for Sensei pages
+ *
+ * @since 2.2.5
+ */
+function themify_sensei_wrapper_end() {
+	echo '</div><!-- #content -->';
+	get_sidebar();
+	echo '</div><!-- #layout -->';
+}
+
+/**
+ * Returns true if the active theme is using Themify framework
+ *
+ * @since 2.2.5
+ * @return bool
+ */
+function themify_is_themify_theme() {
+	if( file_exists( get_template_directory() . '/themify/themify-utils.php' ) ) {
+		return true;
+	}
+
+	return false;
 }

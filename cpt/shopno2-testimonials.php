@@ -40,14 +40,15 @@ function shopno2_testimonial() {
 		'show_in_nav_menus'   => true,
 		'show_in_admin_bar'   => true,
 		'menu_position'       => 5,
-		'menu_icon'           => WP_PLUGIN_URL . ‘/cpt/shopno2-testimonials.png',
+		'menu_icon'           => WP_PLUGIN_URL . '/cpt/shopno2-testimonials.png',
 		'can_export'          => true,
 		'has_archive'         => true,
 		'exclude_from_search' => false,
 		'publicly_queryable'  => true,
 		'capability_type'     => 'page',
-		'supports' => array( 'title', 'editor', 'genesis-seo', 'thumbnail','genesis-cpt-archives-settings','excerpt' ),
-	);
+		'supports' => array( 'title', 'editor', 'thumbnail', 'excerpt', 'custom-fields', 'genesis-seo', 'thumbnail','genesis-cpt-archives-settings', 'genesis-layouts' ), );
+
+	//'supports' => array( 'title', 'editor', 'thumbnail', 'excerpt','custom-fields'),
 	register_post_type( 'testimonial', $args );
 
 }

@@ -7,6 +7,9 @@ if ( ! defined( 'ABSPATH' ) ) exit; // Exit if accessed directly
  * @author Themify
  */
 
+// Load styles and scripts registered in Themify_Builder::register_frontend_js_css()
+$GLOBALS['ThemifyBuilder']->load_templates_js_css();
+
 $fields_default = array(
 	'mod_title_tab' => '',
 	'layout_tab' => 'tab-top',
@@ -35,7 +38,7 @@ $container_class = implode(' ',
 <!-- module tab -->
 <div id="<?php echo esc_attr( $tab_id ); ?>" class="<?php echo esc_attr( $container_class ); ?>">
 	<?php if ( $mod_title_tab != '' ): ?>
-	<h3 class="module-title"><?php echo wp_kses_post( $mod_title_tab ); ?></h3>
+		<?php echo $mod_settings['before_title'] . wp_kses_post( apply_filters( 'themify_builder_module_title', $mod_title_tab, $fields_args ) ) . $mod_settings['after_title']; ?>
 	<?php endif; ?>
 
 	<?php do_action( 'themify_builder_before_template_content_render' ); ?>

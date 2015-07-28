@@ -12,6 +12,7 @@ GENERAL STYLING
 .col3-2,
 .col2-1,
 .themify_builder_row,
+.themify_builder .module_row,
 .themify_builder .module,
 .slide_builder_module_panel,
 .themify_builder_module_panel,
@@ -65,7 +66,6 @@ GRID
 	width: 65.6%;
 }
 .col.first,
-.col6-1.first,
 .col5-1.first,
 .col4-1.first,
 .col4-2.first,
@@ -1444,10 +1444,10 @@ ELEMENTS
 	border-color: inherit;
 	clear: both;
 	overflow: hidden;
+	display: none;
 }
-.ui.module-tab .tab-content.active {
+.ui.module-tab .tab-content.active, .ui.module-tab .tab-content:first-of-type {
 	display: block;
-	clear:both;
 }
 
 /* vertical tab */
@@ -1659,6 +1659,12 @@ IMAGE MODULE
 .module-image.image-top .image-content {
 	margin-top: 1em;
 	margin-bottom: 1.5em;
+}
+.module-image.image-top .image-wrap {
+	width: 100%;
+}
+.module-image.image-top img {
+	width: 100%;
 }
 
 /* image left */
@@ -1990,11 +1996,15 @@ GALLERY MODULE
 .module-gallery .gallery-showcase-image {
 	margin-bottom: 10px;
 }
+.module-gallery.layout-showcase .gallery-images a {
+	border-bottom-width: 0;
+}
 .module-gallery.layout-showcase .gallery-images img {
 	max-width: 50px;
 	max-height: 50px;
 	margin-right: 5px;
 	margin-bottom: 5px;
+	display: inline-block;
 }
 
 /* GALLERY COLUMN
@@ -2259,6 +2269,7 @@ SLIDER MODULE
 }
 .themify_builder_slider .slide-image img {
 	vertical-align: bottom;
+	width: 100%;
 }
 
 /* slider content */
@@ -2886,6 +2897,26 @@ BACKGROUND IMAGE MODE
 .full_width .module_row.fullwidth .row_inner {
 	width: 100%;
 }
+/* fix iOS bug not displaying 100vh correctly */
+/* ipad portrait */
+@media all and (device-width: 768px) and (device-height: 1024px) and (orientation:portrait){
+	.themify_builder .themify_builder_row.fullheight {
+		height: 1024px;
+	}
+}
+/* ipad landscape */
+@media all and (device-width: 768px) and (device-height: 1024px) and (orientation:landscape){
+	.themify_builder .themify_builder_row.fullheight {
+		height: 768px;
+	}
+}
+/* iphone5 */
+@media screen and (device-aspect-ratio: 40/71) {
+	.themify_builder .themify_builder_row.fullheight {
+		height: 500px;
+	}
+}
+
 .single-template-builder-container {
 	margin: 0 auto;
 	width: 1160px;
@@ -2988,6 +3019,7 @@ Fullwidth Slider
 	margin-top: -.5em;
 	text-indent: -999em;
 	text-align: center;
+	border-bottom-width: 0;
 }
 .themify_builder_row .row-slider-arrow:before {
 	position: absolute;
@@ -3089,7 +3121,6 @@ Features module
 	position: relative;
 	text-align: center;
 	margin: 0 auto;
-	max-width: 100%;
 }
 .module-feature .easyPieChart canvas {
 	position: absolute;
@@ -3428,9 +3459,18 @@ Parallax Animation
 /************************************************************************************
 MEDIA QUERIES
 *************************************************************************************/
+@media (min-width: 960px) {
+	.col6-1.first {
+		margin-left: 0 !important;
+		clear: left !important;
+	}
+}
 @media (min-width: 600px) and (max-width: 959px) {
 	.themify_builder_content .col4-1 {
 		width: 46.8%;
+	}
+	.themify_builder_row .col4-3 + .col4-1 {
+		width: 22.6%;
 	}
 	.themify_builder_content .col4-1:nth-child(2n+1) {
 		margin-left: 0 !important;
@@ -3459,6 +3499,14 @@ MEDIA QUERIES
 	.themify_builder_content .gutter-none .row_inner > .col6-1 {
 		width: 33.333%;
 	}
+
+	.themify_builder_row .empty-column {
+		display: none;
+	}
+	.themify_builder_row .empty-column + .col4-2.middle,
+	.themify_builder_row .empty-column + .col3-1.middle {
+		width: auto;
+	}
 }
 
 @media screen and (max-width: 680px) {
@@ -3478,23 +3526,6 @@ MEDIA QUERIES
 
 @media screen and (max-width: 600px) {
 	
-	/* reset fullheight row */
-	.themify_builder .themify_builder_row.fullheight {
-		height: auto;
-		display: block;
-	}
-	.themify_builder .themify_builder_row.fullheight .row_inner_wrapper {
-		display: block;
-		width: auto;	
-	}
-	.themify_builder .themify_builder_row.fullheight .row_inner {
-		display: block;
-		width: auto;
-		padding-top: 30%;
-		padding-bottom: 20%;
-		min-height: 300px;
-	}
-
 	/* reset overlay element to static position */
 	.module-image .image-content,
 	.module-video .video-content,
@@ -3568,6 +3599,15 @@ MEDIA QUERIES
 	.themify_builder_content .gutter-none .row_inner > .col6-1 {
 		width: 50%;
 	}
+
+	.module-feature.layout-icon-right .module-feature-image {
+		float: none;
+		margin: 0 auto .4em;
+	}
+	.module-feature.layout-icon-left .module-feature-image {
+		float: none;
+		margin: 0 auto .4em;
+	}
 }
 
 /* Responsive utilities */
@@ -3638,4 +3678,28 @@ MEDIA QUERIES
 	.visible-large {
 		display: none !important;
 	}
+}
+
+/* Turn On Builder button in content */
+a.themify_builder_turn_on {
+	font: normal normal 15px/2 sans-serif !important;
+	padding: 2px 0 2px 15px;
+	margin: 20px auto;
+	display: inline-block;
+	clear: both;
+	float: none;
+	cursor: pointer;
+	text-decoration: none;
+}
+a.themify_builder_turn_on:hover {
+	text-decoration: none;
+}
+a.themify_builder_turn_on .dashicons-edit {
+	font-weight: normal;
+	font-style: normal;
+	margin-right: 5px;
+	line-height: 1.2;
+}
+.themify_builder_active a.themify_builder_turn_on {
+	display: none;
 }

@@ -49,22 +49,23 @@
 			var self = ThemifyPageBuilder,
 				$body = $('body'),
 				resizeId,
-				eventToUse = 'true' == themifyBuilder.isTouch ? 'touchend' : 'mouseenter mouseleave';
+				eventToUse = 'true' == themifyBuilder.isTouch ? 'touchend' : 'mouseenter mouseleave',
+				actionEvent = 'true' == themifyBuilder.isTouch ? 'touchend' : 'click';
 
 			/* rows */
-			$body.on('click', '.toggle_row', this.toggleRow)
-			.on('click', '.themify_builder_option_row', this.optionRow)
-			.on('click', '.themify_builder_delete_row', this.deleteRow)
-			.on('click', '.themify_builder_duplicate_row', this.duplicateRow)
+			$body.on( actionEvent, '.toggle_row', this.toggleRow )
+			.on( actionEvent, '.themify_builder_option_row', this.optionRow )
+			.on( actionEvent, '.themify_builder_delete_row', this.deleteRow )
+			.on( actionEvent, '.themify_builder_duplicate_row', this.duplicateRow )
 			.on( eventToUse , '.themify_builder_row .row_menu', this.MenuHover);
 			$('.themify_builder_row_panel').on( eventToUse, '.module_menu', this.MenuHover);
 
 			/* module */
-			$body.on('click', '.themify_module_options', this.optionsModule)
+			$body.on( actionEvent, '.themify_module_options', this.optionsModule )
 			.on('dblclick', '.active_module', this.dblOptionModule)
-			.on('click', '.themify_module_duplicate', this.duplicateModule)
-			.on('click', '.themify_module_delete', this.deleteModule)
-			.on('click', '.add_module', this.addModule)
+			.on( actionEvent, '.themify_module_duplicate', this.duplicateModule )
+			.on( actionEvent, '.themify_module_delete', this.deleteModule )
+			.on( actionEvent, '.add_module', this.addModule )
 
 			/* clear styling */
 			.on('click', '.reset-module-styling', this.resetModuleStyling)
@@ -152,11 +153,11 @@
 			})
 
 			// Grid Menu List
-			.on('click', '.themify_builder_grid_list li a', this._gridMenuClicked)
+			.on( actionEvent, '.themify_builder_grid_list li a', this._gridMenuClicked )
 			.on(eventToUse, '.themify_builder_row .grid_menu', this._gridHover)
 			.on('change', '.themify_builder_row .gutter_select', this._gutterChange)
-			.on('click', '.themify_builder_sub_row .sub_row_delete', this._subRowDelete)
-			.on('click', '.themify_builder_sub_row .sub_row_duplicate', this._subRowDuplicate);
+			.on( actionEvent, '.themify_builder_sub_row .sub_row_delete', this._subRowDelete )
+			.on( actionEvent, '.themify_builder_sub_row .sub_row_duplicate', this._subRowDuplicate) ;
 
 			// Module actions
 			self.moduleActions();
@@ -1143,7 +1144,7 @@
 
 					option_data[r] = {row_order: r, gutter: $(this).data('gutter'), cols: cols };
 				} else {
-					option_data[r] = {};
+					option_data[r] = { row_order: r, gutter: $(this).data('gutter') };
 				}
 
 				// get row styling
@@ -1790,6 +1791,9 @@
 						var id = $( this ).attr( 'id' );
 						if( $options[id] ) {
 							$options[id] = typeof $options[id] == 'string' ? [$options[id]] : $options[id]; // cast the option value as array
+							// First unchecked all to fixed checkbox has default value.
+							$(this).find('.tf-checkbox').prop('checked', false);
+							// Set the values
 							$.each( $options[id], function( i, v ){
 								$( '.tf-checkbox[value="'+ v +'"]' ).prop( 'checked', true );
 							} );
@@ -1911,7 +1915,7 @@
 		_gridHover: function(event) {
 			event.stopPropagation();
 			if ( event.type == 'touchend' ) {
-				$column_menu = $(this).find('.themify_builder_grid_list_wrapper');
+				var $column_menu = $(this).find('.themify_builder_grid_list_wrapper');
 				if ( $column_menu.is(':hidden') ) {
 					$column_menu.show();
 				} else {

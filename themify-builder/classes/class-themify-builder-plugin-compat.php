@@ -24,7 +24,47 @@ class Themify_Builder_Plugin_Compat {
 		if ( $this->is_plugin_active( 'wordpress-seo/wp-seo.php' ) ) {
 			add_action( 'wp_ajax_wpseo_get_html_builder', array( &$this, 'wpseo_get_html_builder_ajaxify' ), 10 );
 			add_filter( 'wpseo_pre_analysis_post_content', array( $this, 'wpseo_pre_analysis_post_content' ), 10, 2 );
+			add_filter( 'wpseo_sitemap_urlimages', array( $this, 'wpseo_sitemap_urlimages' ), 10, 2 );
 		}
+	}
+
+	/**
+	 * Make the sitemap in WP-SEO plugin count images in Builder
+	 *
+	 * @since 1.4.2
+	 * @return array
+	 */
+	function wpseo_sitemap_urlimages( $images, $id ) {
+		global $ThemifyBuilder;
+
+		$modules = $ThemifyBuilder->get_flat_modules_list( $id );
+		foreach( $modules as $module ) {
+			$img = $this->_find_image_modules( $module );
+			if( ! empty( $img ) ) {
+				$images[] = $img;
+			}
+		}
+
+		return $images;
+	}
+
+	/**
+	 * get module settings and if it's an image module, returns an array of image url and alt text
+	 * Used in wpseo_sitemap_urlimages
+	 *
+	 * @since 1.4.2
+	 * @return array
+	 */
+	function _find_image_modules( $mod ) {
+		if( $mod['mod_name'] == 'image' && isset( $mod['mod_settings'] ) ) {
+			return array(
+				'src' => isset( $mod['mod_settings']['url_image'] ) ? $mod['mod_settings']['url_image'] : '',
+				'alt' => isset( $mod['mod_settings']['alt_image'] ) ? $mod['mod_settings']['alt_image'] : '',
+				'title' => isset( $mod['mod_settings']['title_image'] ) ? $mod['mod_settings']['title_image'] : '',
+			);
+		}
+
+		return array();
 	}
 
 	function show_builder_below_tabs() {

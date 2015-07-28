@@ -186,8 +186,10 @@ class Themify_Builder_Layouts_Importer extends WP_Importer {
 			foreach ( $import_data['posts'] as $post ) {
 				$login = sanitize_user( $post['post_author'], true );
 				if ( empty( $login ) ) {
-					printf( __( 'Failed to import author %s. Their posts will be attributed to the current user.', 'wordpress-importer' ), esc_html( $post['post_author'] ) );
-					echo '<br />';
+					if ( defined('IMPORT_DEBUG') && IMPORT_DEBUG ) {
+						printf( __( 'Failed to import author %s. Their posts will be attributed to the current user.', 'wordpress-importer' ), esc_html( $post['post_author'] ) );
+						echo '<br />';
+					}
 					continue;
 				}
 
@@ -243,10 +245,11 @@ class Themify_Builder_Layouts_Importer extends WP_Importer {
 						$this->processed_authors[$old_id] = $user_id;
 					$this->author_mapping[$santized_old_login] = $user_id;
 				} else {
-					printf( __( 'Failed to create new user for %s. Their posts will be attributed to the current user.', 'wordpress-importer' ), esc_html($this->authors[$old_login]['author_display_name']) );
-					if ( defined('IMPORT_DEBUG') && IMPORT_DEBUG )
+					if ( defined('IMPORT_DEBUG') && IMPORT_DEBUG ) {
+						printf( __( 'Failed to create new user for %s. Their posts will be attributed to the current user.', 'wordpress-importer' ), esc_html($this->authors[$old_login]['author_display_name']) );
 						echo ' ' . $user_id->get_error_message();
-					echo '<br />';
+						echo '<br />';
+					}
 				}
 			}
 
@@ -294,10 +297,11 @@ class Themify_Builder_Layouts_Importer extends WP_Importer {
 				if ( isset($cat['term_id']) )
 					$this->processed_terms[intval($cat['term_id'])] = $id;
 			} else {
-				printf( __( 'Failed to import category %s', 'wordpress-importer' ), esc_html($cat['category_nicename']) );
-				if ( defined('IMPORT_DEBUG') && IMPORT_DEBUG )
+				if ( defined('IMPORT_DEBUG') && IMPORT_DEBUG ) {
+					printf( __( 'Failed to import category %s', 'wordpress-importer' ), esc_html($cat['category_nicename']) );
 					echo ': ' . $id->get_error_message();
-				echo '<br />';
+					echo '<br />';
+				}
 				continue;
 			}
 		}
@@ -334,10 +338,11 @@ class Themify_Builder_Layouts_Importer extends WP_Importer {
 				if ( isset($tag['term_id']) )
 					$this->processed_terms[intval($tag['term_id'])] = $id['term_id'];
 			} else {
-				printf( __( 'Failed to import post tag %s', 'wordpress-importer' ), esc_html($tag['tag_name']) );
-				if ( defined('IMPORT_DEBUG') && IMPORT_DEBUG )
+				if ( defined('IMPORT_DEBUG') && IMPORT_DEBUG ) {
+					printf( __( 'Failed to import post tag %s', 'wordpress-importer' ), esc_html($tag['tag_name']) );
 					echo ': ' . $id->get_error_message();
-				echo '<br />';
+					echo '<br />';
+				}
 				continue;
 			}
 		}
@@ -380,10 +385,11 @@ class Themify_Builder_Layouts_Importer extends WP_Importer {
 				if ( isset($term['term_id']) )
 					$this->processed_terms[intval($term['term_id'])] = $id['term_id'];
 			} else {
-				printf( __( 'Failed to import %s %s', 'wordpress-importer' ), esc_html($term['term_taxonomy']), esc_html($term['term_name']) );
-				if ( defined('IMPORT_DEBUG') && IMPORT_DEBUG )
+				if ( defined('IMPORT_DEBUG') && IMPORT_DEBUG ) {
+					printf( __( 'Failed to import %s %s', 'wordpress-importer' ), esc_html($term['term_taxonomy']), esc_html($term['term_name']) );
 					echo ': ' . $id->get_error_message();
-				echo '<br />';
+					echo '<br />';
+				}
 				continue;
 			}
 		}
@@ -406,9 +412,11 @@ class Themify_Builder_Layouts_Importer extends WP_Importer {
 			$post = apply_filters( 'wp_import_post_data_raw', $post );
 
 			if ( ! post_type_exists( $post['post_type'] ) ) {
-				printf( __( 'Failed to import &#8220;%s&#8221;: Invalid post type %s', 'wordpress-importer' ),
-					esc_html($post['post_title']), esc_html($post['post_type']) );
-				echo '<br />';
+				if ( defined('IMPORT_DEBUG') && IMPORT_DEBUG ) {
+					printf( __( 'Failed to import &#8220;%s&#8221;: Invalid post type %s', 'wordpress-importer' ),
+						esc_html($post['post_title']), esc_html($post['post_type']) );
+					echo '<br />';
+				}
 				do_action( 'wp_import_post_exists', $post );
 				continue;
 			}
@@ -487,11 +495,12 @@ class Themify_Builder_Layouts_Importer extends WP_Importer {
 				}
 
 				if ( is_wp_error( $post_id ) ) {
-					printf( __( 'Failed to import %s &#8220;%s&#8221;', 'wordpress-importer' ),
+					if ( defined('IMPORT_DEBUG') && IMPORT_DEBUG ) {
+						printf( __( 'Failed to import %s &#8220;%s&#8221;', 'wordpress-importer' ),
 						$post_type_object->labels->singular_name, esc_html($post['post_title']) );
-					if ( defined('IMPORT_DEBUG') && IMPORT_DEBUG )
 						echo ': ' . $post_id->get_error_message();
-					echo '<br />';
+						echo '<br />';
+					}
 					continue;
 				}
 
@@ -521,10 +530,11 @@ class Themify_Builder_Layouts_Importer extends WP_Importer {
 							$term_id = $t['term_id'];
 							do_action( 'wp_import_insert_term', $t, $term, $post_id, $post );
 						} else {
-							printf( __( 'Failed to import %s %s', 'wordpress-importer' ), esc_html($taxonomy), esc_html($term['name']) );
-							if ( defined('IMPORT_DEBUG') && IMPORT_DEBUG )
+							if ( defined('IMPORT_DEBUG') && IMPORT_DEBUG ) {
+								printf( __( 'Failed to import %s %s', 'wordpress-importer' ), esc_html($taxonomy), esc_html($term['name']) );
 								echo ': ' . $t->get_error_message();
-							echo '<br />';
+								echo '<br />';
+							}
 							do_action( 'wp_import_insert_term_failed', $t, $term, $post_id, $post );
 							continue;
 						}

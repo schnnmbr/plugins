@@ -148,6 +148,17 @@ $row_settings = apply_filters( 'themify_builder_row_fields', array(
 	    'class' => 'xlarge',
 	    'wrap_with_class' => 'tf-group-element tf-group-element-video'
     ),
+	array(
+		'id' => 'background_video_options',
+		'type' => 'checkbox',
+		'label' => '',
+		'default' => array(),
+		'options' => array(
+			array( 'name' => 'unloop', 'value' => __( 'Disable looping', 'themify' ) ),
+			array( 'name' => 'mute', 'value' => __( 'Disable audio', 'themify' ) ),
+		),
+		'wrap_with_class' => 'tf-group-element tf-group-element-video',
+	),
     // Background Image
     array(
 	    'id' => 'background_image',

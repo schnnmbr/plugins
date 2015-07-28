@@ -37,7 +37,8 @@ $fields_default = array(
 	'left_margin_slider' => '',
 	'right_margin_slider' => '',
 	'css_slider' => '',
-	'animation_effect' => ''
+	'animation_effect' => '',
+	'height_slider' => 'variable'
 );
 
 if ( isset( $settings['testimonial_category_slider'] ) )	
@@ -84,7 +85,7 @@ switch ( $speed_opt_slider ) {
 <div id="<?php echo esc_attr( $module_ID ); ?>" class="<?php echo esc_attr( $container_class ); ?>">
 
 	<?php if ( $mod_title_slider != '' ): ?>
-	<h3 class="module-title"><?php echo wp_kses_post( $mod_title_slider ); ?></h3>
+		<?php echo $settings['before_title'] . wp_kses_post( apply_filters( 'themify_builder_module_title', $mod_title_slider, $fields_args ) ) . $settings['after_title']; ?>
 	<?php endif; ?>
 	
 	<ul class="themify_builder_slider" 
@@ -97,6 +98,7 @@ switch ( $speed_opt_slider ) {
 		data-arrow="<?php echo esc_attr( $arrow ); ?>"
 		data-pagination="<?php echo esc_attr( $pagination ); ?>"
 		data-effect="<?php echo esc_attr( $effect ); ?>" 
+		data-height="<?php echo esc_attr( $height_slider ); ?>" 
 		data-pause-on-hover="<?php echo esc_attr( $pause_on_hover_slider ); ?>" >
 		
 		<?php

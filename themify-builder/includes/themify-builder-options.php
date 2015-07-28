@@ -632,7 +632,7 @@ if ( ! function_exists( 'themify_builder_styling_field' ) ) {
 			break;
 
 			case 'textarea': ?>
-				<textarea id="<?php echo esc_attr( $styling['id'] ); ?>" name="<?php echo esc_attr( $styling['id'] ); ?>" class="<?php echo esc_attr( $styling['class'] ); ?> tfb_lb_option"><?php if ( isset( $styling['value'] ) ) : echo esc_textarea( $styling['value'] ); endif; ?></textarea>';
+				<textarea id="<?php echo esc_attr( $styling['id'] ); ?>" name="<?php echo esc_attr( $styling['id'] ); ?>" class="<?php echo esc_attr( $styling['class'] ); ?> tfb_lb_option"><?php if ( isset( $styling['value'] ) ) : echo esc_textarea( $styling['value'] ); endif; ?></textarea>
 				<?php if ( isset( $styling['description'] ) ) {
 					echo '<small>' . wp_kses_post( $styling['description'] ) . '</small>';
 				} ?>

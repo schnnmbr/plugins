@@ -9,8 +9,8 @@
 			
 			<?php foreach( $posts as $post ): setup_postdata( $post ); ?>
 			<li class="layout_preview_list">
-				<div class="layout_preview">
-					<div class="thumbnail" data-layout-slug="<?php echo esc_attr( $post->post_name ); ?>">
+				<div class="layout_preview" data-layout-slug="<?php echo esc_attr( $post->post_name ); ?>">
+					<div class="thumbnail">
 						<?php
 						if ( has_post_thumbnail() ) {
 							the_post_thumbnail( 'thumbnail', array( 150, 150 ) );

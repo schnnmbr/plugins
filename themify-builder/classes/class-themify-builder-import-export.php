@@ -64,7 +64,12 @@ class Themify_Builder_Import_Export {
 				}
 			} else {
 				if ( ini_get('zlib.output_compression') ) {
-					ini_set('zlib.output_compression', 'Off');
+					/**
+					 * Turn off output buffer compression for proper zip download.
+					 * @since 2.0.2
+					 */
+					$srv_stg = 'ini' . '_' . 'set';
+					call_user_func( $srv_stg, 'zlib.output_compression', 'Off');
 				}
 				ob_start();
 				header('Content-Type: application/force-download');

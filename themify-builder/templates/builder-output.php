@@ -6,5 +6,8 @@
 			$this->get_template_row( $key, $row, $builder_id, true );
 		} // end row loop
 	?>
+	<?php if ( Themify_Builder_Model::is_frontend_editor_page() ) : ?>
+		<a class="themify_builder_turn_on" href="#"><span class="dashicons dashicons-edit"></span><?php _e( 'Turn On Builder', 'themify' ); ?></a>
+	<?php endif; ?>
 </div>
 <!-- /themify_builder_content -->

@@ -494,7 +494,16 @@ class TB_Slider_Module extends Themify_Builder_Module {
 						'class' => 'xsmall',
 						'unit' => 'px',
 						'help' => __('Right margin space between slides', 'themify')
-					)
+					),
+					array(
+						'id' => 'height_slider',
+						'type' => 'select',
+						'options' => array(
+							'variable' => __('Variable', 'themify'),
+							'auto' => __('Auto', 'themify')
+						),
+						'help' => __('Height <small class="description">"Auto" measures the highest slide and all other slides will be set to that size. "Variable" makes every slide has it\'s own height.</small>', 'themify')
+					),
 				)
 			)
 		);

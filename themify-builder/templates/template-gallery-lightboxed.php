@@ -21,19 +21,20 @@ $thumbnail = themify_get_image( "ignore=true&src={$thumbnail_gallery}&w={$thumb_
 		<dl class="gallery-item" style="<?php echo 0 == $key ? '' : 'display: none;'; ?>">
 			<?php
 			$link = wp_get_attachment_url( $image->ID );
-			$link_before = '' != $link ? sprintf( '<dt class="gallery-icon"><a title="%s" href="%s">',
-				esc_attr( $image->post_title ),
-				esc_url( $link )
-			) : '';
-			$link_after = '' != $link ? '</a></dt>' : '';
 
 			$img = wp_get_attachment_image_src( $image->ID, 'full' );
 
-			echo $link_before . ( $key == 0 ? $thumbnail : $img[1] ) . $link_after;
+			if ( ! empty( $link ) ) {
+				echo '<dt class="gallery-icon"><a href="' . esc_url( $link ) . '" title="' . esc_attr( $image->post_title ) . '">';
+			}
+			echo wp_kses_post( ( 0 == $key ) ? $thumbnail : $img[1] );
+			if ( ! empty( $link ) ) {
+				echo '</a></dt>';
+			}
 
 			if( $key != 0 && isset( $image->post_excerpt ) && '' != $image->post_excerpt ) : ?>
 			<dd class="wp-caption-text gallery-caption">
-				<?php echo $image->post_excerpt; ?>
+				<?php echo wp_kses_post( $image->post_excerpt ); ?>
 			</dd>
 			<?php endif; ?>
 

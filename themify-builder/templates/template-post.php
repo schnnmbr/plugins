@@ -7,6 +7,9 @@ if ( ! defined( 'ABSPATH' ) ) exit; // Exit if accessed directly
  * @author Themify
  */
 
+// Load styles and scripts registered in Themify_Builder::register_frontend_js_css()
+$GLOBALS['ThemifyBuilder']->load_templates_js_css();
+
 $fields_default = array(
 	'mod_title_post' => '',
 	'layout_post' => '',
@@ -51,7 +54,7 @@ $this->add_post_class( $animation_effect );
 <!-- module post -->
 <div id="<?php echo esc_attr( $module_ID ); ?>" class="<?php echo esc_attr( $container_class ); ?>">
 	<?php if ( $mod_title_post != '' ): ?>
-	<h3 class="module-title"><?php echo wp_kses_post( $mod_title_post ); ?></h3>
+		<?php echo $mod_settings['before_title'] . wp_kses_post( apply_filters( 'themify_builder_module_title', $mod_title_post, $fields_args ) ) . $mod_settings['after_title']; ?>
 	<?php endif; ?>
 	
 	<?php
@@ -106,9 +109,6 @@ $this->add_post_class( $animation_effect );
 		$args['post__in'] = $this->parse_slug_to_ids( $query_slug_post );
 	}
 
-	// check if theme loop template exists
-	$is_theme_template = $this->is_loop_template_exist('loop.php', 'includes');
-
 	// add offset posts
 	if ( $offset_post != '' ) {
 		if ( empty( $limit ) ) 
@@ -122,8 +122,8 @@ $this->add_post_class( $animation_effect );
 
 	echo '<div class="builder-posts-wrap clearfix loops-wrapper '. $layout_post .'">';
 
-	// use theme template loop
-	if ( $is_theme_template ) {
+	// if the active theme is using Themify framework use theme template loop (includes/loop.php file)
+	if ( themify_is_themify_theme() ) {
 		// save a copy
 		global $themify;
 		$themify_save = clone $themify;
@@ -154,7 +154,7 @@ $this->add_post_class( $animation_effect );
 		
 		// revert to original $themify state
 		$themify = clone $themify_save;
-		echo $out;
+		echo !empty( $out ) ? $out : '';
 	} else {
 		// use builder template
 		global $post; $temp_post = $post;
@@ -180,7 +180,7 @@ $this->add_post_class( $animation_effect );
 					
 					themify_before_post_image(); // Hook
 					
-					echo $wp_embed->run_shortcode('[embed]' . themify_get('video_url') . '[/embed]');
+					echo $wp_embed->run_shortcode('[embed]' . esc_url( themify_get( 'video_url' ) ) . '[/embed]');
 					
 					themify_after_post_image(); // Hook
 					
@@ -262,9 +262,7 @@ $this->add_post_class( $animation_effect );
 
 	echo '</div><!-- .builder-posts-wrap -->';
 
-	if ( $hide_page_nav_post != 'yes' ) {
-		echo $this->get_pagenav('', '', $the_query);
-	}
+	echo 'yes' != $hide_page_nav_post ? $this->get_pagenav( '', '', $the_query ) : '';
 	?>
 
 	<?php do_action( 'themify_builder_after_template_content_render' ); $this->remove_post_class( $animation_effect ); $this->in_the_loop = false; ?>

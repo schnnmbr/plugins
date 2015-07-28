@@ -13,12 +13,12 @@ if ( ! class_exists( 'Themify_Builder' ) ) {
 		/**
 		 * @var string
 		 */
-		private $meta_key;
+		public $meta_key;
 
 		/**
 		 * @var string
 		 */
-		private $meta_key_transient;
+		public $meta_key_transient;
 
 		/**
 		 * @var array
@@ -66,13 +66,31 @@ if ( ! class_exists( 'Themify_Builder' ) ) {
 		var $builder_cpt = array();
 
 		/**
+		 * A list of posts which have been rendered by Builder
+		 */
+		private $post_ids = array();
+
+		/**
+		 * Flag to know if we're in the middle of saving the stylesheet.
+		 * @var string
+		 */
+		var $saving_stylesheet = true;
+
+		/**
+		 * Flag to know if we're rendering the style inline.
+		 * @var string
+		 */
+		var $is_front_end_style_inline = false;
+
+		/**
 		 * Themify Builder Constructor
 		 */
-		function __construct() {
+		function __construct() {}
 
-			// enqueue when active
-			if ( ! Themify_Builder_Model::builder_check() ) return false;
-
+		/**
+		 * Class Init
+		 */
+		function init() {
 			// Include required files
 			$this->includes();
 			$this->setup_default_directories();
@@ -87,70 +105,98 @@ if ( ! class_exists( 'Themify_Builder' ) ) {
 			$this->load_modules(); // load builder modules
 
 			// Builder write panel
-			add_filter( 'themify_do_metaboxes', array( &$this, 'builder_write_panels' ), 11 );
+			add_filter( 'themify_do_metaboxes', array( $this, 'builder_write_panels' ), 11 );
 
 			// Filtered post types
-			add_filter( 'themify_post_types', array( &$this, 'extend_post_types' ) );
+			add_filter( 'themify_post_types', array( $this, 'extend_post_types' ) );
 			add_filter( 'themify_builder_module_content', 'wptexturize' );
 			add_filter( 'themify_builder_module_content', 'convert_smilies' );
 			add_filter( 'themify_builder_module_content', 'convert_chars' );
-			add_filter( 'themify_builder_module_content', array( &$this, 'the_module_content' ) );
+			add_filter( 'themify_builder_module_content', array( $this, 'the_module_content' ) );
 
 			// Actions
-			add_action( 'init', array( &$this, 'init' ), 10 );
-			add_action( 'themify_builder_metabox', array( &$this, 'add_builder_metabox' ), 10 );
-			//add_action( 'media_buttons_context', array( &$this, 'add_custom_switch_btn' ), 10 );
-			add_action( 'admin_enqueue_scripts', array( &$this, 'load_admin_js_css' ), 10 );
-			add_action( 'wp_enqueue_scripts', array( &$this, 'load_front_js_css' ), 10 );
-			add_action( 'wp_footer', array( &$this, 'load_builder_google_fonts' ), 10 );
+			add_action( 'init', array( $this, 'setup' ), 10 );
+			add_action( 'themify_builder_metabox', array( $this, 'add_builder_metabox' ), 10 );
+			//add_action( 'media_buttons_context', array( $this, 'add_custom_switch_btn' ), 10 );
+			add_action( 'admin_enqueue_scripts', array( $this, 'load_admin_interface' ), 10 );
+
+			// Asynchronous Loader
+			add_action( 'wp_enqueue_scripts', array( $this, 'register_frontend_js_css' ), 9 );
+			if ( Themify_Builder_Model::is_frontend_editor_page() ) {
+				add_action( 'wp_enqueue_scripts', array( $this, 'async_load_builder_js' ), 9 );
+				add_action( 'wp_footer', array( $this, 'async_load_assets_loaded' ), 99 );
+				add_action( 'wp_ajax_themify_builder_loader', array( $this, 'async_load_builder' ) );
+				add_action( 'wp_ajax_nopriv_themify_builder_loader', array( $this, 'async_load_builder' ) );
+				// load module panel frontend
+				add_action( 'wp_footer', array( $this, 'builder_module_panel_frontedit' ), 10 );
+				add_action( 'wp_footer', array( $this, 'load_javascript_template' ), 10 );
+				add_action( 'wp_footer', 'themify_font_icons_dialog', 10 );
+				// Row Styling
+				add_action( 'themify_builder_row_start', array( $this, 'render_row_styling' ), 10, 2 );
+			} else {
+				// If user not logged in and is not a Builder editor view, enqueue static stylesheet
+				if ( isset( $_GET['themify_builder_infinite_scroll'] ) && 'yes' == $_GET['themify_builder_infinite_scroll'] ) {
+					add_action( 'themify_builder_row_start', array( $this, 'render_row_styling' ), 10, 2 );
+				} else {
+					add_action( 'wp_enqueue_scripts', array( $this, 'enqueue_stylesheet' ), 14 );
+					add_action( 'themify_builder_before_template_content_render', array( $this, 'enqueue_stylesheet' ), 10, 2 );
+				}
+			}
+
+			// Google Fonts
+			add_action( 'wp_footer', array( $this, 'load_builder_google_fonts' ), 10 );
 
 			// Ajax Actions
-			add_action( 'wp_ajax_tfb_add_element', array( &$this, 'add_element_ajaxify' ), 10 );
-			add_action( 'wp_ajax_tfb_lightbox_options', array( &$this, 'module_lightbox_options_ajaxify' ), 10 );
-			add_action( 'wp_ajax_tfb_add_wp_editor', array( &$this, 'add_wp_editor_ajaxify' ), 10 );
-			add_action( 'wp_ajax_builder_import', array( &$this, 'builder_import_ajaxify' ), 10 );
-			add_action( 'wp_ajax_builder_import_submit', array( &$this, 'builder_import_submit_ajaxify' ), 10 );
-			add_action( 'wp_ajax_row_lightbox_options', array( &$this, 'row_lightbox_options_ajaxify' ), 10 );
-			add_action( 'wp_ajax_builder_render_duplicate_row', array( &$this, 'render_duplicate_row_ajaxify' ), 10 );
+			add_action( 'wp_ajax_tfb_add_element', array( $this, 'add_element_ajaxify' ), 10 );
+			add_action( 'wp_ajax_tfb_lightbox_options', array( $this, 'module_lightbox_options_ajaxify' ), 10 );
+			add_action( 'wp_ajax_tfb_add_wp_editor', array( $this, 'add_wp_editor_ajaxify' ), 10 );
+			add_action( 'wp_ajax_builder_import', array( $this, 'builder_import_ajaxify' ), 10 );
+			add_action( 'wp_ajax_builder_import_submit', array( $this, 'builder_import_submit_ajaxify' ), 10 );
+			add_action( 'wp_ajax_row_lightbox_options', array( $this, 'row_lightbox_options_ajaxify' ), 10 );
+			add_action( 'wp_ajax_builder_render_duplicate_row', array( $this, 'render_duplicate_row_ajaxify' ), 10 );
 
 			// Builder Save Data
-			add_action( 'wp_ajax_tfb_save_data', array( &$this, 'save_data_builder' ), 10 );
+			add_action( 'wp_ajax_tfb_save_data', array( $this, 'save_data_builder' ), 10 );
 
 			// Duplicate page / post action
-			add_action( 'wp_ajax_tfb_duplicate_page', array( &$this, 'duplicate_page_ajaxify' ), 10 );
+			add_action( 'wp_ajax_tfb_duplicate_page', array( $this, 'duplicate_page_ajaxify' ), 10 );
 
 			// Hook to frontend
-			add_action( 'wp_head', array( &$this, 'load_inline_js_script' ), 10 );
-			add_filter( 'the_content', array( &$this, 'builder_show_on_front' ), 11 );
-			add_action( 'wp_ajax_tfb_toggle_frontend', array( &$this, 'load_toggle_frontend_ajaxify' ), 10 );
-			add_action( 'wp_ajax_tfb_load_module_partial', array( &$this, 'load_module_partial_ajaxify' ), 10 );
-			add_action( 'wp_ajax_tfb_load_row_partial', array( &$this, 'load_row_partial_ajaxify' ), 10 );
-			add_filter( 'body_class', array( &$this, 'body_class'), 10 );
+			add_action( 'wp_head', array( $this, 'load_inline_js_script' ), 10 );
+			add_filter( 'the_content', array( $this, 'builder_show_on_front' ), 11 );
+			add_action( 'wp_ajax_tfb_toggle_frontend', array( $this, 'load_toggle_frontend_ajaxify' ), 10 );
+			add_action( 'wp_ajax_tfb_load_module_partial', array( $this, 'load_module_partial_ajaxify' ), 10 );
+			add_action( 'wp_ajax_tfb_load_row_partial', array( $this, 'load_row_partial_ajaxify' ), 10 );
+			add_filter( 'body_class', array( $this, 'body_class'), 10 );
+
+			// Shortcode
+			add_shortcode( 'themify_builder_render_content', array( $this, 'do_shortcode_builder_render_content' ) );
 
 			// Plupload Action
-			add_action( 'admin_head', array( &$this, 'plupload_admin_head' ), 10 );
-			add_action( 'wp_head', array( &$this, 'plupload_front_head' ), 10 );
+			add_action( 'admin_enqueue_scripts', array( $this, 'plupload_admin_head' ), 10 );
+			// elioader
+			//add_action( 'wp_head', array( $this, 'plupload_front_head' ), 10 );
 
-			add_action( 'wp_ajax_themify_builder_plupload_action', array( &$this, 'builder_plupload' ), 10 );
+			add_action( 'wp_ajax_themify_builder_plupload_action', array( $this, 'builder_plupload' ), 10 );
 
-			add_action( 'admin_bar_menu', array( &$this, 'builder_admin_bar_menu' ), 100 );
+			add_action( 'admin_bar_menu', array( $this, 'builder_admin_bar_menu' ), 100 );
 
 			// Frontend editor
-			add_action( 'themify_builder_edit_module_panel', array( &$this, 'module_edit_panel_front'), 10, 2 );
+			add_action( 'themify_builder_edit_module_panel', array( $this, 'module_edit_panel_front'), 10, 2 );
+
+			// Checks if a stylesheet with the proper slug exists, otherwise generates it.
+			add_action( 'save_post', array( $this, 'build_stylesheet_if_needed' ), 77, 1 );
 
 			// Switch to frontend
-			add_action( 'save_post', array( &$this, 'switch_frontend' ), 999, 1 );
+			add_action( 'save_post', array( $this, 'switch_frontend' ), 999, 1 );
 
 			// Reset Builder Filter
 			// Non active at the moment
-			//add_action( 'themify_builder_before_template_content_render', array( &$this, 'do_reset_before_template_content_render' ) );
-			//add_action( 'themify_builder_after_template_content_render', array( &$this, 'do_reset_after_template_content_render' ) );
+			//add_action( 'themify_builder_before_template_content_render', array( $this, 'do_reset_before_template_content_render' ) );
+			//add_action( 'themify_builder_after_template_content_render', array( $this, 'do_reset_after_template_content_render' ) );
 
 			// WordPress Search
-			add_filter( 'posts_where', array( &$this, 'do_search' ) );
-
-			// Row Styling
-			add_action( 'themify_builder_row_start', array( &$this, 'render_row_styling' ), 10, 2 );
+			add_filter( 'posts_where', array( $this, 'do_search' ) );
 
 			add_filter( 'post_class', array( $this, 'filter_post_class' ) );
 
@@ -160,6 +206,250 @@ if ( ! class_exists( 'Themify_Builder' ) ) {
 
 			// Render any js classname
 			add_action( 'wp_head', array( $this, 'render_javascript_classes' ) );
+			add_action( 'wp_head', array( $this, 'add_builder_inline_css' ), 0 );
+		}
+
+		/**
+		 * Return Builder data for a post
+		 *
+		 * @since 1.4.2
+		 * @return array
+		 */
+		public function get_builder_data( $post_id ) {
+			$builder_data = get_post_meta( $post_id, $this->meta_key, true );
+			$builder_data = stripslashes_deep( maybe_unserialize( $builder_data ) );
+			if( ! is_array( $builder_data ) ) {
+				$builder_data = array();
+			}
+
+			return apply_filters( 'themify_builder_data', $builder_data, $post_id );
+		}
+
+		/**
+		 * Return all modules for a post as a two-dimensional array
+		 *
+		 * @since 1.4.2
+		 * @return array
+		 */
+		public function get_flat_modules_list( $post_id ) {
+			$builder_data = $this->get_builder_data( $post_id );
+
+			$_modules = array();
+			// loop through modules in Builder
+			if( is_array( $builder_data ) ) {
+				foreach ( $builder_data as $row_id => $row ) {
+					if ( isset( $row['cols'] ) && count( $row['cols'] ) > 0 ) {
+						foreach ( $row['cols'] as $cols => $col ) {
+							if ( isset( $col['modules'] ) && count( $col['modules'] ) > 0 ) {
+								foreach ( $col['modules'] as $modules => $mod ) {
+									if ( isset( $mod['mod_name'] ) ) {
+										$_modules[] = $mod;
+									}
+									// Check for Sub-rows
+									if ( isset( $mod['cols'] ) && count( $mod['cols'] ) > 0 ) {
+										foreach( $mod['cols'] as $col_key => $sub_col ) {
+											if ( isset( $sub_col['modules'] ) && count( $sub_col['modules'] ) > 0 ) {
+												foreach( $sub_col['modules'] as $sub_module_k => $sub_module ) {
+													$_modules[] = $sub_module;
+												}
+											}
+										}
+									}
+								}
+							}
+						}
+					}
+				}
+			}
+
+			return $_modules;
+		}
+
+		/**
+		 * Load JS and CSs for async loader.
+		 *
+		 * @since 2.1.9
+		 */
+		public function async_load_builder_js() {
+
+			wp_enqueue_style( 'themify-builder-loader', THEMIFY_BUILDER_URI . '/css/themify.builder.loader.css' );
+			wp_enqueue_script( 'themify-builder-loader', THEMIFY_BUILDER_URI . '/js/themify.builder.loader' . $this->minified() . '.js', array( 'jquery' ) );
+			wp_localize_script( 'themify-builder-loader', 'tbLoaderVars', array(
+				'ajaxurl' => admin_url( 'admin-ajax.php', 'relative' ),
+				'assets' => array(
+					'scripts' => array(),
+					'styles'  => array(),
+				),
+				'post_ID' => get_the_ID(),
+				'progress' => '<div id="builder_progress"><div></div></div>',
+			) );
+
+			if( function_exists( 'wp_enqueue_media' ) ) {
+				wp_enqueue_media();
+			}
+		}
+
+		/**
+		 * Called by AJAX action themify_builder_loader.
+		 * 1. Hooks the load_front_js_css function to wp_footer
+		 * 2. Saves scripts and styles already loaded in page
+		 * 3. Executes wp_head and wp_footer to load new scripts from load_front_js_css. Dismisses output
+		 * 4. Compiles list of new styles and scripts to load and js vars to pass
+		 * 5. Echoes list
+		 *
+		 * @since 2.1.9
+		 */
+		public function async_load_builder() {
+			add_action( 'wp_footer', array( $this, 'load_frontend_interface' ) );
+
+			global $wp_scripts, $wp_styles;
+
+			$done_styles = isset( $_POST['styles'] ) ? ( $_POST['styles'] ) : array();
+			$done_scripts = isset( $_POST['scripts'] ) ? ( $_POST['scripts'] ) : array();
+
+			ob_start();
+			wp_head();
+			wp_footer();
+			ob_end_clean();
+
+			$results = array();
+
+			$new_styles = array_diff( $wp_styles->done, $done_styles );
+			$new_scripts = array_diff( $wp_scripts->done, $done_scripts );
+
+			if ( ! empty( $new_styles ) ) {
+				$results['styles'] = array();
+
+				foreach ( $new_styles as $handle ) {
+					// Abort if somehow the handle doesn't correspond to a registered stylesheet
+					if ( ! isset( $wp_styles->registered[ $handle ] ) )
+						continue;
+
+					// Provide basic style data
+					$style_data = array(
+						'handle' => $handle,
+						'media'  => 'all'
+					);
+
+					// Base source
+					$src = $wp_styles->registered[ $handle ]->src;
+
+					// Take base_url into account
+					if ( strpos( $src, 'http' ) !== 0 )
+						$src = $wp_styles->base_url . $src;
+
+					// Version and additional arguments
+					if ( null === $wp_styles->registered[ $handle ]->ver )
+						$ver = '';
+					else
+						$ver = $wp_styles->registered[ $handle ]->ver ? $wp_styles->registered[ $handle ]->ver : $wp_styles->default_version;
+
+					if ( isset($wp_styles->args[ $handle ] ) )
+						$ver = $ver ? $ver . '&amp;' . $wp_styles->args[$handle] : $wp_styles->args[$handle];
+
+					// Full stylesheet source with version info
+					$style_data['src'] = add_query_arg( 'ver', $ver, $src );
+
+					// Parse stylesheet's conditional comments if present, converting to logic executable in JS
+					if ( isset( $wp_styles->registered[ $handle ]->extra['conditional'] ) && $wp_styles->registered[ $handle ]->extra['conditional'] ) {
+						// First, convert conditional comment operators to standard logical operators. %ver is replaced in JS with the IE version
+						$style_data['conditional'] = str_replace( array(
+							'lte',
+							'lt',
+							'gte',
+							'gt'
+						), array(
+							'%ver <=',
+							'%ver <',
+							'%ver >=',
+							'%ver >',
+						), $wp_styles->registered[ $handle ]->extra['conditional'] );
+
+						// Next, replace any !IE checks. These shouldn't be present since WP's conditional stylesheet implementation doesn't support them, but someone could be _doing_it_wrong().
+						$style_data['conditional'] = preg_replace( '#!\s*IE(\s*\d+){0}#i', '1==2', $style_data['conditional'] );
+
+						// Lastly, remove the IE strings
+						$style_data['conditional'] = str_replace( 'IE', '', $style_data['conditional'] );
+					}
+
+					// Parse requested media context for stylesheet
+					if ( isset( $wp_styles->registered[ $handle ]->args ) )
+						$style_data['media'] = esc_attr( $wp_styles->registered[ $handle ]->args );
+
+					// Add stylesheet to data that will be returned to IS JS
+					array_push( $results['styles'], $style_data );
+				}
+			}
+
+			if ( ! empty( $new_scripts ) ) {
+				$results['scripts'] = array();
+
+				foreach ( $new_scripts as $handle ) {
+					// Abort if somehow the handle doesn't correspond to a registered script
+					if ( ! isset( $wp_scripts->registered[ $handle ] ) ) {
+						continue;
+					}
+
+					// Provide basic script data
+					$script_data = array(
+						'handle'     => $handle,
+						'footer'     => ( is_array( $wp_scripts->in_footer ) && in_array( $handle, $wp_scripts->in_footer ) ),
+						'jsVars' => $wp_scripts->print_extra_script( $handle, false )
+					);
+
+					// Base source
+					$src = $wp_scripts->registered[ $handle ]->src;
+
+					// Take base_url into account
+					if ( strpos( $src, 'http' ) !== 0 ) {
+						$src = $wp_scripts->base_url . $src;
+					}
+
+					// Version and additional arguments
+					if ( null === $wp_scripts->registered[ $handle ]->ver ) {
+						$ver = '';
+					} else {
+						$ver = $wp_scripts->registered[ $handle ]->ver ? $wp_scripts->registered[ $handle ]->ver : $wp_scripts->default_version;
+					}
+
+					if ( isset( $wp_scripts->args[ $handle ] ) ) {
+						$ver = $ver ? $ver . '&amp;' . $wp_scripts->args[ $handle ] : $wp_scripts->args[ $handle ];
+					}
+
+					// Full script source with version info
+					$script_data['src'] = add_query_arg( 'ver', $ver, $src );
+
+					// Add script to data that will be returned to IS JS
+					array_push( $results['scripts'], $script_data );
+				}
+			}
+
+			echo json_encode( $results );
+
+			die();
+		}
+
+		/**
+		 * Print scripts that are already loaded.
+		 *
+		 * @since 2.1.9
+		 *
+		 * @global $wp_scripts, $wp_styles
+		 * @action wp_footer
+		 * @return string
+		 */
+		function async_load_assets_loaded() {
+			global $wp_scripts, $wp_styles;
+
+			wp_editor('', '');
+
+			$scripts = is_a( $wp_scripts, 'WP_Scripts' ) ? $wp_scripts->done : array();
+			$styles = is_a( $wp_styles, 'WP_Styles' ) ? $wp_styles->done : array();
+
+			?><script type="text/javascript">
+				jQuery.extend( tbLoaderVars.assets.scripts, <?php echo json_encode( $scripts ); ?> );
+				jQuery.extend( tbLoaderVars.assets.styles, <?php echo json_encode( $styles ); ?> );
+			</script><?php
 		}
 
 		public function builder_cpt_check() {
@@ -187,10 +477,6 @@ if ( ! class_exists( 'Themify_Builder' ) ) {
 			return apply_filters( "builder_is_{$post_type}_active", $active );
 		}
 
-		function get_meta_key() {
-			return $this->meta_key;
-		}
-
 		/**
 		 * Register default directories used to load modules and their templates
 		 */
@@ -207,7 +493,7 @@ if ( ! class_exists( 'Themify_Builder' ) ) {
 		/**
 		 * Init function
 		 */
-		function init() {
+		function setup() {
 			// Define builder path
 			$this->builder_settings = array(
 				'template_url' => 'themify-builder/',
@@ -222,15 +508,24 @@ if ( ! class_exists( 'Themify_Builder' ) ) {
 			$this->is_front_builder_activate();
 		}
 
+		function get_meta_key() {
+			return $this->meta_key;
+		}
+
 		/**
 		 * Include required files
 		 */
 		function includes() {
-			include( THEMIFY_BUILDER_CLASSES_DIR . '/class-builder-duplicate-page.php' ); // Class duplicate page
+			// Class duplicate page
+			include_once THEMIFY_BUILDER_CLASSES_DIR . '/class-builder-duplicate-page.php';
 		}
 
 		/**
 		 * Builder write panels
+		 *
+		 * @param $meta_boxes
+		 *
+		 * @return array
 		 */
 		function builder_write_panels( $meta_boxes ) {
 			global $pagenow;
@@ -248,21 +543,21 @@ if ( ! class_exists( 'Themify_Builder' ) ) {
 					),
 				),
 				array(
-					'name' 		=> 'page_builder',	
+					'name' 		=> 'page_builder',
 					'title' 	=> __( 'Themify Builder', 'themify' ),
 					'description' => '',
-					'type' 		=> 'page_builder',			
-					'meta'		=> array()			
+					'type' 		=> 'page_builder',
+					'meta'		=> array()
 				),
 				array(
-					'name' 		=> 'builder_switch_frontend',	
-					'title' 		=> false, 
+					'name' 		=> 'builder_switch_frontend',
+					'title' 		=> false,
 					'type' 		=> 'textbox',
-					'value'		=> 0,			
+					'value'		=> 0,
 					'meta'		=> array( 'size' => 'small' )
 				)
 			) );
-			
+
 			$types = themify_post_types();
 			$all_meta_boxes = array();
 			foreach ( $types as $type ) {
@@ -282,7 +577,7 @@ if ( ! class_exists( 'Themify_Builder' ) ) {
 		}
 
 		function get_directory_path( $context ) {
-			return call_user_func_array( 'array_merge', $this->directory_registry[$context] );;
+			return call_user_func_array( 'array_merge', $this->directory_registry[$context] );
 		}
 
 		/**
@@ -318,7 +613,7 @@ if ( ! class_exists( 'Themify_Builder' ) ) {
 				}
 			}
 			ksort( $_modules );
-			
+
 			foreach ( $_modules as $value ) {
 				$path_info = pathinfo( $value );
 				$name = explode( '-', $path_info['filename'] );
@@ -380,23 +675,20 @@ if ( ! class_exists( 'Themify_Builder' ) ) {
 		 * Load admin js and css
 		 * @param $hook
 		 */
-		function load_admin_js_css( $hook ) {
+		function load_admin_interface( $hook ) {
 			global $pagenow, $current_screen;
 
 			if ( in_array( $hook, array( 'post-new.php', 'post.php' ) ) && in_array( get_post_type(), themify_post_types() ) ) {
 
 				add_action( 'admin_footer', array( &$this, 'load_javascript_template' ), 10 );
-				
-				wp_enqueue_style( 'themify-font-icons-css', THEMIFY_URI . '/fontawesome/css/font-awesome.min.css', array(), THEMIFY_BUILDER_VERSION );
-				wp_enqueue_style( 'themify-icons', THEMIFY_URI . '/themify-icons/themify-icons.css', array() );
-				wp_enqueue_style( 'themify-builder-main', THEMIFY_BUILDER_URI . '/css/themify-builder-main.css', array() );
-				wp_enqueue_style( 'themify-builder-admin-ui', THEMIFY_BUILDER_URI . '/css/themify-builder-admin-ui.css', array() );
+
+				wp_enqueue_style( 'themify-builder-main', THEMIFY_BUILDER_URI . '/css/themify-builder-main.css', array(), THEMIFY_BUILDER_VERSION );
+				wp_enqueue_style( 'themify-builder-admin-ui', THEMIFY_BUILDER_URI . '/css/themify-builder-admin-ui.css', array(), THEMIFY_BUILDER_VERSION );
 				if( is_rtl() ) {
 					wp_enqueue_style( 'themify-builder-admin-ui-rtl', THEMIFY_BUILDER_URI . '/css/themify-builder-admin-ui-rtl.css', array('themify-builder-admin-ui') );
 				}
 
 				// Enqueue builder admin scripts
-				//$enqueue_scripts = array( 'themify-builder-admin-js' );
 				$enqueue_scripts = array( 'jquery-ui-accordion', 'jquery-ui-droppable', 'jquery-ui-sortable', 'jquery-ui-resizable', 'themify-builder-admin-ui-js' );
 
 				// Icon picker
@@ -435,7 +727,7 @@ if ( ! class_exists( 'Themify_Builder' ) ) {
 								'subRowDeleteConfirm' => __('Press OK to remove this sub row','themify')
 							)) );
 						break;
-						
+
 						default:
 							wp_enqueue_script( $script );
 						break;
@@ -456,108 +748,281 @@ if ( ! class_exists( 'Themify_Builder' ) ) {
 			?>
 			<script type="text/javascript">
 			var ajaxurl = '<?php echo admin_url( 'admin-ajax.php', 'relative' ); ?>',
-					isRtl = <?php echo (int) is_rtl(); ?>;
+				isRtl = <?php echo (int) is_rtl(); ?>;
 			</script>
 			<?php
 			}
 		}
 
 		/**
-		 * Load frontend js and css
+		 * Register styles and scripts necessary for Builder template output.
+		 * These are enqueued when user initializes Builder or from a template output.
+		 *
+		 * Registered style handlers:
+		 * themify-builder-style
+		 * themify-animate
+		 *
+		 * Registered script handlers:
+		 * themify-easy-pie-chart
+		 * theme-waypoints
+		 * themify-carousel-js
+		 * themify-videojs-js
+		 * themify-bigvideojs-js
+		 * themify-scroll-highlight
+		 * themify-builder-module-plugins-js
+		 * themify-builder-script-js
+		 *
+		 * @since 2.1.9
 		 */
-		function load_front_js_css() {
-			global $version, $post;
+		function register_frontend_js_css() {
+			// Register font icon.
+			wp_register_style( 'themify-font-icons-css', THEMIFY_URI . '/fontawesome/css/font-awesome.min.css', array(), THEMIFY_VERSION );
 
-			wp_enqueue_style( 'themify-font-icons-css', THEMIFY_URI . '/fontawesome/css/font-awesome.min.css', array(), THEMIFY_BUILDER_VERSION );
-			wp_enqueue_style( 'themify-builder-style', THEMIFY_BUILDER_URI . '/css/themify-builder-style.css', array(), $version );
-			wp_enqueue_style( 'themify-animate', THEMIFY_BUILDER_URI . '/css/animate.min.css', array(), $version );
+			// Builder main styles
+			wp_enqueue_style( 'themify-builder-style', THEMIFY_BUILDER_URI . '/css/themify-builder-style.css', array(), THEMIFY_BUILDER_VERSION );
+			wp_register_style( 'themify-animate', THEMIFY_BUILDER_URI . '/css/animate.min.css', array(), THEMIFY_BUILDER_VERSION );
 
-			// Setup Animation
-			$inview_selectors = apply_filters( 'themify_builder_animation_inview_selectors', array() );
-			$new_selectors = apply_filters( 'themify_builder_create_animation_selectors', array() );
-			
-			$global_selectors = isset( $new_selectors['selectors'] ) ? $new_selectors['selectors'] : array();
-			$specific_selectors = isset( $new_selectors['specificSelectors'] ) ? array_keys( $new_selectors['specificSelectors']) : array();
-			$instyle_selectors = array_merge( $inview_selectors, $global_selectors, $specific_selectors );
-			
-			if ( count( $instyle_selectors ) > 0 ) {
-				$inline_style = '.js.csstransitions ' . join(', .js.csstransitions ', $instyle_selectors ) . '{ visibility:hidden; }';
-				wp_add_inline_style( 'themify-builder-style', $inline_style );
+			// Charts
+			wp_register_script( 'themify-easy-pie-chart', THEMIFY_BUILDER_URI . '/js/jquery.easy-pie-chart.js', array( 'jquery' ), THEMIFY_BUILDER_VERSION, true );
+
+			// Map
+			wp_register_script( 'themify-builder-map-script', themify_https_esc( 'http://maps.google.com/maps/api/js' ) . '?sensor=false', array(), false, true );
+
+			// Waypoints
+			wp_register_script( 'theme-waypoints', THEMIFY_URI . '/js/waypoints.min.js', array('jquery'), false, true );
+
+			// Carousel
+			wp_register_script( 'themify-carousel-js', THEMIFY_URI . '/js/carousel.js', array('jquery') );
+
+			// Big Video
+			wp_register_script( 'themify-videojs-js', THEMIFY_URI . '/js/video.js', array('jquery') );
+			wp_register_script( 'themify-bigvideo-js', THEMIFY_URI . '/js/bigvideo.js', array('themify-videojs-js') );
+
+			// Scroll Highlight
+			wp_register_script( 'themify-scroll-highlight', THEMIFY_BUILDER_URI . '/js/themify.scroll-highlight.js', array( 'jquery' ) );
+
+			// Builder main scripts
+			wp_register_script( 'themify-builder-module-plugins-js', THEMIFY_BUILDER_URI . '/js/themify.builder.module.plugins.js', array( 'jquery' ), THEMIFY_BUILDER_VERSION, true );
+			wp_register_script( 'themify-builder-script-js', THEMIFY_BUILDER_URI . '/js/themify.builder.script.js', array( 'jquery', 'theme-waypoints', 'themify-builder-module-plugins-js' ), THEMIFY_BUILDER_VERSION, true );
+		}
+
+		/**
+		 * Load CSS and JS necessary for rendering of Builder templates, not editing.
+		 *
+		 * @since 2.1.9
+		 */
+		function load_templates_js_css( $args = array() ) {
+			$args = wp_parse_args( $args, array(
+				'chart' => false,
+				'carousel' => false,
+				'fullvideo' => false,
+				'scroll' => false,
+				'map' => false,
+				'waypoints' => false,
+				'module-plugins' => false, // for themify.builder.module.plugins.js
+				'icons-fa' => false,
+			) );
+
+			// Enqueue Styles
+			$this->load_main_styles();
+
+			if ( $args['chart'] && ! wp_script_is( 'themify-easy-pie-chart' ) ) {
+				wp_enqueue_script( 'themify-easy-pie-chart' );
+			}
+			if ( $args['carousel'] && ! wp_script_is( 'themify-carousel-js' ) ) {
+				wp_enqueue_script( 'themify-carousel-js' );
+			}
+			if ( $args['fullvideo'] && ! wp_script_is( 'themify-bigvideo-js' ) ) {
+				wp_enqueue_script( 'themify-bigvideo-js' );
+			}
+			if ( $args['map'] && ! wp_script_is( 'themify-builder-map-script' ) ) {
+				wp_enqueue_script( 'themify-builder-map-script' );
+			}
+			if ( $args['waypoints'] && ! wp_script_is( 'theme-waypoints' ) ) {
+				wp_enqueue_script( 'theme-waypoints' );
+			}
+			if ( $args['module-plugins'] && ! wp_script_is( 'themify-builder-module-plugins-js' ) ) {
+				wp_enqueue_script( 'themify-builder-module-plugins-js' );
+			}
+			if ( $args['icons-fa'] && ! wp_script_is( 'themify-font-icons-css' ) ) {
+				wp_enqueue_style( 'themify-font-icons-css' );
+			}
+			if ( $args['scroll'] ) {
+				$this->load_scroll_highlight();
 			}
 
-			wp_register_script( 'themify-easy-pie-chart', THEMIFY_BUILDER_URI . '/js/jquery.easy-pie-chart.js', array( 'jquery' ), THEMIFY_BUILDER_VERSION, true );
-			// Themify waypoints
-			wp_register_script( 'theme-waypoints', THEMIFY_URI . '/js/waypoints.min.js', array('jquery'), false, true );
+			// Enqueue Scripts
+			$this->load_main_scripts();
+		}
+
+		static $inview_selectors;
+		static $new_selectors;
+
+		/**
+		 * Defines selectors for CSS animations and transitions.
+		 *
+		 * @param $selectors
+		 *
+		 * @return array
+		 */
+		public function add_inview_selectors( $selectors ) {
+			$extends = array(
+				'.module.wow',
+				'.themify_builder_content > .themify_builder_row',
+				'.module_row',
+				'.builder-posts-wrap > .post.wow',
+				'.fly-in > .post', '.fly-in .row_inner > .tb-column',
+				'.fade-in > .post', '.fade-in .row_inner > .tb-column',
+				'.slide-up > .post', '.slide-up .row_inner > .tb-column'
+			);
+			return array_merge( $selectors, $extends );
+		}
+
+		/**
+		 * Enqueues main Builder style and animation CSS and configures it.
+		 * Sets variables used when enqueuing main scripts.
+		 * Outputs inline styles for transitions.
+		 *
+		 * @since 2.1.9
+		 */
+		function load_main_styles() {
+			wp_enqueue_style( 'themify-builder-style' );
+			wp_enqueue_style( 'themify-animate' );
+		}
+
+		/**
+		 * Add inline CSS styles for animations
+		 * @since 2.2.7
+		 */
+		public function add_builder_inline_css() {
+			// Setup Animation
+			self::$inview_selectors = apply_filters( 'themify_builder_animation_inview_selectors', array() );
+			self::$new_selectors = apply_filters( 'themify_builder_create_animation_selectors', array() );
+
+			$global_selectors = isset( self::$new_selectors['selectors'] ) ? self::$new_selectors['selectors'] : array();
+			$specific_selectors = isset( self::$new_selectors['specificSelectors'] ) ? array_keys( self::$new_selectors['specificSelectors']) : array();
+			$instyle_selectors = array_merge( self::$inview_selectors, $global_selectors, $specific_selectors );
+
+			if ( count( $instyle_selectors ) > 0 ) {
+				$inline_style = '.js.csstransitions ' . join(', .js.csstransitions ', $instyle_selectors ) . '{ visibility:hidden; }';
+				echo sprintf( '<style>%s</style>', $inline_style );
+			}
+		}
+
+		/**
+		 * Enqueues main Builder scripts and passes vars to them.
+		 *
+		 * @since 2.1.9
+		 */
+		function load_main_scripts() {
+			if ( ! wp_script_is( 'themify-builder-script-js' ) ) {
+				wp_enqueue_script( 'themify-builder-script-js' );
+				wp_localize_script( 'themify-builder-script-js', 'tbLocalScript', apply_filters( 'themify_builder_script_vars', array(
+					'isTouch' => themify_is_touch() ? true : false,
+					'isAnimationActive' => Themify_Builder_Model::is_animation_active(),
+					'isParallaxActive' => Themify_Builder_Model::is_parallax_active(),
+					'animationInviewSelectors' => self::$inview_selectors,
+					'createAnimationSelectors' => self::$new_selectors,
+					'backgroundSlider' => array(
+						'autoplay' => 5000,
+						'speed' => 2000,
+					),
+					'animationOffset' => 100,
+					'videoPoster' => THEMIFY_BUILDER_URI . '/img/blank.png',
+					'backgroundVideoLoop' => 'yes',
+				) ) );
+			}
+		}
+
+		/**
+		 * Loads Scroll-Highlight script and passes JS vars for setup.
+		 *
+		 * @since 2.1.9
+		 */
+		function load_scroll_highlight() {
+			if ( ! wp_script_is( 'themify-scroll-highlight' ) ) {
+				wp_enqueue_script( 'themify-scroll-highlight' );
+				wp_localize_script( 'themify-scroll-highlight', 'tbScrollHighlight', apply_filters( 'themify_builder_scroll_highlight_vars', array(
+					'fixedHeaderSelector' => '',
+					'speed' => 900,
+					'navigation' => '#main-nav',
+					'scrollOffset' => 0
+				) ) );
+			}
+		}
+
+		/**
+		 * Load interface js and css
+		 *
+		 * @since 2.1.9
+		 */
+		function load_frontend_interface() {
+			// Builder main styles
+			$this->load_main_styles();
+
+			// Charts
+			wp_enqueue_script( 'themify-easy-pie-chart' );
+
+			// Waypoints
+			wp_enqueue_script( 'theme-waypoints' );
 
 			// load only when editing and login
 			if ( Themify_Builder_Model::is_frontend_editor_page() ) {
-				wp_enqueue_style( 'themify-builder-main', THEMIFY_BUILDER_URI . '/css/themify-builder-main.css', array(), $version );
-				wp_enqueue_style( 'themify-builder-admin-ui', THEMIFY_BUILDER_URI . '/css/themify-builder-admin-ui.css', array(), $version );
-				wp_enqueue_style( 'themify-icons', THEMIFY_URI . '/themify-icons/themify-icons.css', array(), $version );
-				wp_enqueue_style( 'google-fonts-builder', themify_https_esc('http://fonts.googleapis.com/css'). '?family=Open+Sans:400,300,600|Montserrat');
+				wp_enqueue_style( 'themify-builder-main', THEMIFY_BUILDER_URI . '/css/themify-builder-main.css', array(), THEMIFY_BUILDER_VERSION );
+				wp_enqueue_style( 'themify-builder-admin-ui', THEMIFY_BUILDER_URI . '/css/themify-builder-admin-ui.css', array(), THEMIFY_BUILDER_VERSION );
+				wp_enqueue_style( 'themify-icons', THEMIFY_URI . '/themify-icons/themify-icons.css', array(), THEMIFY_BUILDER_VERSION );
+				wp_enqueue_style( 'google-fonts-builder', themify_https_esc( 'http://fonts.googleapis.com/css' ) . '?family=Open+Sans:400,300,600|Montserrat' );
 				wp_enqueue_style( 'colorpicker', THEMIFY_URI . '/css/jquery.minicolors.css' ); // from themify framework
-				wp_enqueue_script( 'themify-easy-pie-chart' );
 
 				// Icon picker
-				wp_enqueue_script( 'themify-font-icons-js', THEMIFY_URI . '/js/themify.font-icons-select.js', array( 'jquery' ), THEMIFY_BUILDER_VERSION, true );
-				add_action( 'wp_footer', 'themify_font_icons_dialog', 10 );
+				wp_enqueue_script( 'themify-font-icons-js', THEMIFY_URI . '/js/themify.font-icons-select.js', array( 'jquery' ), THEMIFY_VERSION, true );
+
 				do_action( 'themify_builder_admin_enqueue', $this );
 			}
 
 			// lib scripts
 			if ( ! wp_script_is( 'themify-carousel-js' ) ) {
-				wp_enqueue_script( 'themify-carousel-js', THEMIFY_URI . '/js/carousel.js', array('jquery') ); // grab from themify framework
+				wp_enqueue_script( 'themify-carousel-js' ); // grab from themify framework
 			}
 			// Check if BigVideo.js is loaded, if it's not, load it after loading Video.js
+			// which is set as dependency under the handler 'themify-videojs-js'
 			if ( ! wp_script_is( 'themify-bigvideo-js' ) ) {
-				wp_enqueue_script( 'themify-videojs-js', THEMIFY_URI . '/js/video.js', array('jquery') );
-				wp_enqueue_script( 'themify-bigvideo-js', THEMIFY_URI . '/js/bigvideo.js', array('themify-videojs-js') );
+				wp_enqueue_script( 'themify-bigvideo-js' );
 			}
+
 			// Check if scroll highlight is loaded. If it's not, load it.
-			if ( ! wp_script_is( 'themify-scroll-highlight' ) ) {
-				wp_enqueue_script( 'themify-scroll-highlight', THEMIFY_BUILDER_URI . '/js/themify.scroll-highlight.js', array( 'jquery' ) );
-			}
-			wp_localize_script( 'themify-scroll-highlight', 'tbScrollHighlight', apply_filters( 'themify_builder_scroll_highlight_vars', array(
-				'fixedHeaderSelector' => '',
-				'speed' => 900,
-				'navigation' => '#main-nav',
-				'scrollOffset' => 0
-			) ) );
+			$this->load_scroll_highlight();
 
 			// module scripts
-			wp_register_script( 'themify-builder-module-plugins-js', THEMIFY_BUILDER_URI . "/js/themify.builder.module.plugins.js", array( 'jquery' ), $version, true );
+			wp_register_script( 'themify-builder-module-plugins-js', THEMIFY_BUILDER_URI . "/js/themify.builder.module.plugins.js", array( 'jquery' ), THEMIFY_BUILDER_VERSION, true );
 			wp_enqueue_script( 'themify-builder-module-plugins-js' );
 
-			wp_register_script( 'themify-builder-script-js', THEMIFY_BUILDER_URI . "/js/themify.builder.script.js", array( 'jquery', 'theme-waypoints' ), $version, true );
+			wp_register_script( 'themify-builder-script-js', THEMIFY_BUILDER_URI . "/js/themify.builder.script.js", array( 'jquery', 'theme-waypoints' ), THEMIFY_BUILDER_VERSION, true );
 			wp_enqueue_script( 'themify-builder-script-js' );
 			wp_localize_script( 'themify-builder-script-js', 'tbLocalScript', apply_filters( 'themify_builder_script_vars', array( 
-				'isTouch' => $this->isMobile() ? true : false,
+				'isTouch' => themify_is_touch() ? true : false,
 				'isAnimationActive' => Themify_Builder_Model::is_animation_active(),
 				'isParallaxActive' => Themify_Builder_Model::is_parallax_active(),
-				'animationInviewSelectors' => $inview_selectors,
-				'createAnimationSelectors' => $new_selectors,
+				'animationInviewSelectors' => self::$inview_selectors,
+				'createAnimationSelectors' => self::$new_selectors,
 				'backgroundSlider' => array(
 					'autoplay' => 5000,
 					'speed' => 2000,
 				),
 				'animationOffset' => 100,
 				'videoPoster' => THEMIFY_BUILDER_URI . '/img/blank.png',
-				'backgroundVideoLoop' => 'yes',
 			) ) );
+
+			// Main module scripts
+			$this->load_main_scripts();
 
 			if ( Themify_Builder_Model::is_frontend_editor_page() ) {
 
-				// load module panel frontend
-				add_action( 'wp_footer', array( &$this, 'builder_module_panel_frontedit' ), 10 );
-				add_action( 'wp_footer', array( &$this, 'load_javascript_template' ), 10 );
-				
-				if( function_exists( 'wp_enqueue_media' ) ) {
-					wp_enqueue_media();
-				}
 				if ( class_exists( 'Jetpack_VideoPress' ) ) {
 					// Load this so submit_button() is available in VideoPress' print_media_templates().
 					require_once ABSPATH . 'wp-admin/includes/template.php';
 				}
+
 				$enqueue_scripts = array(
 					'underscore',
 					'jquery-ui-core',
@@ -571,17 +1036,22 @@ if ( ! class_exists( 'Themify_Builder' ) ) {
 					'wpdialogs',
 					'wpdialogs-popup',
 					'wplink',
+					'word-count',
 					'editor',
 					'quicktags',
+					'wp-fullscreen',
 					'admin-widgets',
 					'colorpicker-js',
 					'themify-builder-google-webfont',
 					'themify-builder-front-ui-js'
 				);
 
+				// For editor
+				wp_enqueue_style( 'buttons' );
+
 				// is mobile version
 				if( $this->isMobile() ) {
-					wp_register_script( 'themify-builder-mobile-ui-js', THEMIFY_BUILDER_URI . "/js/jquery.ui.touch-punch.js", array( 'jquery' ), $version, true );
+					wp_register_script( 'themify-builder-mobile-ui-js', THEMIFY_BUILDER_URI . "/js/jquery.ui.touch-punch.js", array( 'jquery' ), THEMIFY_BUILDER_VERSION, true );
 					wp_enqueue_script( 'jquery-ui-mouse' );
 					wp_enqueue_script( 'themify-builder-mobile-ui-js' );
 				}
@@ -602,15 +1072,16 @@ if ( ! class_exists( 'Themify_Builder' ) ) {
 
 						case 'themify-builder-front-ui-js':
 							// front ui js
-							wp_register_script( $script, THEMIFY_BUILDER_URI . "/js/themify.builder.front.ui.js", array( 'jquery', 'jquery-ui-tabs' ), $version, true );
+							wp_register_script( $script, THEMIFY_BUILDER_URI . "/js/themify.builder.front.ui.js", array( 'jquery', 'jquery-ui-tabs' ), THEMIFY_BUILDER_VERSION, true );
 							wp_enqueue_script( $script );
 
 							$gutterClass = Themify_Builder_Model::get_grid_settings('gutter_class');
 							wp_localize_script( $script, 'themifyBuilder', apply_filters( 'themify_builder_ajax_front_vars', array(
 								'ajaxurl' => admin_url( 'admin-ajax.php' ),
+								'isTouch' => themify_is_touch()? 'true': 'false',
 								'tfb_load_nonce' => wp_create_nonce( 'tfb_load_nonce' ),
 								'tfb_url' => THEMIFY_BUILDER_URI,
-								'post_ID' => $post->ID,
+								'post_ID' => get_the_ID(),
 								'dropPlaceHolder' => __('drop module here', 'themify'),
 								'draggerTitleMiddle' => __('Drag left/right to change columns','themify'),
 								'draggerTitleLast' => __('Drag left to add columns','themify'),
@@ -631,6 +1102,7 @@ if ( ! class_exists( 'Themify_Builder' ) ) {
 								'gutterClass' => $gutterClass,
 								'subRowDeleteConfirm' => __('Press OK to remove this sub row','themify')
 							)) );
+							wp_localize_script( $script, 'themify_builder_plupload_init', $this->get_builder_plupload_init() );
 						break;
 						
 						default:
@@ -640,18 +1112,6 @@ if ( ! class_exists( 'Themify_Builder' ) ) {
 				}
 
 			}
-		}
-
-		public function add_inview_selectors( $selectors ) {
-			$extends = array(
-				'.module.wow',
-				'.themify_builder_content > .themify_builder_row',
-				'.module_row',
-				'.fly-in > .post', '.fly-in .row_inner > .tb-column',
-				'.fade-in > .post', '.fade-in .row_inner > .tb-column',
-				'.slide-up > .post', '.slide-up .row_inner > .tb-column'
-			);
-			return array_merge( $selectors, $extends );
 		}
 
 		/**
@@ -854,13 +1314,17 @@ if ( ! class_exists( 'Themify_Builder' ) ) {
 
 			$saveto = $_POST['tfb_saveto'];
 			$ids = json_decode( stripslashes( $_POST['ids'] ), true );
-
+			
 			if ( is_array( $ids ) && count( $ids ) > 0 ) {
 				foreach( $ids as $v ) {
 					$post_id = isset( $v['id'] ) ? $v['id'] : '';
 					$post_data = ( isset( $v['data'] ) && is_array( $v['data'] ) && count( $v['data'] ) > 0 ) ? $v['data'] : array();
 					if ( 'main' == $saveto ) {
 						update_post_meta( $post_id, $this->meta_key, $post_data );
+						if ( ! empty( $post_data ) ) {
+							// Write Stylesheet
+							$this->write_stylesheet( array( 'id' => $post_id, 'data' => $post_data ) );
+						}
 						do_action( 'themify_builder_save_data', $post_id, $this->meta_key, $post_data ); // hook save data
 					} else {
 						$transient = $this->meta_key_transient . '_' . $post_id;
@@ -885,13 +1349,13 @@ if ( ! class_exists( 'Themify_Builder' ) ) {
 			if ( ( is_post_type_archive() && ! is_post_type_archive( 'product' ) ) || post_password_required() || isset( $wp_query->query_vars['product_cat'] ) || is_tax( 'product_tag' ) ) return $content;
 
 			if ( is_singular( 'product' ) && 'product' == get_post_type() ) return $content; // dont show builder on product single description
-			
+
 			if ( is_post_type_archive( 'product' ) && get_query_var( 'paged' ) == 0 && $this->builder_is_plugin_active( 'woocommerce/woocommerce.php' ) ) {
 				$post = get_post( woocommerce_get_page_id( 'shop' ) );
 			}
 
 			if ( ! is_object( $post ) ) return $content;
-
+			
 			// Paid Membership Pro
 			if( defined( 'PMPRO_VERSION' ) ) {
 				$hasaccess = pmpro_has_membership_access( NULL, NULL, true );
@@ -914,8 +1378,16 @@ if ( ! class_exists( 'Themify_Builder' ) ) {
 				}
 			}
 
-			$builder_data = get_post_meta( $post->ID, $this->meta_key, true );
-			$builder_data = stripslashes_deep( maybe_unserialize( $builder_data ) );
+			// Infinite-loop prevention
+			if( empty( $this->post_ids ) ) {
+				$this->post_ids[] = $post->ID;
+			} elseif( in_array( $post->ID, $this->post_ids ) ) {
+				// we have already rendered this, go back.
+				return $content;
+			}
+			$this->post_ids[] = $post->ID;
+
+			$builder_data = $this->get_builder_data( $post->ID );
 
 			if ( ! is_array( $builder_data ) || strpos( $content, '#more-' ) ) {
 				$builder_data = array();
@@ -926,6 +1398,12 @@ if ( ! class_exists( 'Themify_Builder' ) ) {
 			} else {
 				$content .= $this->retrieve_template( 'builder-output.php', array( 'builder_output' => $builder_data, 'builder_id' => $post->ID ), '', '', false );
 			}
+
+			if( array_shift( $this->post_ids ) == $post->ID ) {
+				// the loop is finished, reset the ID list
+				$this->post_ids = array();
+			}
+
 			return $content;
 		}
 
@@ -978,8 +1456,7 @@ if ( ! class_exists( 'Themify_Builder' ) ) {
 		 * @since 1.4.2
 		 */
 		function plupload_front_head() {
-			$plupload_init = $this->get_builder_plupload_init();
-			wp_localize_script( 'themify-builder-front-ui-js', 'themify_builder_plupload_init', $plupload_init );
+			wp_localize_script( 'themify-builder-front-ui-js', 'themify_builder_plupload_init', $this->get_builder_plupload_init() );
 		}
 
 		/**
@@ -987,8 +1464,7 @@ if ( ! class_exists( 'Themify_Builder' ) ) {
 		 * @since 1.4.2
 		 */
 		function plupload_admin_head() {
-			$plupload_init = $this->get_builder_plupload_init();
-			wp_localize_script( 'themify-builder-admin-ui-js', 'themify_builder_plupload_init', $plupload_init );
+			wp_localize_script( 'themify-builder-admin-ui-js', 'themify_builder_plupload_init', $this->get_builder_plupload_init() );
 		}
 
 		/**
@@ -1078,6 +1554,7 @@ if ( ! class_exists( 'Themify_Builder' ) ) {
 					//Return URL for the image field in meta box
 					$file['large_url'] = $large[0];
 					$file['thumb'] = $thumb[0];
+					$file['id'] = $attach_id;
 				}
 			}
 
@@ -1095,7 +1572,7 @@ if ( ! class_exists( 'Themify_Builder' ) ) {
 			global $wp_query;
 			$post_id = get_the_ID();
 			
-			if ( ( is_post_type_archive() && ! is_post_type_archive( 'product' ) ) || !is_admin_bar_showing() || is_admin() || !current_user_can( 'edit_page', $post_id ) || isset( $wp_query->query_vars['product_cat'] ) || is_tax( 'product_tag' ) ) return;
+			if ( ( ! Themify_Builder_Model::is_frontend_editor_page() ) || ( is_post_type_archive() && ! is_post_type_archive( 'product' ) ) || !is_admin_bar_showing() || is_admin() || !current_user_can( 'edit_page', $post_id ) || isset( $wp_query->query_vars['product_cat'] ) || is_tax( 'product_tag' ) ) return;
 			
 			$args = array(
 				array(
@@ -1386,7 +1863,7 @@ if ( ! class_exists( 'Themify_Builder' ) ) {
 			$output = '';
 			$mod['mod_name'] = isset( $mod['mod_name'] ) ? $mod['mod_name'] : '';
 			$mod['mod_settings'] = isset( $mod['mod_settings'] ) ? $mod['mod_settings'] : array();
-
+			
 			$mod_id = $mod['mod_name'] . '-' . $builder_id . '-' . implode( '-', $identifier );
 			$output .= PHP_EOL; // add line break
 
@@ -1398,10 +1875,15 @@ if ( ! class_exists( 'Themify_Builder' ) ) {
 				ob_start(); ?>
 				<div class="themify_builder_module_front clearfix module-<?php echo esc_attr( $mod['mod_name'] ); ?> active_module <?php echo esc_attr( $class ); ?>" data-module-name="<?php echo esc_attr( $mod['mod_name'] ); ?>">
 				<div class="themify_builder_module_front_overlay"></div>
-				<?php themify_builder_edit_module_panel( $mod['mod_name'], $mod['mod_settings'] ); ?>
-				<?php
+				<?php themify_builder_edit_module_panel( $mod['mod_name'], $mod['mod_settings'] );
 				$output .= ob_get_clean();
 			}
+
+			$module_args = apply_filters( 'themify_builder_module_args', array(
+				'before_title' => '<h3 class="module-title">',
+				'after_title' => '</h3>',
+			) );
+			$mod['mod_settings'] = wp_parse_args( $mod['mod_settings'], $module_args );
 			$output .= $this->retrieve_template( 'template-'.$mod['mod_name'].'.php', array(
 				'module_ID' => $mod_id,
 				'mod_name' => $mod['mod_name'],
@@ -1409,7 +1891,9 @@ if ( ! class_exists( 'Themify_Builder' ) ) {
 				'mod_settings' => ( isset( $mod['mod_settings'] ) ? $mod['mod_settings'] : '' )
 			),'', '', false );
 			$style_id = '.themify_builder .' . $mod_id;
-			$output .= $this->get_custom_styling( $style_id, $mod['mod_name'], $mod['mod_settings'] );
+			if ( Themify_Builder_Model::is_frontend_editor_page() || ( isset( $_GET['themify_builder_infinite_scroll'] ) && 'yes' == $_GET['themify_builder_infinite_scroll'] ) || $this->is_front_end_style_inline ) {
+				$output .= $this->get_custom_styling( $style_id, $mod['mod_name'], $mod['mod_settings'] );
+			}
 
 			if ( $wrap ) 
 				$output .= '</div>';
@@ -1663,7 +2147,7 @@ if ( ! class_exists( 'Themify_Builder' ) ) {
 			if($start_page <= 0) {
 				$start_page = 1;
 			}
-
+		
 			if ($max_page > 1) {
 				$out .=  $before.'<div class="pagenav clearfix">';
 				if ($start_page >= 2 && $pages_to_show < $max_page) {
@@ -1724,7 +2208,12 @@ if ( ! class_exists( 'Themify_Builder' ) ) {
 					if ( method_exists( $wpdb, 'esc_like' ) ) {
 						$query = $wpdb->esc_like( $query );
 					} else {
-						$query = like_escape( $query );
+						/**
+						 * If this is not WP 4.0 or above, use old method to escape db query.
+						 * @since 2.0.2
+						 */
+						$do = 'like'; $it = 'escape';
+						$query = call_user_func( $do . '_' . $it, $query );
 					}
 					$types = Themify_Builder_Model::get_post_types();
 
@@ -1739,7 +2228,6 @@ if ( ! class_exists( 'Themify_Builder' ) ) {
 
 		/**
 		 * Builder Import Lightbox
-		 * @return html
 		 */
 		function builder_import_ajaxify(){
 			check_ajax_referer( 'tfb_load_nonce', 'nonce' );
@@ -1747,7 +2235,7 @@ if ( ! class_exists( 'Themify_Builder' ) ) {
 			$type = $_POST['type'];
 			$data = array();
 
-			if ( 'post' == $type ){
+			if ( 'post' == $type ) {
 				$post_types = get_post_types( array('_builtin' => false) );
 				$data[] = array(
 					'post_type' => 'post',
@@ -1825,23 +2313,37 @@ if ( ! class_exists( 'Themify_Builder' ) ) {
 			$row['row_order'] = isset( $row['row_order'] ) ? $row['row_order'] : '';
 			$settings = $row['styling'];
 			$style_id = '.themify_builder_content-' . $builder_id . ' > .module_row_' . $row['row_order'];
-			echo $this->get_custom_styling( $style_id, 'row', $settings );  
+			echo $this->get_custom_styling( $style_id, 'row', $settings );
 		}
 
-		function get_custom_styling( $style_id, $mod_name, $settings, $array = false ) {
+		/**
+		 * Generate CSS styling.
+		 * 
+		 * @since 1.0.0
+		 * @since 2.2.5 Added the ability to return pure CSS without <style> tags for stylesheet generation.
+		 *
+		 * @param int $style_id
+		 * @param string $mod_name Name of the module to build styles for. Example 'row' for row styling.
+		 * @param array $settings List of settings to generate style.
+		 * @param bool $array Used for legacy styling generation.
+		 * @param string $format Use 'tag' to return the CSS enclosed in <style> tags. This mode is used while user is logged in and Builder is active. Use 'css' to return only the CSS. This mode is used on stylesheet generation.
+		 *
+		 * @return string
+		 */
+		function get_custom_styling( $style_id, $mod_name, $settings, $array = false, $format = 'tag' ) {
 			global $themify;
 
 			if ( ! isset( $themify->builder_google_fonts ) ) {
 				$themify->builder_google_fonts = '';
 			}
 
-			if( 'row' == $mod_name
-				|| ( isset( Themify_Builder_model::$modules[ $mod_name ] ) && is_array( Themify_Builder_model::$modules[ $mod_name ]->get_css_selectors() ) ) // legacy module def support
+			// legacy module def support
+			if ( 'row' == $mod_name || ( isset( Themify_Builder_model::$modules[ $mod_name ] ) && is_array( Themify_Builder_model::$modules[ $mod_name ]->get_css_selectors() ) )
 			) {
-				return $this->get_custom_styling_legacy( $style_id, $mod_name, $settings, $array );
+				return $this->get_custom_styling_legacy( $style_id, $mod_name, $settings, $array, $format );
 			}
 
-			$styling = Themify_Builder_model::$modules[ $mod_name ]->get_styling();
+			$styling = isset( Themify_Builder_model::$modules[ $mod_name ] ) ? Themify_Builder_model::$modules[ $mod_name ]->get_styling() : array();
 			$rules = $this->make_styling_rules( $styling, $settings );
 
 			if( ! empty( $rules ) ) {
@@ -1867,12 +2369,16 @@ if ( ! class_exists( 'Themify_Builder' ) ) {
 			}
 
 			$output = '';
-			if( ! empty( $css ) ) {
-				$output .= '<style>';
+			if ( ! empty( $css ) ) {
 				foreach( $css as $selector => $defs ) {
-					$output .= "{$style_id}{$selector } { {$defs} } \n";
+					if ( empty( $defs ) ) {
+						continue;
+					}
+					$output .= "{$style_id}{$selector} { {$defs} } \n";
 				}
-				$output .= '</style>';
+				if ( 'tag' == $format && ! empty( $output ) ) {
+					$output = '<style>' . $output . '</style>';
+				}
 			}
 
 			return $output;
@@ -1880,8 +2386,9 @@ if ( ! class_exists( 'Themify_Builder' ) ) {
 
 		function make_styling_rules( $def, $settings ) {
 			$result = array();
-			if( empty( $def ) )
+			if ( empty( $def ) ) {
 				return $result;
+			}
 
 			foreach( $def as $option ) {
 				if( $option['type'] == 'multi' ) {
@@ -1907,13 +2414,18 @@ if ( ! class_exists( 'Themify_Builder' ) ) {
 
 		/**
 		 * Get custom style
+		 *
+		 * @since 2.2.5 New parameter $format to return output enclosed in style tags or not.
+		 *
 		 * @param string $style_id 
 		 * @param string $mod_name 
 		 * @param array $settings 
 		 * @param boolean $array 
+		 * @param string $format Use 'tag' to return the CSS enclosed in <style> tags. This mode is used while user is logged in and Builder is active. Use 'css' to return only the CSS. This mode is used on stylesheet generation.
+		 *
 		 * @return string|array
 		 */
-		function get_custom_styling_legacy( $style_id, $mod_name, $settings, $array = false ) {
+		function get_custom_styling_legacy( $style_id, $mod_name, $settings, $array = false, $format = 'tag' ) {
 			global $themify;
 
 			if ( ! isset( $themify->builder_google_fonts ) ) {
@@ -2077,7 +2589,7 @@ if ( ! class_exists( 'Themify_Builder' ) ) {
 						if ( $prop == 'color' || stripos( $prop, 'color' ) ) {
 							$css[ $selector ][ $prop ] = $this->build_color_props( array(
 									'color_opacity' => $settings[ $key ],
-							        'property' => $prop,
+									'property' => $prop,
 								)
 							);
 						}
@@ -2108,7 +2620,11 @@ if ( ! class_exists( 'Themify_Builder' ) ) {
 
 			if ( ! $array ) {
 				if ( '' != $style ) {
-					return "\n<!-- $style_id Style -->\n<style>\n$style</style>\n<!-- End $style_id Style -->\n";
+					if ( 'tag' == $format ) {
+						return "\n<!-- $style_id Style -->\n<style>\n$style</style>\n<!-- End $style_id Style -->\n";
+					} else {
+						return "/* $style_id Style */\n$style\n";
+					}
 				}
 			} else if ( $array ) {
 				return $css;
@@ -2256,16 +2772,23 @@ if ( ! class_exists( 'Themify_Builder' ) ) {
 
 		/**
 		 * Get template row
-		 * @param array $rows 
-		 * @param array $row 
-		 * @param string $builder_id 
-		 * @param bool $echo
+		 *
+		 * @param array  $rows
+		 * @param array  $row
+		 * @param string $builder_id
+		 * @param bool   $echo
+		 *
+		 * @return string
 		 */
-		public function get_template_row( $rows, $row, $builder_id, $echo = false ) {
+		public function get_template_row( $rows, $row, $builder_id, $echo = false, $frontedit_active = null ) {
 			/* allow addons to control the display of the rows */
 			$display = apply_filters( 'themify_builder_row_display', true, $row, $builder_id );
 			if( false === $display ) {
 				return false;
+			}
+
+			if( null === $frontedit_active ) {
+				$frontedit_active = $this->frontedit_active;
 			}
 
 			$row['row_order'] = isset( $row['row_order'] ) ? $row['row_order'] : uniqid();
@@ -2279,6 +2802,10 @@ if ( ! class_exists( 'Themify_Builder' ) ) {
 
 			// Class for Scroll Highlight
 			if ( isset( $row['styling'] ) && isset( $row['styling']['row_anchor'] ) && '' != $row['styling']['row_anchor'] ) {
+
+				// Load styles and scripts registered in Themify_Builder::register_frontend_js_css()
+				$GLOBALS['ThemifyBuilder']->load_templates_js_css( array( 'scroll' => true ) );
+
 				$row_classes[] = 'tb_section-' . $row['styling']['row_anchor'];
 			}
 
@@ -2301,13 +2828,32 @@ if ( ! class_exists( 'Themify_Builder' ) ) {
 			}
 			$row_classes = apply_filters( 'themify_builder_row_classes', $row_classes, $row, $builder_id );
 
+			if ( $is_type_video && $has_video ) {
+				// Load styles and scripts registered in Themify_Builder::register_frontend_js_css()
+				$GLOBALS['ThemifyBuilder']->load_templates_js_css( array( 'fullvideo' => true ) );
+				$video_data = 'data-fullwidthvideo="' . esc_url( $row['styling']['background_video'] ) . '"';
+
+				// Will only be written if they exist, for backwards compatibility with global JS variable tbLocalScript.backgroundVideoLoop
+				if ( isset( $row['styling']['background_video_options'] ) ) {
+					if ( is_array( $row['styling']['background_video_options'] ) ) {
+						$video_data .= in_array( 'mute', $row['styling']['background_video_options'] ) ? ' data-mutevideo="mute"' : ' data-mutevideo="unmute"';
+						$video_data .= in_array( 'unloop', $row['styling']['background_video_options'] ) ? ' data-unloopvideo="unloop"' : ' data-unloopvideo="loop"';
+					} else {
+						$video_data .= ( false !== stripos( 'mute', $row['styling']['background_video_options'] ) ) ? ' data-mutevideo="mute"' : ' data-mutevideo="unmute"';
+						$video_data .= ( false !== stripos( 'unloop', $row['styling']['background_video_options'] ) ) ? ' data-unloopvideo="unloop"' : ' data-unloopvideo="loop"';
+					}
+				}
+			} else {
+				$video_data = '';
+			}
+
 			$output = PHP_EOL; // add line break
 			ob_start();
 			?>
 			<!-- module_row -->
-			<div data-gutter="<?php echo esc_attr( $row_gutter_class ); ?>" class="<?php echo esc_attr( implode( ' ', $row_classes ) ); ?>" <?php if ( $is_type_video && $has_video ) : echo 'data-fullwidthvideo="' . esc_url( $row['styling']['background_video'] ) . '"'; endif; ?>>
+			<div data-gutter="<?php echo esc_attr( $row_gutter_class ); ?>" class="<?php echo esc_attr( implode( ' ', $row_classes ) ); ?>" <?php echo $video_data; ?>>
 
-				<?php if ( $this->frontedit_active ): ?>
+				<?php if ( $frontedit_active ): ?>
 				<div class="themify_builder_row_top">
 					<div class="row_menu">
 						<div class="menu_icon">
@@ -2329,10 +2875,10 @@ if ( ! class_exists( 'Themify_Builder' ) ) {
 
 				<?php
 				if( isset( $row['styling']['cover_color'] ) || isset( $row['styling']['cover_color_hover'] ) ) {
-					$cover_color = ( $row['styling']['cover_color'] != '' ) ? 'style="background-color: ' . $this->get_rgba_color( $row['styling']['cover_color'] ) . '" data-color="'. $this->get_rgba_color( $row['styling']['cover_color'] ) .'"' : '';
-					$cover_hover_color = ( $row['styling']['cover_color_hover'] != '' ) ? 'data-hover-color="' . $this->get_rgba_color( $row['styling']['cover_color_hover'] ) . '"' : '';
+					$cover_color = ( $row['styling']['cover_color'] != '' ) ? 'style="background-color: ' . esc_attr( $this->get_rgba_color( $row['styling']['cover_color'] ) ) . '" data-color="'. esc_attr( $this->get_rgba_color( $row['styling']['cover_color'] ) ) .'"' : '';
+					$cover_hover_color = ( $row['styling']['cover_color_hover'] != '' ) ? 'data-hover-color="' . esc_attr( $this->get_rgba_color( $row['styling']['cover_color_hover'] ) ) . '"' : '';
 					?>
-					<div class="builder_row_cover" <?php echo $cover_color . ' ' . $cover_hover_color; ?>></div>
+					<div class="builder_row_cover" <?php echo "$cover_color $cover_hover_color"; ?>></div>
 				<?php } ?>
 
 				<?php
@@ -2341,6 +2887,9 @@ if ( ! class_exists( 'Themify_Builder' ) ) {
 
 					if ( $images = $this->get_images_from_gallery_shortcode( $row['styling']['background_slider'] ) ) :
 						$bgmode = isset( $row['styling']['background_slider_mode'] ) && ! empty( $row['styling']['background_slider_mode'] ) ? $row['styling']['background_slider_mode'] : 'fullcover';
+
+						// Load styles and scripts registered in Themify_Builder::register_frontend_js_css()
+						$GLOBALS['ThemifyBuilder']->load_templates_js_css( array( 'icons-fa' => true ) );
 						?>
 
 						<div id="row-slider-<?php echo esc_attr( $row['row_order'] ); ?>" class="row-slider"
@@ -2375,7 +2924,7 @@ if ( ! class_exists( 'Themify_Builder' ) ) {
 
 						<?php do_action('themify_builder_row_start', $builder_id, $row ); ?>
 
-						<?php if ( $this->frontedit_active ): ?>
+						<?php if ( $frontedit_active ): ?>
 						<div class="themify_builder_row_content">	
 						<?php endif; // builder edit active ?>
 
@@ -2384,7 +2933,15 @@ if ( ! class_exists( 'Themify_Builder' ) ) {
 								$count = count( $row['cols'] );
 
 								switch ( $count ) {
-									
+
+									case 6:
+										$order_classes = array( 'first', 'second', 'third', 'fourth', 'fifth', 'last' );
+									break;
+
+									case 5:
+										$order_classes = array( 'first', 'second', 'third', 'fourth', 'last' );
+									break;
+
 									case 4:
 										$order_classes = array( 'first', 'second', 'third', 'last' );
 									break;
@@ -2406,8 +2963,9 @@ if ( ! class_exists( 'Themify_Builder' ) ) {
 									$columns_class = array();
 									$grid_class = explode(' ', $col['grid_class'] );
 									$dynamic_class = array( '', '' );
-									$dynamic_class[0] = $this->frontedit_active ? 'themify_builder_col' : $order_classes[ $cols ];
-									$dynamic_class[1] = $this->frontedit_active ? '' : 'tb-column';
+									$dynamic_class[0] = $frontedit_active ? 'themify_builder_col' : $order_classes[ $cols ];
+									$dynamic_class[1] = $frontedit_active ? '' : 'tb-column';
+									$dynamic_class[2] = ( isset( $col['modules'] ) && count( $col['modules'] ) > 0 ) ? '' : 'empty-column';
 									$columns_class = array_merge( $columns_class, $grid_class );
 									foreach( $dynamic_class as $class ) {
 										array_push( $columns_class, $class );
@@ -2423,7 +2981,7 @@ if ( ! class_exists( 'Themify_Builder' ) ) {
 									?>
 
 									<div class="<?php echo esc_attr( $print_column_classes ); ?>">
-										<?php if($this->frontedit_active): ?>
+										<?php if($frontedit_active): ?>
 										<div class="themify_module_holder">
 											<div class="empty_holder_text"><?php _e('drop module here', 'themify') ?></div><!-- /empty module text -->
 										<?php endif; ?>
@@ -2433,8 +2991,8 @@ if ( ! class_exists( 'Themify_Builder' ) ) {
 													foreach ( $col['modules'] as $modules => $mod ) {
 
 														if ( isset( $mod['mod_name']) ) {
-															$w_wrap = ( $this->frontedit_active ) ? true : false;
-															$w_class = ( $this->frontedit_active ) ? 'r'.$rows.'c'.$cols.'m'.$modules : '';
+															$w_wrap = ( $frontedit_active ) ? true : false;
+															$w_class = ( $frontedit_active ) ? 'r'.$rows.'c'.$cols.'m'.$modules : '';
 															$identifier = array( $rows, $cols, $modules ); // define module id
 															$this->get_template_module( $mod, $builder_id, true, $w_wrap, $w_class, $identifier );
 														}
@@ -2443,14 +3001,14 @@ if ( ! class_exists( 'Themify_Builder' ) ) {
 														if ( isset( $mod['cols'] ) && count( $mod['cols'] ) > 0 ) {
 															$sub_row_gutter = isset( $mod['gutter'] ) && ! empty( $mod['gutter'] ) ? $mod['gutter'] : 'gutter-default';
 															$sub_row_class = 'sub_row_' . $rows . '-' . $cols . '-' . $modules; 
-															$sub_row_attr = $this->frontedit_active ? '
+															$sub_row_attr = $frontedit_active ? '
 															data-gutter="' . esc_attr( $sub_row_gutter ) . '"' : '';
 															echo sprintf('<div class="themify_builder_sub_row
 															clearfix %s %s"%s>', esc_attr( $sub_row_gutter ), esc_attr( $sub_row_class ),
 																$sub_row_attr );
 															?>
 															
-															<?php if( $this->frontedit_active ): ?>
+															<?php if( $frontedit_active ): ?>
 															<div class="themify_builder_sub_row_top">
 																<?php themify_builder_grid_lists( 'sub_row', $sub_row_gutter ); ?>
 																<ul class="sub_row_action">
@@ -2463,24 +3021,24 @@ if ( ! class_exists( 'Themify_Builder' ) ) {
 
 															<?php
 															foreach( $mod['cols'] as $col_key => $sub_col ) {
-																$sub_col_class = $this->frontedit_active ? 'themify_builder_col ' . $sub_col['grid_class'] : $sub_col['grid_class'];
+																$sub_col_class = $frontedit_active ? 'themify_builder_col ' . $sub_col['grid_class'] : $sub_col['grid_class'];
 																echo sprintf( '<div class="%s">', esc_attr( $sub_col_class ) ); ?>
 																
-																<?php if( $this->frontedit_active ): ?>
+																<?php if( $frontedit_active ): ?>
 																<div class="themify_module_holder">
 																	<div class="empty_holder_text"><?php _e('drop module here', 'themify') ?></div><!-- /empty module text -->
 																<?php endif; ?>
 																<?php
 																if ( isset( $sub_col['modules'] ) && count( $sub_col['modules'] ) > 0 ) {
 																	foreach( $sub_col['modules'] as $sub_module_k => $sub_module ) {
-																		$sw_wrap = ( $this->frontedit_active ) ? true : false;
-																		$sw_class = ( $this->frontedit_active ) ? 'r'. $sub_row_class .'c'.$col_key.'m'.$sub_module_k : '';
+																		$sw_wrap = ( $frontedit_active ) ? true : false;
+																		$sw_class = ( $frontedit_active ) ? 'r'. $sub_row_class .'c'.$col_key.'m'.$sub_module_k : '';
 																		$sub_identifier = array( $sub_row_class, $col_key, $sub_module_k ); // define module id
 																		$this->get_template_module( $sub_module, $builder_id, true, $sw_wrap, $sw_class, $sub_identifier );
 																	}
 																} ?>
 
-																<?php if ( $this->frontedit_active ): ?>
+																<?php if ( $frontedit_active ): ?>
 																</div>
 																<!-- /module_holder -->
 																<?php endif; ?>
@@ -2488,19 +3046,19 @@ if ( ! class_exists( 'Themify_Builder' ) ) {
 																echo '</div>';
 															}
 															
-															if ( $this->frontedit_active ) {
+															if ( $frontedit_active ) {
 																echo '</div>';
 															}
 
 															echo '</div>';
 														}
 													}
-												} elseif ( ! $this->frontedit_active )  {
+												} elseif ( ! $frontedit_active )  {
 													echo '&nbsp;'; // output empty space
 												}
 											?>
 										
-										<?php if ( $this->frontedit_active ): ?>
+										<?php if ( $frontedit_active ): ?>
 										</div>
 										<!-- /module_holder -->
 										<?php endif; ?>
@@ -2511,18 +3069,18 @@ if ( ! class_exists( 'Themify_Builder' ) ) {
 						<?php else: ?>
 
 						<div class="themify_builder_col col-full first last">
-							<?php if($this->frontedit_active): ?>
+							<?php if($frontedit_active): ?>
 							<div class="themify_module_holder">
 								<div class="empty_holder_text"><?php _e('drop module here', 'themify') ?></div><!-- /empty module text -->
 							<?php endif; ?>
 								
 								<?php
-									if ( ! $this->frontedit_active )  {
+									if ( ! $frontedit_active )  {
 										echo '&nbsp;'; // output empty space
 									}
 								?>
 							
-							<?php if ( $this->frontedit_active ): ?>
+							<?php if ( $frontedit_active ): ?>
 							</div>
 							<!-- /module_holder -->
 							<?php endif; ?>
@@ -2531,7 +3089,7 @@ if ( ! class_exists( 'Themify_Builder' ) ) {
 
 						<?php endif; // end col loop ?>
 
-						<?php if ( $this->frontedit_active ): ?>
+						<?php if ( $frontedit_active ): ?>
 						</div> <!-- /themify_builder_row_content -->
 						
 						<?php $row_data_styling = isset( $row['styling'] ) ? json_encode( $row['styling'] ) : json_encode( array() ); ?>
@@ -2718,6 +3276,362 @@ if ( ! class_exists( 'Themify_Builder' ) ) {
 			}
 
 			return apply_filters( 'builder_get_public_taxonomies', $result );
+		}
+
+		/**
+		 * If installation is in debug mode, returns '' to load non-minified scripts and stylesheets.
+		 *
+		 * @since 1.0.3
+		 */
+		function minified() {
+			return ( defined( 'WP_DEBUG' ) && WP_DEBUG ) ? '' : '.min';
+		}
+
+		/**
+		 * Return the URL or the directory path for a template, template part or content builder styling stylesheet.
+		 * 
+		 * @since 2.2.5
+		 *
+		 * @param string $mode Whether to return the directory or the URL. Can be 'bydir' or 'byurl' correspondingly. 
+		 * @param int $single ID of layout, layour part or entry that we're working with.
+		 *
+		 * @return string
+		 */
+		public static function get_stylesheet( $mode = 'bydir', $single = null ) {
+			static $before;
+			if ( ! isset( $before ) ) {
+				$upload_dir = wp_upload_dir();
+				$before = array(
+					'bydir' => $upload_dir['basedir'],
+					'byurl' => $upload_dir['baseurl'],
+				);
+			}
+			if ( is_null( $single ) ) {
+				$single = get_the_ID();
+			}
+			
+			$single = is_int( $single ) ? get_post( $single ) : get_page_by_path( $single, OBJECT, 'tbuilder_layout_part' );
+
+			if ( ! is_object( $single ) ) {
+				return '';
+			}
+			
+			$single = $single->post_name;
+
+			$path = "$before[$mode]/themify-css";
+
+			if ( 'bydir' == $mode ) {
+				if ( ! function_exists( 'WP_Filesystem' ) ) {
+					require_once ABSPATH . 'wp-admin/includes/file.php';
+				}
+				WP_Filesystem();
+				global $wp_filesystem;
+				$dir_exists = $wp_filesystem->is_dir( $path );
+				if ( ! $dir_exists ) {
+					$dir_exists = $wp_filesystem->mkdir( $path, FS_CHMOD_DIR );
+				}
+			}
+
+			$stylesheet = "$path/themify-builder-$single-generated.css";
+
+			/**
+			 * Filters the return URL or directory path including the file name.
+			 *
+			 * @param string $stylesheet Path or URL for the global styling stylesheet.
+			 * @param string $mode What was being retrieved, 'bydir' or 'byurl'.
+			 * @param int $single ID of the template, template part or content builder that we're fetching.
+			 *
+			 */
+			return apply_filters( 'themify_builder_get_stylesheet', $stylesheet, $mode, $single );
+		}
+
+		/**
+		 * Build style recursively. Written for sub_row styling generation.
+		 * 
+		 * @since 2.2.6
+		 * 
+		 * @param array $data Collection of styling data.
+		 * @param int $style_id ID of the current entry.
+		 * @param string $sub_row Row ID when it's a sub row. This is used starting from second level depth.
+		 *
+		 * @return string
+		 */
+		function recursive_style_generator( $data, $style_id, $sub_row = '' ) {
+			$css_to_save = '';
+			if ( ! is_array( $data ) ) {
+				return $css_to_save;
+			}
+			foreach ( $data as $row_index => $row ) {
+				if ( isset( $row['styling'] ) && ! empty( $row['styling'] ) && is_array( $row['styling'] ) ) {
+					if ( isset( $row['row_order'] ) ) {
+						$selector = ".themify_builder_content-$style_id > .module_row_{$row['row_order']}";
+					} else {
+						$selector = ".themify_builder_content-$style_id > .module_row_{$row_index}";
+					}
+					$css_to_save .= $this->get_custom_styling( 
+						$selector,
+						'row',
+						$row['styling'],
+						false,
+						'css'
+					);
+				}
+				if ( ! isset( $row['cols'] ) || ! is_array( $row['cols'] ) ) {
+					continue;
+				}
+				foreach ( $row['cols'] as $col_index => $col ) {
+					if ( ! isset( $col['modules'] ) || ! is_array( $col['modules'] ) ) {
+						continue;
+					}
+					foreach ( $col['modules'] as $mod_index => $mod ) {
+						if ( is_null( $mod ) ) {
+							continue;
+						}
+						if ( isset( $mod['mod_name'] ) ) {
+							if ( 'layout-part' == $mod['mod_name'] ) {
+								$lp = get_page_by_path( $mod['mod_settings']['selected_layout_part'], OBJECT, 'tbuilder_layout_part' );
+								$lp_meta = get_post_meta( $lp->ID, $this->meta_key, true );
+								foreach ( $lp_meta as $lp_row_index => $lp_row ) {
+									if ( ! empty( $lp_row['styling'] ) && is_array( $lp_row['styling'] ) ) {
+										$css_to_save .= $this->get_custom_styling(
+											".themify_builder_content-$lp->ID > .module_row_{$lp_row['row_order']}",
+											'row',
+											$lp_row['styling'],
+											false,
+											'css'
+										);
+									}
+									if ( isset( $lp_row['cols'] ) && is_array( $lp_row['cols'] ) ) {
+										foreach ( $lp_row['cols'] as $lp_col_index => $lp_col ) {
+											if ( isset( $lp_col['modules'] ) && is_array( $lp_col['modules'] ) ) {
+												foreach ( $lp_col['modules'] as $lp_mod_index => $lp_mod ) {
+													if ( is_null( $lp_mod ) ) {
+														continue;
+													}
+													if ( empty( $sub_row ) ) {
+														$this_index = "$lp_row_index-$lp_col_index-$lp_mod_index";
+													} else {
+														if ( isset( $row['row_order'] ) ) {
+															$this_index = $sub_row . "{$row['row_order']}-$lp_col_index-$lp_mod_index";
+														} else {
+															$sr_index = $row_index + 1;
+															$this_index = $sub_row . "$sr_index-$lp_col_index-$lp_mod_index";
+														}
+													}
+													$css_to_save .= $this->get_custom_styling(
+														".themify_builder .{$lp_mod['mod_name']}-$lp->ID-$this_index",
+														$lp_mod['mod_name'],
+														$lp_mod['mod_settings'],
+														false,
+														'css'
+													);
+												}
+											}
+										}
+									}
+								}
+							} else {
+								if ( empty( $sub_row ) ) {
+									$this_index = "$row_index-$col_index-$mod_index";
+								} else {
+									if ( isset( $row['row_order'] ) ) {
+										$this_index = $sub_row . "{$row['row_order']}-$col_index-$mod_index";
+									} else {
+										$sr_index = $row_index + 1;
+										$this_index = $sub_row . "$sr_index-$col_index-$mod_index";
+									}
+								}
+								$css_to_save .= $this->get_custom_styling(
+									".themify_builder .{$mod['mod_name']}-$style_id-$this_index",
+									$mod['mod_name'],
+									$mod['mod_settings'],
+									false,
+									'css'
+								);
+							}
+						}
+						if ( isset( $mod['row_order'] ) ) {
+							$css_to_save .= $this->recursive_style_generator( array( $mod ), $style_id, "sub_row_$row_index-$col_index-" );
+						}
+					}
+				}	
+			}
+			return $css_to_save;
+		}
+
+		/** 
+		 * Write stylesheet file.
+		 * 
+		 * @since 2.2.5
+		 * 
+		 * @return bool
+		 */
+		function write_stylesheet( $data_set ) {
+			$this->saving_stylesheet = true;
+			$style_id = $data_set['id'];
+
+			$css_to_save = $this->recursive_style_generator( $data_set['data'], $style_id );
+
+			if ( ! empty( $css_to_save ) ) {
+				$css_file = $this->get_stylesheet( 'bydir', (int) $style_id );
+
+				// Load WP Filesystem
+				if ( ! function_exists( 'WP_Filesystem' ) ) {
+					require_once ABSPATH . 'wp-admin/includes/file.php';
+				}
+				WP_Filesystem();
+				global $wp_filesystem;
+
+				if ( $wp_filesystem->is_file( $css_file ) ) {
+					$wp_filesystem->delete( $css_file );
+				}
+				/**
+				 * Filters the CSS that will be saved for modules that output inline <style> tags for styling changes not managed by get_styling().
+				 * 
+				 * @since 2.2.5
+				 *
+				 * @param string $css_to_save CSS text right before it's saved.
+				 */
+				$css_to_save = apply_filters( 'themify_builder_css_to_stylesheet', $css_to_save );
+				if ( $wp_filesystem->put_contents( $css_file, $css_to_save, FS_CHMOD_FILE ) ) {
+					update_option( 'themify_builder_stylesheet_timestamp', current_time( 'y.m.d.H.i.s' ) );
+				}
+
+				// Save Google Fonts
+				global $themify;
+				if ( isset( $themify->builder_google_fonts ) && ! empty( $themify->builder_google_fonts ) ) {
+					$builder_fonts = get_option( 'themify_builder_google_fonts' );
+					if ( empty( $builder_fonts ) || ! is_array( $builder_fonts ) ) {
+						$builder_fonts = array();
+					}
+					$entry_fonts = array_unique( array(	$style_id => $themify->builder_google_fonts	) + $builder_fonts );
+					update_option( 'themify_builder_google_fonts', $entry_fonts );
+				}
+			}
+
+			$this->saving_stylesheet = false;
+		}
+
+		/**
+		 * Checks if the builder stylesheet exists and enqueues it. Otherwise hooks an action to wp_head to build the CSS and output it.
+		 * 
+		 * @since 2.2.5
+		 */
+		function delete_stylesheet() {
+			$css_file = $this->get_stylesheet();
+
+			// Load WP Filesystem
+			if ( ! function_exists( 'WP_Filesystem' ) ) {
+				require_once ABSPATH . 'wp-admin/includes/file.php';
+			}
+			WP_Filesystem();
+			global $wp_filesystem;
+
+			if ( $wp_filesystem->is_file( $css_file ) ) {
+				$wp_filesystem->delete( $css_file );
+			}
+		}
+
+		/**
+		 * If there wasn't a proper stylesheet, that is, one that matches this slug, generate it.
+		 *
+		 * @since 2.2.5
+		 *
+		 * @param int $post_id
+		 */
+		function build_stylesheet_if_needed( $post_id ) {
+			//verify post is not a revision
+			if ( ! wp_is_post_revision( $post_id ) ) {
+				if ( ! $this->is_readable_and_not_empty( $this->get_stylesheet( 'bydir', $post_id ) ) ) {
+					if ( $post_data = get_post_meta( $post_id, $this->meta_key, true ) ) {
+						// Write Stylesheet
+						$this->write_stylesheet( array( 'id' => $post_id, 'data' => $post_data ) );
+					}
+				}
+			}
+		}
+
+		/** 
+		 * Checks whether a file exists, can be loaded and is not empty.
+		 * 
+		 * @since 2.2.5
+		 * 
+		 * @param string $file_path Path in server to the file to check.
+		 * 
+		 * @return bool
+		 */
+		function is_readable_and_not_empty( $file_path = '' ) {
+			if ( empty( $file_path ) ) {
+				return false;
+			}
+			return is_readable( $file_path ) && 0 !== filesize( $file_path );
+		}
+
+		/**
+		 * Tries to enqueue stylesheet. If it's not possible, it hooks an action to wp_head to build the CSS and output it.
+		 * 
+		 * @since 2.2.5
+		 */
+		function enqueue_stylesheet() {
+			if ( apply_filters( 'themify_builder_enqueue_stylesheet', true ) ) {
+				// If enqueue fails, maybe the file doesn't exist...
+				if ( ! $this->test_and_enqueue() ) {
+					// Try to generate it right now.
+					if ( $post_data = get_post_meta( get_the_ID(), $this->meta_key, true ) ) {
+						// Write Stylesheet
+						$this->write_stylesheet( array( 'id' => get_the_ID(), 'data' => $post_data ) );
+					}
+					if ( ! $this->test_and_enqueue() ) {
+						// No luck. Let's do it inline.
+						$this->is_front_end_style_inline = true;
+						add_action( 'themify_builder_row_start', array( $this, 'render_row_styling' ), 10, 2 );
+					}
+				}
+			}
+		}
+
+		/**
+		 * Checks if the builder stylesheet exists and enqueues it.
+		 * 
+		 * @since 2.2.5
+		 * 
+		 * @return bool True if enqueue was successful, false otherwise.
+		 */
+		function test_and_enqueue() {
+			$stylesheet_path = $this->get_stylesheet();
+			if ( $this->is_readable_and_not_empty( $stylesheet_path ) ) {
+				setlocale( LC_CTYPE, get_locale() . '.UTF-8' );
+				$handler = pathinfo( $stylesheet_path );
+				wp_enqueue_style( $handler['filename'], themify_https_esc( $this->get_stylesheet( 'byurl' ) ), array(), $this->get_stylesheet_version() );
+				// Load Google Fonts. Despite this function is hit twice while on-the-fly stylesheet generation, they're loaded only once.
+				$this->enqueue_fonts();
+				return true;
+			}
+			return false;
+		}
+
+		/**
+		 * Return timestamp to use as stylesheet version.
+		 * 
+		 * @since 2.2.5
+		 */
+		function get_stylesheet_version() {
+			return get_option( 'themify_builder_stylesheet_timestamp' );
+		}
+
+		/**
+		 * Enqueues Google Fonts
+		 * 
+		 * @since 2.2.6
+		 */
+		function enqueue_fonts() {
+			$entry_google_fonts = get_option( 'themify_builder_google_fonts' );
+			if ( isset( $entry_google_fonts ) && ! empty( $entry_google_fonts ) && is_array( $entry_google_fonts ) ) {
+				$entry_id = get_the_ID();
+				if ( isset( $entry_google_fonts[$entry_id] ) ) {
+					wp_enqueue_style( 'builder-google-fonts', themify_https_esc( 'http://fonts.googleapis.com/css' ) . '?family=' . $entry_google_fonts[$entry_id] );
+				}
+			}
 		}
 	}
 

@@ -1,4 +1,4 @@
-;var ThemifyPageBuilder;
+;var ThemifyPageBuilder, tinyMCEPreInit;
 (function($, window, document, undefined) {
 
 	'use strict';
@@ -51,7 +51,7 @@
 		bindEvents: function() {
 			var self = ThemifyPageBuilder,
 				$body = $('body'),
-				$tfBuilderAFirst = $('.toggle_tf_builder a:first'),
+				$tfBuilderAFirst = $('.toggle_tf_builder a:first, a.themify_builder_turn_on'),
 				resizeId,
 				eventToUse = 'true' == themifyBuilder.isTouch ? 'touchend' : 'mouseenter mouseleave';
 
@@ -73,7 +73,7 @@
 			.on('dblclick', '.themify_builder .active_module', this.dblOptionModule)
 			.on('click', '.themify_builder .themify_module_duplicate', this.duplicateModule)
 			.on('click', '.themify_builder .themify_module_delete', this.deleteModule)
-			.on('click', '.themify_builder .add_module', this.addModule)
+			.on('click', '.add_module', this.addModule)
 
 			/* clear styling */
 			.on('click', '.reset-module-styling', this.resetModuleStyling)
@@ -83,7 +83,7 @@
 			.on('click', '.themify-builder-front-close', this.panelClose)
 
 			/* Layout Action */
-			.on('click', '.layout_preview .thumbnail', this.templateSelected);
+			.on('click', '.layout_preview', this.templateSelected);
 
 			// add support click mobile device
 			if(this.is_touch_device()) {
@@ -118,7 +118,7 @@
 			/* save as template */
 			.on('submit', '#tfb_save_layout_form', this.saveAsLayout);
 
-			$(window).load(function(){
+			$('body').on('builderscriptsloaded.themify', function(){
 				if ( typeof switchEditors !== 'undefined' && typeof tinyMCE !== 'undefined' ) {
 					//make sure the hidden WordPress Editor is in Visual mode
 					switchEditors.go('tfb_lb_hidden_editor','tmce');
@@ -149,14 +149,9 @@
 			$('#wp-admin-bar-themify_builder .ab-item:first').on('click', function(e) {
 				e.preventDefault();
 			});
-			$tfBuilderAFirst.on('click', this.toggleFrontEdit);
+			$('body').on('click.aftertbloader', '.toggle_tf_builder a:first, a.themify_builder_turn_on', this.toggleFrontEdit);
 			$('.themify_builder_dup_link a').on('click', this.duplicatePage);
 			$('.slide_builder_module_panel').on('click', this.slidePanel);
-
-			// Grab hash url #builder_active then activate frontend edit
-			if( window.location.hash === "#builder_active" ) {
-				$tfBuilderAFirst.trigger('click');
-			}
 
 			if(this.is_touch_device()){
 				$body.addClass('touch');
@@ -743,7 +738,7 @@
 
 									}
 									else if( $this_option_child.hasClass('tf-radio-choice') ){
-										$this_option_child.find("input[value='" + $found_element_child + "']").attr('checked','checked');  
+										$this_option_child.find("input[value='" + $found_element_child + "']").attr('checked','checked'); 
 									} else if( $this_option_child.hasClass( 'themify-layout-icon' ) ) {
 										$this_option_child.find( '#' + $found_element_child ).addClass( 'selected' );
 									}
@@ -762,7 +757,7 @@
 							});
 
 						} else if ( $this_option.hasClass('tf-radio-input-container') ){
-							$this_option.find("input[value='" + $found_element + "']").attr('checked', 'checked');  
+							$this_option.find("input[value='" + $found_element + "']").prop('checked', true);
 							var selected_group = $this_option.find('input[name="'+this_option_id+'"]:checked').val();
 
 							// has group element enable
@@ -1330,7 +1325,7 @@
 
 				option_data = {row_order: index, gutter: $base.data('gutter'), cols: cols };
 			} else {
-				option_data = {};
+				option_data = { row_order: index, gutter: $base.data('gutter') };
 			}
 
 			// get row styling
@@ -1668,7 +1663,7 @@
 					self.loadContentJs();
 
 					// Load google font style
-					if ( 'undefined' !== WebFont && data.gfonts.length > 0 ) {
+					if ( 'undefined' !== typeof WebFont && data.gfonts.length > 0 ) {
 						WebFont.load({
 							google: {
 								families: data.gfonts
@@ -1706,11 +1701,11 @@
 			// add body class
 			if(!$('body').hasClass('themify_builder_active')){
 				is_edit = 1;
-				$(this).text(themifyBuilder.toggleOff);
+				$('.toggle_tf_builder a:first').text(themifyBuilder.toggleOff);
 				$('.themify_builder_front_panel').slideDown();
 			}else{
 				$('.themify_builder_front_panel').slideUp();
-				$(this).text(themifyBuilder.toggleOn);
+				$('.toggle_tf_builder a:first').text(themifyBuilder.toggleOn);
 				is_edit = 0;
 			}
 
@@ -1729,7 +1724,9 @@
 				self.editing = false;
 			}
 
-			e.preventDefault();
+			if ( 'undefined' !== typeof e ) {
+				e.preventDefault();
+			}
 		},
 
 		toggleFrontEditAjax: function(is_edit, bids) {
@@ -1785,7 +1782,7 @@
 
 			$('.themify_builder_content').each(function(){
 				var $container = $(this),
-					$parent = $container.find('.themify_builder_row:visible'),
+					$parent = $container.find('.themify_builder_row:visible').not( '.module-layout-part .themify_builder_row' ), // exclude builder rows inside layout parts,
 					template_func = wp.template( 'builder_row'),
 					$template = $( template_func({}) );
 				
@@ -2104,7 +2101,7 @@
 
 		panelClose: function(e){
 			e.preventDefault();
-			$('.toggle_tf_builder a:first').trigger('click');
+			ThemifyPageBuilder.toggleFrontEdit();
 		},
 
 		builderImportPage: function(e){
@@ -2213,6 +2210,9 @@
 						var id = $( this ).attr( 'id' );
 						if( $options[id] ) {
 							$options[id] = typeof $options[id] == 'string' ? [$options[id]] : $options[id]; // cast the option value as array
+							// First unchecked all to fixed checkbox has default value.
+							$(this).find('.tf-checkbox').prop('checked', false);
+							// Set the values
 							$.each( $options[id], function( i, v ){
 								$( '.tf-checkbox[value="'+ v +'"]' ).prop( 'checked', true );
 							} );
@@ -2285,7 +2285,7 @@
 					self.loadContentJs();
 
 					// Load google font style
-					if ( 'undefined' !== WebFont && data.gfonts.length > 0 ) {
+					if ( 'undefined' !== typeof WebFont && data.gfonts.length > 0 ) {
 						WebFont.load({
 							google: {
 								families: data.gfonts
@@ -2502,7 +2502,7 @@
 			$('#themify_builder_overlay').addClass( 'tfb-lightbox-open' ).show();
 			self.showLoader('show');
 			$('body').addClass('noScroll');
-			
+
 			// This is for themes that add html { overflow-y: scroll; } since it prevents WP Editor from scrolling
 			self.htmlOverflowY = $('html').css( 'overflowY' );
 			if ( '' !== self.htmlOverflowY ) {
@@ -2626,7 +2626,7 @@
 
 		_gridHover: function(event) {
 			if ( event.type == 'touchend' ) {
-				$column_menu = $(this).find('.themify_builder_grid_list_wrapper');
+				var $column_menu = $(this).find('.themify_builder_grid_list_wrapper');
 				if ( $column_menu.is(':hidden') ) {
 					$column_menu.show();
 				} else {
@@ -2713,7 +2713,10 @@
 	};
 
 	// Initialize Builder
-	$(function(){
+	$('body').on('builderscriptsloaded.themify', function(e){
 		ThemifyPageBuilder.init();
+		ThemifyPageBuilder.toggleFrontEdit(e);
+		$('.toggle_tf_builder a:first').on('click', ThemifyPageBuilder.toggleFrontEdit);
 	});
+
 }(jQuery, window, document));

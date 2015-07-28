@@ -700,7 +700,7 @@ class TB_Feature_Module extends Themify_Builder_Module {
 		$attachment = $wpdb->get_col( $wpdb->prepare( "SELECT ID FROM {$wpdb->posts} WHERE guid RLIKE %s;", $url ) );
 
 		// Returns null if no attachment is found
-		return $attachment[0];
+		return isset( $attachment[0] ) ? $attachment[0] : null;
 	}
 }
 ///////////////////////////////////////
