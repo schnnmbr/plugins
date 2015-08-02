@@ -1219,7 +1219,7 @@ function themify_is_theme_skin() {
 function themify_protected_meta( $protected, $meta_key, $meta_type ) {
 	global $themify_protected_meta;
 
-	if( in_array( $meta_key, $themify_protected_meta ) ) {
+	if( is_array( $themify_protected_meta ) && in_array( $meta_key, $themify_protected_meta ) ) {
 		$protected = true;
 	}
 
@@ -5019,8 +5019,9 @@ if ( ! function_exists( 'themify_wc_body_class' ) ) {
 			}
 		} else {
 			global $wp_query;
-			if ( isset( $wp_query->queried_object ) && isset( $wp_query->queried_object->ID ) ) {
-				$sidebar_layout = get_post_meta( $wp_query->queried_object->ID, 'page_layout', true );
+			$sidebar_in_page = get_post_meta( $wp_query->queried_object->ID, 'page_layout', true );
+			if ( isset( $wp_query->queried_object ) && isset( $wp_query->queried_object->ID ) && ( $sidebar_in_page && 'default' != $sidebar_in_page ) ) {
+				$sidebar_layout = $sidebar_in_page;
 			} elseif( themify_check('setting-shop_layout') ) {
 				$sidebar_layout = themify_get('setting-shop_layout');
 			} elseif( themify_check('setting-default_layout') ) {

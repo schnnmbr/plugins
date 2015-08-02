@@ -54,6 +54,7 @@ global $post;
 <?php elseif($layout_selection == 'grid'): ?>
     <?php  while ($the_query->have_posts()) : $the_query->the_post(); ?>
 
+        <div class="margin_zero">
         <div class="<?php echo $grid_selection; ?>">
                 <div class="testimonials_grid">
                     <div class="testimonial_content big-col">
@@ -76,6 +77,7 @@ global $post;
                         </a>
                     </h5>
                 </div>
+        </div>
         </div>
 
 

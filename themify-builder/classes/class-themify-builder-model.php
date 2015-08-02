@@ -107,7 +107,7 @@ final class Themify_Builder_Model {
 	 */
 	static public function is_frontend_editor_page() {
 		$active = false;
-		if ( is_user_logged_in() && current_user_can( 'edit_page', get_the_ID() ) ) {
+		if ( is_user_logged_in() && current_user_can( 'edit_pages', get_the_ID() ) ) {
 			$active = true;
 		}
 

@@ -52,10 +52,10 @@ class Testimonials extends SiteOrigin_Widget {
                     'label' => __( 'Choose a Gird Layout ( Only for Testimonial Grid )', 'addon-so-widgets-bundle' ),
                     'default' => 'col-md-12',
                     'options' => array(
-                        'col-md-6' => __( 'Two Columns', 'addon-so-widgets-bundle' ),
-                        'col-md-4' => __( 'Three Columns', 'addon-so-widgets-bundle' ),
-                        'col-md-3' => __( 'Four Columns', 'addon-so-widgets-bundle' ),
-                        'col-md-12' => __( 'Full Width', 'addon-so-widgets-bundle' ),
+                        'six columns' => __( 'Two Columns', 'addon-so-widgets-bundle' ),
+                        'four columns' => __( 'Three Columns', 'addon-so-widgets-bundle' ),
+                        'three columns' => __( 'Four Columns', 'addon-so-widgets-bundle' ),
+                        'twelve columns' => __( 'Full Width', 'addon-so-widgets-bundle' ),
                     )
                 ),
 

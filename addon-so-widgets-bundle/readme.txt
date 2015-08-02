@@ -2,7 +2,7 @@
 Tags: SiteOrigin page builder, responsive, widget, widgets, post grid, testimonial widget, testimonial rotator, testimonial post type, faqs, faq post type, tab, toggle, divider, spacer, service box, feature box, post loop
 Requires at least: 3.9
 Tested up to: 4.2
-Stable tag: 2.2
+Stable tag: 2.2.1
 License: GPLv2 or later
 License URI: http://www.gnu.org/licenses/gpl-2.0.html
 Donate link: http://ingenious-web.com/contact
@@ -14,11 +14,11 @@ An ultimate collection of addons for SiteOrigin. SiteOrigin Widgets Bundle is re
 
 [vimeo https://vimeo.com/134485964]
 
-** Important: You must activate widgets you need to use from Plugins > SiteOrigin Widgets so that they can be available to use. **
+**Important: You must activate widgets you need to use from Plugins > SiteOrigin Widgets so that they can be available to use.**
 
 This is an Addon plugin for SiteOrigin Widgets Bundle plugin which will add some (and growing) amazing widgets for you to build up your content pages easily using SiteOrigin page builder. For more info visit [Ultimate Addons' Page.](http://ingenious-web.com/ultimate-addons-for-siteorigin/)
 
-The collection is growing, but here’s what we have so far.
+The collection is growing, but here's what we have so far.
 
 * Tabs Widget - Now you can easily add tabbed content on any page.
 * Toggle Widget - Will help you add content in toggle.
@@ -50,6 +50,9 @@ Now each widget has it's styling options within it same as Siteorigin Widgets.
 We will add FAQs very soon.
 
 == Changelog ==
+
+= 2.2.1 =
+* Changed CSS for grid columns. Old css was still conflicting with themes.
 
 = 2.2 =
 * Fixed CSS issues on couple of Widgets.

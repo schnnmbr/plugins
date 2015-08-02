@@ -3,7 +3,7 @@
 /*
 Plugin Name: Ultimate Addons for SiteOrigin
 Description: An ultimate collection of addons for SiteOrigin. SiteOrigin Widgets Bundle is required.
-Version: 2.2
+Version: 2.2.1
 Author: Ingenious Solution
 Author URI: http://ingenious-web.com/
 Plugin URI: http://ingenious-web.com/ultimate-addons-for-siteorigin/

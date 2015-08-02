@@ -553,7 +553,9 @@ BUILDER ROW
 .themify_builder_active .themify_builder_row .row-slider-nav {
 	z-index: 99;
 }
-
+.builder-is-touch .themify_builder_row_top {
+	visibility: visible !important;
+}
 /* row content */
 .frontend .themify_builder_content .themify_builder_row_content {
 	background: none;

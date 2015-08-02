@@ -41,9 +41,9 @@ class Blog_Style_Two extends SiteOrigin_Widget {
                     'label' => __( 'Choose a Layout', 'addon-so-widgets-bundle' ),
                     'default' => 'col-md-6',
                     'options' => array(
-                        'col-md-6' => __( '2 Column Layout', 'widget-form-fields-text-domain' ),
-                        'col-md-4' => __( '3 Column Layout', 'widget-form-fields-text-domain' ),
-                        'col-md-3' => __( '4 Column Layout', 'widget-form-fields-text-domain' ),
+                        'six columns' => __( '2 Column Layout', 'widget-form-fields-text-domain' ),
+                        'one-third column' => __( '3 Column Layout', 'widget-form-fields-text-domain' ),
+                        'three columns' => __( '4 Column Layout', 'widget-form-fields-text-domain' ),
                     )
                 ),
 

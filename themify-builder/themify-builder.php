@@ -3,7 +3,7 @@
 Plugin Name: Themify Builder
 Plugin URI: http://themify.me/
 Description: Build responsive layouts that work for desktop, tablets, and mobile using intuitive &quot;what you see is what you get&quot; drag &amp; drop framework with live edits and previews.
-Version: 1.4.2
+Version: 1.4.4
 Author: Themify
 Author URI: http://themify.me
 */

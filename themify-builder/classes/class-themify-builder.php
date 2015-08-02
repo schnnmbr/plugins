@@ -661,8 +661,7 @@ if ( ! class_exists( 'Themify_Builder' ) ) {
 		function add_builder_metabox() {
 			global $post, $pagenow;
 
-			$builder_data = get_post_meta( $post->ID, $this->meta_key, true );
-			$builder_data = stripslashes_deep( maybe_unserialize( $builder_data ) );
+			$builder_data = $this->get_builder_data( $post->ID );
 
 			if ( empty( $builder_data ) ) {
 				$builder_data = array();
@@ -904,6 +903,9 @@ if ( ! class_exists( 'Themify_Builder' ) ) {
 			$instyle_selectors = array_merge( self::$inview_selectors, $global_selectors, $specific_selectors );
 
 			if ( count( $instyle_selectors ) > 0 ) {
+				// If there's animation only, load at least main styles and scripts
+				add_action( 'wp_enqueue_scripts', array( $this, 'load_templates_js_css' ) );
+
 				$inline_style = '.js.csstransitions ' . join(', .js.csstransitions ', $instyle_selectors ) . '{ visibility:hidden; }';
 				echo sprintf( '<style>%s</style>', $inline_style );
 			}
@@ -1674,11 +1676,7 @@ if ( ! class_exists( 'Themify_Builder' ) ) {
 						),
 				);
 				global $Themify_Builder_Layouts;
-				if ( ! is_singular( $Themify_Builder_Layouts->post_types ) || ! Themify_Builder_Model::is_prebuilt_layout( $post_id ) ) {
-					$args = array_merge( $args, $import_args );
-				} else {
-					unset( $args[1] ); // unset Turn on Builder Link
-				}
+				$args = array_merge( $args, $import_args );
 			}
 
 			$args = array_merge( $args, $help_args );
@@ -1891,7 +1889,14 @@ if ( ! class_exists( 'Themify_Builder' ) ) {
 				'mod_settings' => ( isset( $mod['mod_settings'] ) ? $mod['mod_settings'] : '' )
 			),'', '', false );
 			$style_id = '.themify_builder .' . $mod_id;
-			if ( Themify_Builder_Model::is_frontend_editor_page() || ( isset( $_GET['themify_builder_infinite_scroll'] ) && 'yes' == $_GET['themify_builder_infinite_scroll'] ) || $this->is_front_end_style_inline ) {
+
+			$post = get_post( $builder_id );
+			if (
+				Themify_Builder_Model::is_frontend_editor_page()
+				|| ( isset( $_GET['themify_builder_infinite_scroll'] ) && 'yes' == $_GET['themify_builder_infinite_scroll'] )
+				|| $this->is_front_end_style_inline
+				|| ( is_object( $post ) && $post->post_type == 'tbuilder_layout_part' )
+			) {
 				$output .= $this->get_custom_styling( $style_id, $mod['mod_name'], $mod['mod_settings'] );
 			}
 
@@ -3316,7 +3321,7 @@ if ( ! class_exists( 'Themify_Builder' ) ) {
 				return '';
 			}
 			
-			$single = $single->post_name;
+			$single = $single->ID;
 
 			$path = "$before[$mode]/themify-css";
 

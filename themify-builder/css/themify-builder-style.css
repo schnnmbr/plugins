@@ -1660,12 +1660,6 @@ IMAGE MODULE
 	margin-top: 1em;
 	margin-bottom: 1.5em;
 }
-.module-image.image-top .image-wrap {
-	width: 100%;
-}
-.module-image.image-top img {
-	width: 100%;
-}
 
 /* image left */
 .module-image.image-left .image-wrap {
@@ -2269,7 +2263,6 @@ SLIDER MODULE
 }
 .themify_builder_slider .slide-image img {
 	vertical-align: bottom;
-	width: 100%;
 }
 
 /* slider content */

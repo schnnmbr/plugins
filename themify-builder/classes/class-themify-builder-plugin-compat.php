@@ -26,6 +26,32 @@ class Themify_Builder_Plugin_Compat {
 			add_filter( 'wpseo_pre_analysis_post_content', array( $this, 'wpseo_pre_analysis_post_content' ), 10, 2 );
 			add_filter( 'wpseo_sitemap_urlimages', array( $this, 'wpseo_sitemap_urlimages' ), 10, 2 );
 		}
+
+		// WPML compatibility
+		if ( $this->is_plugin_active( 'sitepress-multilingual-cms/sitepress.php' ) ) {
+			add_action( 'wp_ajax_themify_builder_icl_copy_from_original', array( $this, 'icl_copy_from_original' ) );
+		}
+	}
+
+	/**
+	 * Load Builder content from original page when "Copy content" feature in WPML is used
+	 *
+	 * @since 1.4.3
+	 */
+	function icl_copy_from_original() {
+		global $ThemifyBuilder, $wpdb;
+
+		if( isset( $_POST['source_page_id'] ) && isset( $_POST['source_page_lang'] ) ) {
+			$post_id = $wpdb->get_var( $wpdb->prepare( "SELECT element_id FROM {$wpdb->prefix}icl_translations WHERE trid=%d AND language_code=%s", $_POST[ 'source_page_id' ], $_POST[ 'source_page_lang' ] ) );
+			$post    = get_post( $post_id );
+			if ( ! empty( $post ) ) {
+				$builder_data = $ThemifyBuilder->get_builder_data( $post->ID );
+				include THEMIFY_BUILDER_INCLUDES_DIR . '/themify-builder-meta.php';
+			} else {
+				echo '-1';
+			}
+		}
+		die;
 	}
 
 	/**

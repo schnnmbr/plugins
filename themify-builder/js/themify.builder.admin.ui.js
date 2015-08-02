@@ -1064,10 +1064,6 @@
 					});
 					e.preventDefault();
 				}
-				else{
-					self.isPostSave = false;
-					return true;  
-				}
 			}
 		},
 
@@ -1707,7 +1703,7 @@
 				$options = $this.closest('.themify_builder_row').find('.row-data-styling').data('styling');
 
 			$('#themify_builder_lightbox_container').empty();
-			$('#themify_builder_overlay').show();
+			$('#themify_builder_overlay').addClass( 'tfb-lightbox-open' ).show();
 			self.showLoader('show');
 
 			// highlight current selected row
@@ -2002,6 +1998,33 @@
 
 	// Initialize Builder
 	$(function(){
+		var _original_icl_copy_from_original;
 		ThemifyPageBuilder.init();
+
+		// WPML compat
+		if( typeof window.icl_copy_from_original == 'function' ) {
+			 _original_icl_copy_from_original = window.icl_copy_from_original;
+			// override "copy content" button action to load Builder modules as well
+			window.icl_copy_from_original = function( lang, id ) {
+				_original_icl_copy_from_original( lang, id );
+				jQuery.ajax({
+					url : ajaxurl,
+					type : "POST",
+					data : {
+						action : 'themify_builder_icl_copy_from_original',
+						source_page_id : id,
+						source_page_lang : lang
+					},
+					success : function( data ){
+						if( data != '-1' ) {
+							jQuery( '#page-builder .themify_builder.themify_builder_admin' ).empty().append( data ).contents().unwrap();
+
+							// redo module events
+							ThemifyPageBuilder.moduleEvents();
+						}
+					}
+				});
+			}
+		}
 	});
 }(jQuery, window, document));
