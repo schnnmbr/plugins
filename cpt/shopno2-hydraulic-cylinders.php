@@ -1,7 +1,7 @@
 	<?php 
 
 /*
-Plugin Name: 14 - Hydraulic Cylinders
+Plugin Name: 17 - Hydraulic Cylinders
 Plugin URI: http://shopno2.com
 Description: Hydraulic Cylinder CPT For Use Through Out The Site
 Use Hydraulic Cylinders to add and display hydraulic cylinders on your site.
@@ -32,7 +32,6 @@ function shopno2_hydraulic_cylinder() {
 		'label'               => __( 'Hydraulic Cylinder', 'text_domain' ),
 		'description'         => __( 'Hydraulic Cylinder information pages', 'text_domain' ),
 		'labels'              => $labels,
-		'supports'            => array( 'title', 'editor', 'thumbnail', 'custom-fields', ),
 		'taxonomies'          => array( 'category' ),
 		'hierarchical'        => false,
 		'public'              => true,
@@ -48,9 +47,9 @@ function shopno2_hydraulic_cylinder() {
 		'publicly_queryable'  => true,
 		'capability_type'     => 'page',
 		'supports' => array( 'title', 'editor', 'thumbnail', 'excerpt', 'custom-fields', 'genesis-seo', 'thumbnail','genesis-cpt-archives-settings', 'genesis-layouts' ), );
-		//'supports' => array( 'title', 'editor', 'thumbnail', 'excerpt','custom-fields'), );
+		
 	
-	register_post_type( 'hydraulic_cylinder', $args );
+	register_post_type( 'hydraulic-cylinder', $args );
 
 }
 
