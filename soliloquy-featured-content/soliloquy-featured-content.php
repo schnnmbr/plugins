@@ -1,223 +1,199 @@
 <?php
-/*
-Plugin Name: Soliloquy Featured Content Addon
-Plugin URI: http://soliloquywp.com/
-Description: Enables dynamic featured content support for the Soliloquy for WordPress plugin.
-Author: Thomas Griffin
-Author URI: http://thomasgriffinmedia.com/
-Version: 1.0.9
-License: GNU General Public License v2.0 or later
-License URI: http://www.opensource.org/licenses/gpl-license.php
-*/
+/**
+ * Plugin Name: Soliloquy - Featured Content Addon
+ * Plugin URI:  http://soliloquywp.com
+ * Description: Enables featured content sliders in Soliloquy.
+ * Author:      Thomas Griffin
+ * Author URI:  http://thomasgriffinmedia.com
+ * Version:     2.3.1
+ * Text Domain: soliloquy-fc
+ * Domain Path: languages
+ *
+ * Soliloquy is free software: you can redistribute it and/or modify
+ * it under the terms of the GNU General Public License as published by
+ * the Free Software Foundation, either version 2 of the License, or
+ * any later version.
+ *
+ * Soliloquy is distributed in the hope that it will be useful,
+ * but WITHOUT ANY WARRANTY; without even the implied warranty of
+ * MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE. See the
+ * GNU General Public License for more details.
+ *
+ * You should have received a copy of the GNU General Public License
+ * along with Soliloquy. If not, see <http://www.gnu.org/licenses/>.
+ */
 
-/*
-	Copyright 2012  Thomas Griffin  (email : thomas@thomasgriffinmedia.com)
-
-    This program is free software; you can redistribute it and/or modify
-    it under the terms of the GNU General Public License, version 2, as
-    published by the Free Software Foundation.
-
-    This program is distributed in the hope that it will be useful,
-    but WITHOUT ANY WARRANTY; without even the implied warranty of
-    MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
-    GNU General Public License for more details.
-
-    You should have received a copy of the GNU General Public License
-    along with this program; if not, write to the Free Software
-    Foundation, Inc., 51 Franklin St, Fifth Floor, Boston, MA  02110-1301  USA
-*/
-
-/** Load all of the necessary class files for the plugin */
-spl_autoload_register( 'Tgmsp_FC::autoload' );
+// Exit if accessed directly.
+if ( ! defined( 'ABSPATH' ) ) {
+    exit;
+}
 
 /**
- * Init class for the Featured Content Addon for Soliloquy.
+ * Main plugin class.
  *
  * @since 1.0.0
  *
- * @package Tgmsp-FC
- * @author Thomas Griffin <thomas@thomasgriffinmedia.com>
+ * @package Soliloquy
+ * @author  Thomas Griffin
  */
-class Tgmsp_FC {
+class Soliloquy_Featured_Content {
 
-	/**
-	 * Holds a copy of the object for easy reference.
-	 *
-	 * @since 1.0.0
-	 *
-	 * @var object
-	 */
-	private static $instance;
+    /**
+     * Holds the class object.
+     *
+     * @since 1.0.0
+     *
+     * @var object
+     */
+    public static $instance;
 
-	/**
-	 * Holds a copy of the main plugin filepath.
-	 *
-	 * @since 1.0.0
-	 *
-	 * @var string
-	 */
-	private static $file = __FILE__;
+    /**
+     * Plugin version, used for cache-busting of style and script file references.
+     *
+     * @since 1.0.0
+     *
+     * @var string
+     */
+    public $version = '2.3.1';
 
-	/**
-	 * Current version of the plugin.
-	 *
-	 * @since 1.0.0
-	 *
-	 * @var string
-	 */
-	public $version = '1.0.9';
+    /**
+     * The name of the plugin.
+     *
+     * @since 1.0.0
+     *
+     * @var string
+     */
+    public $plugin_name = 'Soliloquy - Featured Content Addon';
 
-	/**
-	 * Constructor. Hooks all interactions into correct areas to start
-	 * the class.
-	 *
-	 * @since 1.0.0
-	 */
-	public function __construct() {
+    /**
+     * Unique plugin slug identifier.
+     *
+     * @since 1.0.0
+     *
+     * @var string
+     */
+    public $plugin_slug = 'soliloquy-featured-content';
 
-		self::$instance = $this;
+    /**
+     * Plugin file.
+     *
+     * @since 1.0.0
+     *
+     * @var string
+     */
+    public $file = __FILE__;
 
-		/** Run a hook before the slider is loaded and pass the object */
-		do_action_ref_array( 'tgmsp_fc_init', array( $this ) );
+    /**
+     * Primary class constructor.
+     *
+     * @since 1.0.0
+     */
+    public function __construct() {
+	    
+	    // Load the plugin textdomain.
+        add_action( 'plugins_loaded', array( $this, 'load_plugin_textdomain' ) );
 
-		register_activation_hook( __FILE__, array( $this, 'activation' ) );
+        // Load the plugin.
+        add_action( 'soliloquy_init', array( $this, 'init' ), 99 );
 
-		/** Load the plugin in the init hook (set high priority to make sure it loads after Soliloquy is fully loaded) */
-		add_action( 'init', array( $this, 'init' ), 20 );
+    }
 
-	}
+    /**
+     * Loads the plugin textdomain for translation.
+     *
+     * @since 1.0.0
+     */
+    public function load_plugin_textdomain() {
 
-	/**
-	 * Activation hook. Checks to make sure that the main Soliloquy for
-	 * WordPress plugin is active before proceeding.
-	 *
-	 * @since 1.0.0
-	 */
-	public function activation() {
+        load_plugin_textdomain( $this->plugin_slug, false, dirname( plugin_basename( __FILE__ ) ) . '/languages/' );
 
-		/** If the Tgmsp class doesn't exist, deactivate ourself and die */
-		if ( ! class_exists( 'Tgmsp' ) ) {
-			deactivate_plugins( plugin_basename( __FILE__ ) );
-			wp_die( __( 'The Soliloquy for WordPress plugin must be active before you can activate this plugin.', 'soliloquy-fc' ) );
-		}
+    }
 
-		/** If Soliloquy isn't the correct version, deactivate ourself and die */
-		if ( version_compare( Tgmsp::get_instance()->version, '1.3.9', '<' ) ) {
-			deactivate_plugins( plugin_basename( __FILE__ ) );
-			wp_die( sprintf( __( 'The current version of Soliloquy for WordPress, <strong>%s</strong>, does not meet the required version of <strong>1.3.9</strong> to run this Addon. Please update Soliloquy to the latest version before activating this Addon.', 'soliloquy-fc' ), Tgmsp::get_instance()->version ) );
-		}
+    /**
+     * Loads the plugin into WordPress.
+     *
+     * @since 1.0.0
+     */
+    public function init() {
 
-	}
-
-	/**
-	 * Loads the plugin updater and all the actions and
-	 * filters for the class.
-	 *
-	 * @since 1.0.0
-	 *
-	 * @global array $soliloquy_license Soliloquy license data
-	 */
-	public function init() {
-
-		/** Load the plugin textdomain for internationalizing strings */
-		load_plugin_textdomain( 'soliloquy-fc', false, dirname( plugin_basename( __FILE__ ) ) . '/languages/' );
-
-		// Only load certain items in the admin.
-		if ( is_admin() ) :
-    		/** Instantiate all the necessary components of the plugin */
-    		$tgmsp_fc_admin		= new Tgmsp_FC_Admin();
-    		$tgmsp_fc_ajax		= new Tgmsp_FC_Ajax();
-    		$tgmsp_fc_assets	= new Tgmsp_FC_Assets();
-    		$tgmsp_fc_strings	= new Tgmsp_FC_Strings();
-
-    		/** If the Preview Addon is available, load the Preview class */
-    		if ( class_exists( 'Tgmsp_Preview', false ) ) // Don't check the autoload stack for this instantiation
-    			$tgmsp_fc_preview = new Tgmsp_FC_Preview();
-
-    		/** Setup the license checker */
-    		global $soliloquy_license;
-
-    		/** Only process update if a key has been entered and updates are on */
-    		if ( isset( $soliloquy_license['license'] ) ) {
-    			$args = array(
-    				'remote_url' 	=> 'http://soliloquywp.com/',
-    				'version' 		=> $this->version,
-    				'plugin_name'   => 'Soliloquy Featured Content Addon',
-    				'plugin_slug' 	=> 'soliloquy-featured-content',
-    				'plugin_path' 	=> plugin_basename( __FILE__ ),
-    				'plugin_url' 	=> WP_PLUGIN_URL . '/soliloquy-featured-content',
-    				'time' 			=> 43200,
-    				'key' 			=> $soliloquy_license['license']
-    			);
-
-    			/** Instantiate the automatic plugin updater class */
-    			$tgmsp_fc_updater = new Tgmsp_Updater( $args );
-    		}
-        endif;
+        // Load admin only components.
+        if ( is_admin() ) {
+            $this->require_admin();
+        }
 
         // Load global components.
-        $tgmsp_fc_shortcode	= new Tgmsp_FC_Shortcode();
+        $this->require_global();
 
-	}
+        // Load the updater
+        add_action( 'soliloquy_updater', array( $this, 'updater' ) );
 
-	/**
-	 * PSR-0 compliant autoloader to load classes as needed.
+    }
+
+    /**
+     * Loads all admin related files into scope.
+     *
+     * @since 1.0.0
+     */
+    public function require_admin() {
+
+        require plugin_dir_path( __FILE__ ) . 'includes/admin/ajax.php';
+        require plugin_dir_path( __FILE__ ) . 'includes/admin/metaboxes.php';
+        
+    }
+
+    /**
+	 * Initializes the addon updater.
 	 *
 	 * @since 1.0.0
 	 *
-	 * @param string $classname The name of the class
-	 * @return null Return early if the class name does not start with the correct prefix
+	 * @param string $key The user license key.
 	 */
-	public static function autoload( $classname ) {
+	function updater( $key ) {
 
-		if ( 'Tgmsp_FC' !== mb_substr( $classname, 0, 8 ) )
-			return;
-
-		$filename = dirname( __FILE__ ) . DIRECTORY_SEPARATOR . str_replace( '_', DIRECTORY_SEPARATOR, $classname ) . '.php';
-		if ( file_exists( $filename ) )
-			require $filename;
+	    $args = array(
+	        'plugin_name' => $this->plugin_name,
+	        'plugin_slug' => $this->plugin_slug,
+	        'plugin_path' => plugin_basename( __FILE__ ),
+	        'plugin_url'  => trailingslashit( WP_PLUGIN_URL ) . $this->plugin_slug,
+	        'remote_url'  => 'http://soliloquywp.com/',
+	        'version'     => $this->version,
+	        'key'         => $key,
+	    );
+	    $this->soliloquy_fullscreen_updater = new Soliloquy_Updater( $args );
 
 	}
 
-	/**
-	 * Helper method to determine if Soliloquy is inactive or not.
-	 *
-	 * @since 1.0.0
-	 *
-	 * @global string $pagenow The current page slug
-	 * @return bool True if Soliloquy is not active, false otherwise
-	 */
-	public static function soliloquy_is_not_active() {
+    /**
+     * Loads all global files into scope.
+     *
+     * @since 1.0.0
+     */
+    public function require_global() {
 
-		global $pagenow;
+        require plugin_dir_path( __FILE__ ) . 'includes/global/common.php';
+        require plugin_dir_path( __FILE__ ) . 'includes/global/html.php';
+        require plugin_dir_path( __FILE__ ) . 'includes/global/shortcode.php';
 
-		return ! ( class_exists( 'Tgmsp' ) ) && ! ( isset( $_GET['action'] ) && 'do-plugin-upgrade' == $_GET['action'] || 'plugin-editor.php' == $pagenow && isset( $_REQUEST['file'] ) && preg_match( '|^soliloquy|', $_REQUEST['file'] ) || 'update-core.php' == $pagenow );
+    }
 
-	}
+    /**
+     * Returns the singleton instance of the class.
+     *
+     * @since 1.0.0
+     *
+     * @return object The Soliloquy object.
+     */
+    public static function get_instance() {
 
-	/**
-	 * Getter method for retrieving the object instance.
-	 *
-	 * @since 1.0.0
-	 */
-	public static function get_instance() {
+        if ( ! isset( self::$instance ) && ! ( self::$instance instanceof Soliloquy_Featured_Content ) ) {
+            self::$instance = new Soliloquy_Featured_Content();
+        }
 
-		return self::$instance;
+        return self::$instance;
 
-	}
-
-	/**
-	 * Getter method for retrieving the main plugin filepath.
-	 *
-	 * @since 1.0.0
-	 */
-	public static function get_file() {
-
-		return self::$file;
-
-	}
+    }
 
 }
 
-/** Instantiate the init class */
-$tgmsp_fc = new Tgmsp_FC();
+// Load the main plugin class.
+$soliloquy_featured_content = Soliloquy_Featured_Content::get_instance();

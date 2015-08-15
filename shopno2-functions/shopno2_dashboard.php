@@ -101,4 +101,4 @@ add_action( 'welcome_panel', 'shopno2_welcome_panel' );
  
 /* That's all folks! */
  
-/*?>
+/*?>*/

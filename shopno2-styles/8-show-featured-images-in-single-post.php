@@ -44,7 +44,8 @@ add_action( 'genesis_entry_header', 's2_show_featured_image_single_posts', 9 );
 //}
 */
 function s2_show_featured_image_single_posts() { 
-	if ( !is_single($post)) {
+	
+	if ( !is_single()) {
 		return;
 	}
 	the_post_thumbnail();

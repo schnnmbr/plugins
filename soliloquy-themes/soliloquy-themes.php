@@ -1,221 +1,118 @@
 <?php
-/*
-Plugin Name: Soliloquy Themes Addon
-Plugin URI: http://soliloquywp.com/
-Description: Enables custom slider themes for Soliloquy for WordPress plugin.
-Author: Thomas Griffin
-Author URI: http://thomasgriffinmedia.com/
-Version: 1.0.5
-License: GNU General Public License v2.0 or later
-License URI: http://www.opensource.org/licenses/gpl-license.php
-*/
-
-/*
-	Copyright 2013  Thomas Griffin  (email : thomas@thomasgriffinmedia.com)
-
-    This program is free software; you can redistribute it and/or modify
-    it under the terms of the GNU General Public License, version 2, as
-    published by the Free Software Foundation.
-
-    This program is distributed in the hope that it will be useful,
-    but WITHOUT ANY WARRANTY; without even the implied warranty of
-    MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
-    GNU General Public License for more details.
-
-    You should have received a copy of the GNU General Public License
-    along with this program; if not, write to the Free Software
-    Foundation, Inc., 51 Franklin St, Fifth Floor, Boston, MA  02110-1301  USA
-*/
-
-/** Load all of the necessary class files for the plugin */
-spl_autoload_register( 'Tgmsp_Themes::autoload' );
-
 /**
- * Init class for the Themes Addon for Soliloquy.
+ * Plugin Name: Soliloquy - Themes Addon
+ * Plugin URI:  http://enviraslider.com
+ * Description: Enables custom themes for Soliloquy sliders.
+ * Author:      Thomas Griffin
+ * Author URI:  http://thomasgriffinmedia.com
+ * Version:     2.1.4
+ * Text Domain: soliloquy-themes
+ * Domain Path: languages
+ *
+ * Soliloquy is free software: you can redistribute it and/or modify
+ * it under the terms of the GNU General Public License as published by
+ * the Free Software Foundation, either version 2 of the License, or
+ * any later version.
+ *
+ * Soliloquy is distributed in the hope that it will be useful,
+ * but WITHOUT ANY WARRANTY; without even the implied warranty of
+ * MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE. See the
+ * GNU General Public License for more details.
+ *
+ * You should have received a copy of the GNU General Public License
+ * along with Soliloquy. If not, see <http://www.gnu.org/licenses/>.
+ */
+
+// Exit if accessed directly.
+if ( ! defined( 'ABSPATH' ) ) {
+    exit;
+}
+
+// Define necessary addon constants.
+define( 'SOLILOQUY_THEMES_PLUGIN_NAME', 'Soliloquy - Themes Addon' );
+define( 'SOLILOQUY_THEMES_PLUGIN_VERSION', '2.1.4' );
+define( 'SOLILOQUY_THEMES_PLUGIN_SLUG', 'soliloquy-themes' );
+
+add_action( 'plugins_loaded', 'soliloquy_themes_plugins_loaded' );
+/**
+ * Ensures the full Soliloquy plugin is active before proceeding.
  *
  * @since 1.0.0
  *
- * @package Tgmsp-Themes
- * @author Thomas Griffin <thomas@thomasgriffinmedia.com>
+ * @return null Return early if Soliloquy is not active.
  */
-class Tgmsp_Themes {
+function soliloquy_themes_plugins_loaded() {
 
-	/**
-	 * Holds a copy of the object for easy reference.
-	 *
-	 * @since 1.0.0
-	 *
-	 * @var object
-	 */
-	private static $instance;
+    // Bail if the main class does not exist.
+    if ( ! class_exists( 'Soliloquy' ) ) {
+        return;
+    }
 
-	/**
-	 * Holds a copy of the main plugin filepath.
-	 *
-	 * @since 1.0.0
-	 *
-	 * @var string
-	 */
-	private static $file = __FILE__;
+    // Fire up the addon.
+    add_action( 'soliloquy_init', 'soliloquy_themes_plugin_init' );
 
-	/**
-	 * Current version of the plugin.
-	 *
-	 * @since 1.0.0
-	 *
-	 * @var string
-	 */
-	public $version = '1.0.5';
+	// Loads the plugin textdomain for translation
+    load_plugin_textdomain( SOLILOQUY_THEMES_PLUGIN_SLUG, false, dirname( plugin_basename( __FILE__ ) ) . '/languages/' );
+    
+}
 
-	/**
-	 * Constructor. Hooks all interactions into correct areas to start
-	 * the class.
-	 *
-	 * @since 1.0.0
-	 */
-	public function __construct() {
+/**
+ * Loads all of the addon hooks and filters.
+ *
+ * @since 1.0.0
+ */
+function soliloquy_themes_plugin_init() {
 
-		self::$instance = $this;
-
-		/** Run a hook before the slider is loaded and pass the object */
-		do_action_ref_array( 'tgmsp_themes_init', array( $this ) );
-
-		register_activation_hook( __FILE__, array( $this, 'activation' ) );
-
-		/** Load the plugin in the init hook (set high priority to make sure it loads after Soliloquy is fully loaded) */
-		add_action( 'init', array( $this, 'init' ), 20 );
-
-	}
-
-	/**
-	 * Activation hook. Checks to make sure that the main Soliloquy for
-	 * WordPress plugin is active before proceeding.
-	 *
-	 * @since 1.0.0
-	 */
-	public function activation() {
-
-		/** If the Tgmsp class doesn't exist, deactivate ourself and die */
-		if ( ! class_exists( 'Tgmsp' ) ) {
-			deactivate_plugins( plugin_basename( __FILE__ ) );
-			wp_die( __( 'The Soliloquy for WordPress plugin must be active before you can activate this plugin.', 'soliloquy-themes' ) );
-		}
-
-		/** If Soliloquy isn't the correct version, deactivate ourself and die */
-		if ( version_compare( Tgmsp::get_instance()->version, '1.4.8.1', '<' ) ) {
-			deactivate_plugins( plugin_basename( __FILE__ ) );
-			wp_die( sprintf( __( 'The current version of Soliloquy for WordPress, <strong>%s</strong>, does not meet the required version of <strong>1.4.8.1</strong> to run this Addon. Please update Soliloquy to the latest version before activating this Addon.', 'soliloquy-themes' ), Tgmsp::get_instance()->version ) );
-		}
-
-	}
-
-	/**
-	 * Loads the plugin updater and all the actions and
-	 * filters for the class.
-	 *
-	 * @since 1.0.0
-	 *
-	 * @global array $soliloquy_license Soliloquy license data
-	 */
-	public function init() {
-
-		/** Load the plugin textdomain for internationalizing strings */
-		load_plugin_textdomain( 'soliloquy-themes', false, dirname( plugin_basename( __FILE__ ) ) . '/languages/' );
-
-		/** Setup the license checker */
-		global $soliloquy_license;
-
-		/** Only process update if a key has been entered and updates are on */
-		if ( is_admin() ) :
-			if ( isset( $soliloquy_license['license'] ) ) {
-				$args = array(
-					'remote_url' 	=> 'http://soliloquywp.com/',
-					'version' 		=> $this->version,
-					'plugin_name'	=> 'Soliloquy Themes Addon',
-					'plugin_slug' 	=> 'soliloquy-themes',
-					'plugin_path' 	=> plugin_basename( __FILE__ ),
-					'plugin_url' 	=> WP_PLUGIN_URL . '/soliloquy-themes',
-					'time' 			=> 43200,
-					'key' 			=> $soliloquy_license['license']
-				);
-
-				/** Instantiate the automatic plugin updater class */
-				$tgmsp_themes_updater = new Tgmsp_Updater( $args );
-			}
-
-			// Instantiate all necessary admin components of the plugin.
-			$tgmsp_themes_admin	  = new Tgmsp_Themes_Admin();
-			$tgmsp_themes_strings = new Tgmsp_Themes_Strings();
-
-			// If the Preview Addon is available, load the Preview class.
-			if ( class_exists( 'Tgmsp_Preview', false ) ) // Don't check the autoload stack for this instantiation
-				$tgmsp_themes_preview = new Tgmsp_Themes_Preview();
-		endif;
-
-		/** Instantiate all the necessary components of the plugin */
-		$tgmsp_themes_assets	= new Tgmsp_Themes_Assets();
-		$tgmsp_themes_shortcode = new Tgmsp_Themes_Shortcode();
-
-	}
-
-	/**
-	 * PSR-0 compliant autoloader to load classes as needed.
-	 *
-	 * @since 1.0.0
-	 *
-	 * @param string $classname The name of the class
-	 * @return null Return early if the class name does not start with the correct prefix
-	 */
-	public static function autoload( $classname ) {
-
-		if ( 'Tgmsp_Themes' !== mb_substr( $classname, 0, 12 ) )
-			return;
-
-		$filename = dirname( __FILE__ ) . DIRECTORY_SEPARATOR . str_replace( '_', DIRECTORY_SEPARATOR, $classname ) . '.php';
-		if ( file_exists( $filename ) )
-			require $filename;
-
-	}
-
-	/**
-	 * Helper method to determine if Soliloquy is inactive or not.
-	 *
-	 * @since 1.0.0
-	 *
-	 * @global string $pagenow The current page slug
-	 * @return bool True if Soliloquy is not active, false otherwise
-	 */
-	public static function soliloquy_is_not_active() {
-
-		global $pagenow;
-
-		return ! ( class_exists( 'Tgmsp' ) ) && ! ( isset( $_GET['action'] ) && 'do-plugin-upgrade' == $_GET['action'] || 'plugin-editor.php' == $pagenow && isset( $_REQUEST['file'] ) && preg_match( '|^soliloquy|', $_REQUEST['file'] ) || 'update-core.php' == $pagenow );
-
-	}
-
-	/**
-	 * Getter method for retrieving the object instance.
-	 *
-	 * @since 1.0.0
-	 */
-	public static function get_instance() {
-
-		return self::$instance;
-
-	}
-
-	/**
-	 * Getter method for retrieving the main plugin filepath.
-	 *
-	 * @since 1.0.0
-	 */
-	public static function get_file() {
-
-		return self::$file;
-
-	}
+    add_action( 'soliloquy_updater', 'soliloquy_themes_updater' );
+    add_filter( 'soliloquy_slider_themes', 'soliloquy_themes_slider_themes' );
 
 }
 
-/** Instantiate the init class */
-$tgmsp_themes = new Tgmsp_Themes();
+/**
+ * Initializes the addon updater.
+ *
+ * @since 1.0.0
+ *
+ * @param string $key The user license key.
+ */
+function soliloquy_themes_updater( $key ) {
+
+    $args = array(
+        'plugin_name' => SOLILOQUY_THEMES_PLUGIN_NAME,
+        'plugin_slug' => SOLILOQUY_THEMES_PLUGIN_SLUG,
+        'plugin_path' => plugin_basename( __FILE__ ),
+        'plugin_url'  => trailingslashit( WP_PLUGIN_URL ) . SOLILOQUY_THEMES_PLUGIN_SLUG,
+        'remote_url'  => 'http://soliloquywp.com/',
+        'version'     => SOLILOQUY_THEMES_PLUGIN_VERSION,
+        'key'         => $key
+    );
+    $soliloquy_themes_updater = new Soliloquy_Updater( $args );
+
+}
+
+/**
+ * Adds custom slider themes to the available list of slider themes.
+ *
+ * @since 1.0.0
+ *
+ * @param array $themes  Array of slider themes.
+ * @return array $themes Amended array of slider themes.
+ */
+function soliloquy_themes_slider_themes( $themes ) {
+
+    // Add custom themes here.
+    $themes[] = array(
+        'value' => 'karisma',
+        'name'  => __( 'Karisma', 'soliloquy-themes' ),
+        'file'  => __FILE__
+    );
+
+    $themes[] = array(
+        'value' => 'metro',
+        'name'  => __( 'Metro', 'soliloquy-themes' ),
+        'file'  => __FILE__
+    );
+
+    return $themes;
+
+}

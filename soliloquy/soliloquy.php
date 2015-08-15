@@ -1,359 +1,669 @@
 <?php
-/*
-Plugin Name: Soliloquy
-Plugin URI: http://soliloquywp.com/
-Description: Soliloquy is the best responsive WordPress slider plugin. Period.
-Author: Thomas Griffin
-Author URI: http://thomasgriffinmedia.com/
-Version: 1.5.5.4
-License: GNU General Public License v2.0 or later
-License URI: http://www.opensource.org/licenses/gpl-license.php
-*/
+/**
+ * Plugin Name: Soliloquy
+ * Plugin URI:  http://soliloquywp.com
+ * Description: Soliloquy is best responsive WordPress slider plugin.
+ * Author:      Thomas Griffin
+ * Author URI:  http://thomasgriffinmedia.com
+ * Version:     2.4.2.3
+ * Text Domain: soliloquy
+ * Domain Path: languages
+ *
+ * Soliloquy is free software: you can redistribute it and/or modify
+ * it under the terms of the GNU General Public License as published by
+ * the Free Software Foundation, either version 2 of the License, or
+ * any later version.
+ *
+ * Soliloquy is distributed in the hope that it will be useful,
+ * but WITHOUT ANY WARRANTY; without even the implied warranty of
+ * MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE. See the
+ * GNU General Public License for more details.
+ *
+ * You should have received a copy of the GNU General Public License
+ * along with Soliloquy. If not, see <http://www.gnu.org/licenses/>.
+ */
 
-/*
-	Copyright 2013	 Thomas Griffin	 (email : thomas@thomasgriffinmedia.com)
-
-	This program is free software; you can redistribute it and/or modify
-	it under the terms of the GNU General Public License, version 2, as
-	published by the Free Software Foundation.
-
-	This program is distributed in the hope that it will be useful,
-	but WITHOUT ANY WARRANTY; without even the implied warranty of
-	MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
-	GNU General Public License for more details.
-
-	You should have received a copy of the GNU General Public License
-	along with this program; if not, write to the Free Software
-	Foundation, Inc., 51 Franklin St, Fifth Floor, Boston, MA  02110-1301  USA
-*/
-
-/** Load all of the necessary class files for the plugin */
-spl_autoload_register( 'Tgmsp::autoload' );
+// Exit if accessed directly.
+if ( ! defined( 'ABSPATH' ) ) {
+    exit;
+}
 
 /**
- * Init class for Soliloquy.
- *
- * Loads all of the necessary components for the Soliloquy plugin.
+ * Main plugin class.
  *
  * @since 1.0.0
  *
- * @package	Soliloquy
- * @author	Thomas Griffin
+ * @package Soliloquy
+ * @author  Thomas Griffin
  */
-class Tgmsp {
+class Soliloquy {
 
-	/**
-	 * You can define your license key here.
-	 *
-	 * @since 1.0.0
-	 *
-	 * @var string
-	 */
-	private static $key = '';
+    /**
+     * Holds the class object.
+     *
+     * @since 1.0.0
+     *
+     * @var object
+     */
+    public static $instance;
 
-	/**
-	 * Holds a copy of the object for easy reference.
-	 *
-	 * @since 1.0.0
-	 *
-	 * @var object
-	 */
-	private static $instance;
+    /**
+     * Plugin version, used for cache-busting of style and script file references.
+     *
+     * @since 1.0.0
+     *
+     * @var string
+     */
+    public $version = '2.4.2.3';
 
-	/**
-	 * Current version of the plugin.
-	 *
-	 * @since 1.0.0
-	 *
-	 * @var string
-	 */
-	public $version = '1.5.5.4';
+    /**
+     * The name of the plugin.
+     *
+     * @since 1.0.0
+     *
+     * @var string
+     */
+    public $plugin_name = 'Soliloquy';
 
-	/**
-	 * Holds a copy of the main plugin filepath.
-	 *
-	 * @since 1.2.0
-	 *
-	 * @var string
-	 */
-	private static $file = __FILE__;
+    /**
+     * Unique plugin slug identifier.
+     *
+     * @since 1.0.0
+     *
+     * @var string
+     */
+    public $plugin_slug = 'soliloquy';
 
-	/**
-	 * Constructor. Hooks all interactions into correct areas to start
-	 * the class.
-	 *
-	 * @since 1.0.0
-	 */
-	public function __construct() {
+    /**
+     * Plugin file.
+     *
+     * @since 1.0.0
+     *
+     * @var string
+     */
+    public $file = __FILE__;
 
-		self::$instance = $this;
+    /**
+     * Primary class constructor.
+     *
+     * @since 1.0.0
+     */
+    public function __construct() {
 
-		/** Run a hook before the slider is loaded and pass the object */
-		do_action_ref_array( 'tgmsp_init', array( $this ) );
+        // Fire a hook before the class is setup.
+        do_action( 'soliloquy_pre_init' );
 
-		/** Run activation hook and make sure the WordPress version supports the plugin */
-		register_activation_hook( __FILE__, array( $this, 'activation' ) );
+        // Load the plugin textdomain.
+        add_action( 'plugins_loaded', array( $this, 'load_plugin_textdomain' ) );
 
-		/** Add theme support for post thumbnails if it doesn't exist */
-		if ( ! current_theme_supports( 'post-thumbnails' ) )
-			add_theme_support( 'post-thumbnails' );
+        // Load the plugin widget.
+        add_action( 'widgets_init', array( $this, 'widget' ) );
 
-		/** Load the plugin */
-		add_action( 'widgets_init', array( $this, 'widget' ) );
-		add_action( 'init', array( $this, 'init' ) );
+        // Load the plugin.
+        add_action( 'init', array( $this, 'init' ), 0 );
 
-	}
+    }
 
-	/**
- 	 * Registers a plugin activation hook to make sure the current WordPress
- 	 * version is suitable (>= 3.3.1) for use.
- 	 *
- 	 * @since 1.0.0
- 	 *
- 	 * @global int $wp_version The current version of this particular WP instance
- 	 */
-	public function activation() {
+    /**
+     * Loads the plugin textdomain for translation.
+     *
+     * @since 1.0.0
+     */
+    public function load_plugin_textdomain() {
 
-		global $wp_version;
+        load_plugin_textdomain( $this->plugin_slug, false, dirname( plugin_basename( __FILE__ ) ) . '/languages/' );
 
-		if ( version_compare( $wp_version, '3.5.1', '<' ) ) {
-			deactivate_plugins( plugin_basename( __FILE__ ) );
-			wp_die( printf( __( 'Sorry, but your version of WordPress, <strong>%s</strong>, does not meet Soliloquy\'s required version of <strong>3.5.1</strong> to run properly. The plugin has been deactivated. <a href="%s">Click here to return to the Dashboard</a>', 'soliloquy' ), $wp_version, admin_url() ) );
-		}
+    }
 
-		/** Add option to prevent extra queries */
-		add_option( 'soliloquy_license_key' );
+    /**
+     * Registers the Soliloquy widget.
+     *
+     * @since 1.0.0
+     */
+    public function widget() {
 
-	}
+        register_widget( 'Soliloquy_Widget' );
 
-	/**
- 	 * Registers the widget with WordPress.
- 	 *
- 	 * @since 1.0.0
- 	 */
-	public function widget() {
+    }
 
-		register_widget( 'Tgmsp_Widget' );
+    /**
+     * Loads the plugin into WordPress.
+     *
+     * @since 1.0.0
+     */
+    public function init() {
 
-	}
+        // Run hook once Soliloquy has been initialized.
+        do_action( 'soliloquy_init' );
 
-	/**
-	 * Loads the plugin upgrader, registers the post type and
-	 * loads all the actions and filters for the class.
-	 *
-	 * @since 1.0.0
-	 */
-	public function init() {
+        // Load admin only components.
+        if ( is_admin() ) {
+            $this->require_admin();
+            $this->require_updater();
+        }
 
-		/** Load the plugin textdomain for internationalizing strings */
-		load_plugin_textdomain( 'soliloquy', false, dirname( plugin_basename( __FILE__ ) ) . '/languages/' );
+        // Load global components.
+        $this->require_global();
 
-		/** Setup the license checker */
-		global $soliloquy_license;
-		$soliloquy_license = get_option( 'soliloquy_license_key' );
+    }
 
-		// Only run certain processes in the admin.
-		if ( is_admin() ) :
-			/** Only process upgrade and addons page if a key has been entered and verified */
-			if ( isset( $soliloquy_license['license'] ) ) {
-				$args = array(
-					'remote_url' 	=> 'http://soliloquywp.com/',
-					'version' 		=> $this->version,
-					'plugin_name'	=> 'Soliloquy',
-					'plugin_slug' 	=> 'soliloquy',
-					'plugin_path' 	=> plugin_basename( __FILE__ ),
-					'plugin_url' 	=> WP_PLUGIN_URL . '/soliloquy',
-					'time' 			=> 43200,
-					'key' 			=> $soliloquy_license['license']
-				);
+    /**
+     * Loads all admin related files into scope.
+     *
+     * @since 1.0.0
+     */
+    public function require_admin() {
 
-				/** Instantiate the automatic plugin upgrader class */
-				$tgmsp_updater = new Tgmsp_Updater( $args );
+        require plugin_dir_path( __FILE__ ) . 'includes/admin/ajax.php';
+        require plugin_dir_path( __FILE__ ) . 'includes/admin/common.php';
+        require plugin_dir_path( __FILE__ ) . 'includes/admin/editor.php';
+        require plugin_dir_path( __FILE__ ) . 'includes/admin/export.php';
+        require plugin_dir_path( __FILE__ ) . 'includes/admin/import.php';
+        require plugin_dir_path( __FILE__ ) . 'includes/admin/license.php';
+        require plugin_dir_path( __FILE__ ) . 'includes/admin/media.php';
+        require plugin_dir_path( __FILE__ ) . 'includes/admin/metaboxes.php';
+        require plugin_dir_path( __FILE__ ) . 'includes/admin/posttype.php';
+        require plugin_dir_path( __FILE__ ) . 'includes/admin/settings.php';
+        require plugin_dir_path( __FILE__ ) . 'includes/admin/vimeo.php';
+        
+    }
 
-				/** Load the addons page */
-				if ( isset( $soliloquy_license['single'] ) && ! $soliloquy_license['single'] || ! isset( $soliloquy_license['single'] ) )
-					$tgmsp_addons = new Tgmsp_Addons( $soliloquy_license['license'] );
+    /**
+     * Loads all updater related files and functions into scope.
+     *
+     * @since 1.0.0
+     *
+     * @return null Return early if the license key is not set or there are key errors.
+     */
+    public function require_updater() {
 
-				/** Load the updates page */
-				$tgmsp_updates = new Tgmsp_Updates();
-			}
+        // Retrieve the license key. If it is not set, return early.
+        $key = $this->get_license_key();
+        if ( ! $key ) {
+            return;
+        }
 
-			/** Instantiate all the necessary admin components of the plugin */
-			$tgmsp_admin	   = new Tgmsp_Admin();
-			$tgmsp_ajax		   = new Tgmsp_Ajax();
-			$tgmsp_adminassets = new Tgmsp_AdminAssets();
-			$tgmsp_editor	   = new Tgmsp_Editor();
-			$tgmsp_help		   = new Tgmsp_Help();
-			$tgmsp_license	   = new Tgmsp_License();
-			$tgmsp_media	   = new Tgmsp_Media();
-		endif;
+        // If there are any errors with the key itself, return early.
+        if ( $this->get_license_key_errors() ) {
+            return;
+        }
 
-		// Load these components regardless.
-		$tgmsp_assets	 = new Tgmsp_Assets();
-		$tgmsp_posttype	 = new Tgmsp_Posttype();
-		$tgmsp_shortcode = new Tgmsp_Shortcode();
-		$tgmsp_strings	 = new Tgmsp_Strings();
+        // Load the updater class.
+        require plugin_dir_path( __FILE__ ) . 'includes/admin/updater.php';
 
-	}
+        // Go ahead and initialize the updater.
+        $args = array(
+            'plugin_name' => $this->plugin_name,
+            'plugin_slug' => $this->plugin_slug,
+            'plugin_path' => plugin_basename( __FILE__ ),
+            'plugin_url'  => trailingslashit( WP_PLUGIN_URL ) . $this->plugin_slug,
+            'remote_url'  => 'http://soliloquywp.com/',
+            'version'     => $this->version,
+            'key'         => $key
+        );
+        $soliloquy_updater = new Soliloquy_Updater( $args );
 
-	/**
-	 * PSR-0 compliant autoloader to load classes as needed.
-	 *
-	 * @since 1.0.0
-	 *
-	 * @param string $classname The name of the class
-	 * @return null Return early if the class name does not start with the correct prefix
-	 */
-	public static function autoload( $classname ) {
+        // Fire a hook for Addons to register their updater since we know the key is present.
+        do_action( 'soliloquy_updater', $key );
 
-		if ( 'Tgmsp' !== mb_substr( $classname, 0, 5 ) )
-			return;
+    }
 
-		$filename = dirname( __FILE__ ) . DIRECTORY_SEPARATOR . str_replace( '_', DIRECTORY_SEPARATOR, $classname ) . '.php';
-		if ( file_exists( $filename ) )
-			require $filename;
+    /**
+     * Loads all global files into scope.
+     *
+     * @since 1.0.0
+     */
+    public function require_global() {
 
-	}
+        require plugin_dir_path( __FILE__ ) . 'includes/global/common.php';
+        require plugin_dir_path( __FILE__ ) . 'includes/global/legacy.php';
+        require plugin_dir_path( __FILE__ ) . 'includes/global/posttype.php';
+        require plugin_dir_path( __FILE__ ) . 'includes/global/shortcode.php';
+        require plugin_dir_path( __FILE__ ) . 'includes/global/widget.php';
 
-	/**
-	 * Getter method for retrieving the object instance.
-	 *
-	 * @since 1.0.0
-	 */
-	public static function get_instance() {
+    }
 
-		return self::$instance;
+    /**
+     * Returns a slider based on ID.
+     *
+     * Honors the slider post's status (publish, draft etc)
+     *
+     * @since 1.0.0
+     *
+     * @param int $id     The slider ID used to retrieve a slider.
+     * @return array|bool Array of slider data or false if none found.
+     */
+    public function get_slider( $id ) {
+	    
+        // Attempt to return the transient first, otherwise generate the new query to retrieve the data.
+        if ( false === ( $slider = get_transient( '_sol_cache_' . $id ) ) ) {
+            $slider = $this->_get_slider( $id );
+            if ( $slider ) {
+                set_transient( '_sol_cache_' . $id, $slider, DAY_IN_SECONDS );
+            }
+        }
+        
+        // Check status of slider
+        if ( isset( $slider['status'] ) ) {
+	        if ( $slider['status'] == 'draft' || $slider['status'] == 'pending' ) {
+	        	// Public site, slider is set to draft, so don't display it
+				return;
+	        }
+        }
 
-	}
+        // Return the slider data
+        return $slider;
 
-	/**
-	 * Getter method for retrieving the license key.
-	 *
-	 * @since 1.0.0
-	 */
-	public static function get_key() {
+    }
 
-		return self::$key;
+    /**
+     * Internal method that returns a slider based on ID.
+     *
+     * Ignores the slider post's status (publish, draft etc), so can be used for admin previews etc.
+     *
+     * @since 1.0.0
+     *
+     * @param int $id     The slider ID used to retrieve a slider.
+     * @return array|bool Array of slider data or false if none found.
+     */
+    public function _get_slider( $id ) {
 
-	}
+        return get_post_meta( $id, '_sol_slider_data', true );
 
-	/**
-	 * Getter method for retrieving the main plugin filepath.
-	 *
-	 * @since 1.2.0
-	 */
-	public static function get_file() {
+    }
 
-		return self::$file;
+    /**
+     * Returns a slider based on slug.
+     *
+     * @since 1.0.0
+     *
+     * @param string $slug The slider slug used to retrieve a slider.
+     * @return array|bool  Array of slider data or false if none found.
+     */
+    public function get_slider_by_slug( $slug ) {
+	    
+        // Attempt to return the transient first, otherwise generate the new query to retrieve the data.
+        if ( false === ( $slider = get_transient( '_sol_cache_' . $slug ) ) ) {
+            $slider = $this->_get_slider_by_slug( $slug );
+            if ( $slider ) {
+                set_transient( '_sol_cache_' . $slug, $slider, DAY_IN_SECONDS );
+            }
+       	}
+       	
+       	// Check status of slider
+        if ( isset( $slider['status'] ) ) {
+	        if ( $slider['status'] == 'draft' || $slider['status'] == 'pending' ) {
+	        	// Public site, slider is set to draft, so don't display it
+				return;
+	        }
+        }
 
-	}
+        // Return the slider data.
+        return $slider;
 
-	/**
-	 * Getter method for retrieving all Soliloquy sliders.
-	 *
-	 * @since 1.3.0
-	 */
-	public static function get_sliders() {
+    }
 
-		$args = array(
-			'post_type' 		=> 'soliloquy',
-			'posts_per_page' 	=> -1
-		);
+    /**
+     * Internal method that returns a slider based on slug.
+     *
+     * @since 1.0.0
+     *
+     * @param string $slug The slider slug used to retrieve a slider.
+     * @return array|bool  Array of slider data or false if none found.
+     */
+    public function _get_slider_by_slug( $slug ) {
 
-		return get_posts( $args );
+        $sliders = $this->get_sliders();
+        if ( ! $sliders ) {
+            return false;
+        }
 
-	}
+        // Loop through the sliders to find a match by slug.
+        $ret = false;
+        foreach ( $sliders as $data ) {
+	        
+            if ( ( $data['config']['type'] != 'fc' && empty( $data['slider'] ) ) || empty( $data['config']['slug'] ) ) {
+                continue;
+            }
 
-	/**
-	 * Helper flag method for any Soliloquy screen.
-	 *
-	 * @since 1.2.0
-	 *
-	 * @return bool True if on a Soliloquy screen, false if not
-	 */
-	public static function is_soliloquy_screen() {
+            if ( $data['config']['slug'] == $slug ) {
+                $ret = $data;
+                break;
+            }
+        }
 
-		$current_screen = get_current_screen();
+        // Return the slider data.
+        return $ret;
 
-		if ( ! $current_screen )
-			return false;
+    }
 
-		if ( 'soliloquy' == $current_screen->post_type )
-			return true;
+    /**
+     * Returns all sliders created on the site.
+     *
+     * @since 1.0.0
+     *
+     * @param bool $skip_empty Skip empty sliders
+     * @param bool $ignore_cache Ignore Transient cache
+     * @return array|bool Array of slider data or false if none found.
+     */
+    public function get_sliders( $skip_empty = true, $ignore_cache = false ) {
 
-		return false;
+        // Attempt to return the transient first, otherwise generate the new query to retrieve the data.
+        if ( $ignore_cache || false === ( $sliders = get_transient( '_sol_cache_all' ) ) ) {
+            $sliders = $this->_get_sliders( $skip_empty );
+            if ( $sliders ) {
+                set_transient( '_sol_cache_all', $sliders, DAY_IN_SECONDS );
+            }
+        }
 
-	}
+        // Return the slider data.
+        return $sliders;
 
-	/**
-	 * Helper flag method for the Add/Edit Soliloquy screens.
-	 *
-	 * @since 1.2.0
-	 *
-	 * @return bool True if on a Soliloquy Add/Edit screen, false if not
-	 */
-	public static function is_soliloquy_add_edit_screen() {
+    }
 
-		$current_screen = get_current_screen();
+    /**
+     * Internal method that returns all sliders created on the site.
+     *
+     * @since 1.0.0
+     *
+     * @param bool $skip_empty Skip Empty Sliders
+     * @return array|bool Array of slider data or false if none found.
+     */
+    public function _get_sliders( $skip_empty = true ) {
 
-		if ( ! $current_screen )
-			return false;
+        $sliders = get_posts(
+            array(
+                'post_type'     => 'any',
+                'no_found_rows' => true,
+                'cache_results' => false,
+                'nopaging'      => true,
+                'fields'        => 'ids',
+                'meta_query'    => array(
+                    array(
+                        'key' => '_sol_slider_data'
+                    )
+                )
+            )
+        );
+        if ( empty( $sliders ) ) {
+            return false;
+        }
 
-		if ( 'soliloquy' == $current_screen->post_type && 'post' == $current_screen->base )
-			return true;
+        // Now loop through all the sliders found and only use sliders that have images in them.
+        $ret = array();
+        foreach ( $sliders as $id ) {
+            $data = get_post_meta( $id, '_sol_slider_data', true );
+           
+            // Skip empty sliders, if required
+            if ( $skip_empty && empty( $data['slider'] ) ) {
+                continue;
+            }
 
-		return false;
+            // Skip Defaults and Dynamic Sliders
+            if ( 'defaults' == Soliloquy_Shortcode::get_instance()->get_config( 'type', $data ) || 'dynamic' == Soliloquy_Shortcode::get_instance()->get_config( 'type', $data ) ) {
+                continue;
+            }
 
-	}
+            $ret[] = $data;
+        }
+
+        // Return the slider data.
+        return $ret;
+
+    }
+
+    /**
+     * Returns the license key for Soliloquy.
+     *
+     * @since 1.0.0
+     *
+     * @return string $key The user's license key for Soliloquy.
+     */
+    public function get_license_key() {
+
+        $option = get_option( 'soliloquy' );
+        $key    = false;
+        if ( empty( $option['key'] ) ) {
+            if ( defined( 'SOLILOQUY_LICENSE_KEY' ) ) {
+                $key = SOLILOQUY_LICENSE_KEY;
+            }
+        } else {
+            $key = $option['key'];
+        }
+
+        return apply_filters( 'soliloquy_license_key', $key );
+
+    }
+
+    /**
+     * Returns the license key type for Soliloquy.
+     *
+     * @since 1.0.0
+     *
+     * @return string $type The user's license key type for Soliloquy.
+     */
+    public function get_license_key_type() {
+
+        $option = get_option( 'soliloquy' );
+        return $option['type'];
+
+    }
+
+    /**
+     * Returns possible license key error flag.
+     *
+     * @since 1.0.0
+     *
+     * @return bool True if there are license key errors, false otherwise.
+     */
+    public function get_license_key_errors() {
+
+        $option = get_option( 'soliloquy' );
+        return isset( $option['is_expired'] ) && $option['is_expired'] || isset( $option['is_disabled'] ) && $option['is_disabled'] || isset( $option['is_invalid'] ) && $option['is_invalid'];
+
+    }
+
+    /**
+     * Loads the default plugin options.
+     *
+     * @since 1.0.0
+     *
+     * @return array Array of default plugin options.
+     */
+    public static function default_options() {
+
+        $ret = array(
+            'key'         => '',
+            'type'        => '',
+            'is_expired'  => false,
+            'is_disabled' => false,
+            'is_invalid'  => false
+        );
+
+        return apply_filters( 'soliloquy_default_options', $ret );
+
+    }
+
+    /**
+     * Getter method for retrieving the main plugin filepath.
+     *
+     * @since 1.2.0
+     */
+    public static function get_file() {
+
+        return self::$file;
+
+    }
+
+    /**
+     * Helper flag method for any Soliloquy screen.
+     *
+     * @since 1.2.0
+     *
+     * @return bool True if on a Soliloquy screen, false if not.
+     */
+    public static function is_soliloquy_screen() {
+
+        $current_screen = get_current_screen();
+
+        if ( ! $current_screen ) {
+            return false;
+        }
+
+        if ( 'soliloquy' == $current_screen->post_type ) {
+            return true;
+        }
+
+        return false;
+
+    }
+
+    /**
+     * Helper flag method for the Add/Edit Soliloquy screens.
+     *
+     * @since 1.2.0
+     *
+     * @return bool True if on a Soliloquy Add/Edit screen, false if not.
+     */
+    public static function is_soliloquy_add_edit_screen() {
+
+        $current_screen = get_current_screen();
+
+        if ( ! $current_screen ) {
+            return false;
+        }
+
+        if ( 'soliloquy' == $current_screen->post_type && 'post' == $current_screen->base ) {
+            return true;
+        }
+
+        return false;
+
+    }
+
+    /**
+     * Returns the singleton instance of the class.
+     *
+     * @since 1.0.0
+     *
+     * @return object The Soliloquy object.
+     */
+    public static function get_instance() {
+
+        if ( ! isset( self::$instance ) && ! ( self::$instance instanceof Soliloquy ) ) {
+            self::$instance = new Soliloquy();
+        }
+
+        return self::$instance;
+
+    }
 
 }
 
-/** Instantiate the init class */
-$tgmsp = new Tgmsp();
+register_activation_hook( __FILE__, 'soliloquy_activation_hook' );
+/**
+ * Fired when the plugin is activated.
+ *
+ * @since 1.0.0
+ *
+ * @global int $wp_version      The version of WordPress for this install.
+ * @global object $wpdb         The WordPress database object.
+ * @param boolean $network_wide True if WPMU superadmin uses "Network Activate" action, false otherwise.
+ */
+function soliloquy_activation_hook( $network_wide ) {
 
-if ( ! function_exists( 'soliloquy_slider' ) ) {
-	/**
-	 * Template tag function for outputting the slider within templates.
-	 *
-	 * @since 1.0.0
-	 *
-	 * @package Soliloquy
-	 * @param int|string $id The Soliloquy slider ID or unique slug
-	 * @param bool $return Flag for returning or echoing the slider content
-	 */
-	function soliloquy_slider( $id, $return = false ) {
+    global $wp_version;
+    if ( version_compare( $wp_version, '3.5.1', '<' ) && ! defined( 'SOLILOQUY_FORCE_ACTIVATION' ) ) {
+        deactivate_plugins( plugin_basename( __FILE__ ) );
+        wp_die( sprintf( __( 'Sorry, but your version of WordPress does not meet Soliloquy\'s required version of <strong>3.5.1</strong> to run properly. The plugin has been deactivated. <a href="%s">Click here to return to the Dashboard</a>.', 'soliloquy' ), get_admin_url() ) );
+    }
 
-		/** Check if slider ID is an integer or string */
-		if ( is_numeric( $id ) )
-			$id = absint( $id );
-		else
-			$id = esc_attr( $id );
+    $instance = Soliloquy::get_instance();
 
-		/** Return if no slider ID has been entered or if it is not valid */
-		if ( ! $id || empty( $id ) ) {
-			printf( '<p>%s</p>', Tgmsp_Strings::get_instance()->strings['no_id'] );
-			return;
-		}
+    if ( is_multisite() && $network_wide ) {
+        global $wpdb;
+        $site_list = $wpdb->get_results( "SELECT * FROM $wpdb->blogs ORDER BY blog_id" );
+        foreach ( (array) $site_list as $site ) {
+            switch_to_blog( $site->blog_id );
 
-		/** Validate based on type of ID submitted */
-		if ( is_numeric( $id ) ) {
-			$validate = get_post( $id, OBJECT );
-			if ( ! $validate || isset( $validate->post_type ) && 'soliloquy' !== $validate->post_type ) {
-				printf( '<p>%s</p>', Tgmsp_Strings::get_instance()->strings['invalid_id'] );
-				return;
-			}
-		} else {
-			$validate = get_page_by_path( $id, OBJECT, 'soliloquy' );
-			if ( ! $validate ) {
-				printf( '<p>%s</p>', Tgmsp_Strings::get_instance()->strings['invalid_slug'] );
-				return;
-			}
-		}
+            // Set default license option.
+            $option = get_option( 'soliloquy' );
+            if ( ! $option || empty( $option ) ) {
+                update_option( 'soliloquy', Soliloquy::default_options() );
+            }
 
-		if ( $return )
-			return do_shortcode( '[soliloquy id="' . $id . '"]' );
-		else
-			echo do_shortcode( '[soliloquy id="' . $id . '"]' );
+            restore_current_blog();
+        }
+    } else {
+        // Set default license option.
+        $option = get_option( 'soliloquy' );
+        if ( ! $option || empty( $option ) ) {
+            update_option( 'soliloquy', Soliloquy::default_options() );
+        }
+    }
 
-	}
+}
+
+register_uninstall_hook( __FILE__, 'soliloquy_uninstall_hook' );
+/**
+ * Fired when the plugin is uninstalled.
+ *
+ * @since 1.0.0
+ *
+ * @global object $wpdb The WordPress database object.
+ */
+function soliloquy_uninstall_hook() {
+
+    $instance = Soliloquy::get_instance();
+
+    if ( is_multisite() ) {
+        global $wpdb;
+        $site_list = $wpdb->get_results( "SELECT * FROM $wpdb->blogs ORDER BY blog_id" );
+        foreach ( (array) $site_list as $site ) {
+            switch_to_blog( $site->blog_id );
+            delete_option( 'soliloquy' );
+            restore_current_blog();
+        }
+    } else {
+        delete_option( 'soliloquy' );
+    }
+
+}
+
+// Load the main plugin class.
+$soliloquy = Soliloquy::get_instance();
+
+// Conditionally load the template tag.
+if ( ! function_exists( 'soliloquy' ) ) {
+    /**
+     * Primary template tag for outputting Soliloquy sliders in templates.
+     *
+     * @since 1.0.0
+     *
+     * @param int $slider_id The ID of the slider to load.
+     * @param string $type   The type of field to query.
+     * @param array $args    Associative array of args to be passed.
+     * @param bool $return   Flag to echo or return the slider HTML.
+     */
+    function soliloquy( $id, $type = 'id', $args = array(), $return = false ) {
+
+        // If we have args, build them into a shortcode format.
+        $args_string = '';
+        if ( ! empty( $args ) ) {
+            foreach ( (array) $args as $key => $value ) {
+                $args_string .= ' ' . $key . '="' . $value . '"';
+            }
+        }
+
+        // Build the shortcode.
+        $shortcode = ! empty( $args_string ) ? '[soliloquy ' . $type . '="' . $id . '"' . $args_string . ']' : '[soliloquy ' . $type . '="' . $id . '"]';
+
+        // Return or echo the shortcode output.
+        if ( $return ) {
+            return do_shortcode( $shortcode );
+        } else {
+            echo do_shortcode( $shortcode );
+        }
+
+    }
 }
