@@ -1,10 +1,10 @@
 	<?php 
 
 /*
-Plugin Name: 17 - Hydraulic Cylinders
+Plugin Name: 17 - Hydraulic Cylinder
 Plugin URI: http://shopno2.com
-Description: Hydraulic Cylinder CPT For Use Through Out The Site
-Use Hydraulic Cylinders to add and display hydraulic cylinders on your site.
+Description: Hydraulic  Cylinder CPT For Use Through Out The Site
+Use Hydraulic to add and display hydraulic on your site.
 Author: sachin nambiar
 Author URI: sachinnambiar.com
 Version: 0.1
@@ -14,19 +14,19 @@ Version: 0.1
 function shopno2_hydraulic_cylinder() {
 
 	$labels = array(
-		'name'                => _x( 'Hydraulic Cylinders', 'Post Type General Name', 'text_domain' ),
+		'name'                => _x( 'Hydraulic Cylinder', 'Post Type General Name', 'text_domain' ),
 		'singular_name'       => _x( 'Hydraulic Cylinder', 'Post Type Singular Name', 'text_domain' ),
 		'menu_name'           => __( 'Hydraulic Cylinder', 'text_domain' ),
-		'parent_item_colon'   => __( 'Parent Hydraulic Cylinder:', 'text_domain' ),
-		'all_items'           => __( 'All Hydraulic Cylinders', 'text_domain' ),
-		'view_item'           => __( 'View Hydraulic Cylinders', 'text_domain' ),
+		'parent_item_colon'   => __( 'Parent Hydraulic:', 'text_domain' ),
+		'all_items'           => __( 'All Hydraulic Cylinder', 'text_domain' ),
+		'view_item'           => __( 'View Hydraulic Cylinder', 'text_domain' ),
 		'add_new_item'        => __( 'Add New Hydraulic Cylinder', 'text_domain' ),
 		'add_new'             => __( 'New Hydraulic Cylinder', 'text_domain' ),
 		'edit_item'           => __( 'Edit Hydraulic Cylinder', 'text_domain' ),
 		'update_item'         => __( 'Update Hydraulic Cylinder', 'text_domain' ),
 		'search_items'        => __( 'Search Hydraulic Cylinder', 'text_domain' ),
-		'not_found'           => __( 'No Hydraulic Cylinders found', 'text_domain' ),
-		'not_found_in_trash'  => __( 'No Hydraulic Cylinders found in Trash', 'text_domain' ),
+		'not_found'           => __( 'No Hydraulic Cylinder found', 'text_domain' ),
+		'not_found_in_trash'  => __( 'No Hydraulic Cylinder found in Trash', 'text_domain' ),
 	);
 	$args = array(
 		'label'               => __( 'Hydraulic Cylinder', 'text_domain' ),
