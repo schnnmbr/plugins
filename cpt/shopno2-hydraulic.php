@@ -49,7 +49,7 @@ function shopno2_hydraulic_cylinder() {
 		'supports' => array( 'title', 'editor', 'thumbnail', 'excerpt', 'custom-fields', 'genesis-seo', 'thumbnail','genesis-cpt-archives-settings', 'genesis-layouts' ), );
 		
 	
-	register_post_type( 'hydraulic-cylinder', $args );
+	register_post_type( 'hydraulic- qcylinder', $args );
 
 }
 
