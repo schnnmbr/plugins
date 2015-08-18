@@ -1,8 +1,8 @@
 <?php
 /*
-Plugin Name: Shopno2 Functions.php
+Plugin Name: 19 - Remove Metaboxes
 Plugin URI: http://shopno2.com
-Description: A simple plugin that contains all Custom Functions
+Description: Remove Metaboxes
 Author: sachin nambiar
 Author URI: shopno2.com
 Version: 0.5
@@ -35,7 +35,7 @@ if (basename($_SERVER['PHP_SELF']) == basename (__FILE__)) {
 
 
 function shopno2_remove_extra_meta_boxes() {
-//remove_meta_box( 'postcustom' , 'post' , 'normal' ); // custom fields for posts
+remove_meta_box( 'postcustom' , 'post' , 'normal' ); // custom fields for posts
 //remove_meta_box( 'postcustom' , 'page' , 'normal' ); // custom fields for pages
 //remove_meta_box( 'postexcerpt' , 'post' , 'normal' ); // post excerpts
 //remove_meta_box( 'postexcerpt' , 'page' , 'normal' ); // page excerpts
@@ -47,9 +47,9 @@ remove_meta_box( 'trackbacksdiv' , 'post' , 'normal' ); // post trackbacks
 remove_meta_box( 'trackbacksdiv' , 'page' , 'normal' ); // page trackbacks
 remove_meta_box( 'commentstatusdiv' , 'post' , 'normal' ); // allow comments for posts
 remove_meta_box( 'commentstatusdiv' , 'page' , 'normal' ); // allow comments for pages
-//remove_meta_box('slugdiv','post','normal'); // post slug
-//remove_meta_box('slugdiv','page','normal'); // page slug
-//remove_meta_box('pageparentdiv','page','side'); // Page Parent Attributes. Necessary to use page attributes.
+remove_meta_box('slugdiv','post','normal'); // post slug
+remove_meta_box('slugdiv','page','normal'); // page slug
+remove_meta_box('pageparentdiv','page','side'); // Page Parent Attributes. Necessary to use page attributes.
 }
 add_action( 'admin_menu' , 'shopno2_remove_extra_meta_boxes' );
 

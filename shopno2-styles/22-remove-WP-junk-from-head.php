@@ -1,6 +1,6 @@
 <?php
 /*
-Plugin Name: Shopno2 Remove WP Junk from head
+Plugin Name: 22 - Remove WP Junk from head
 Plugin URI: http://shopno2.com
 Description: Removes rsd, wp_generator, feedlinks, index_rel, wlwmanifest etc.
 Author: sachin nambiar

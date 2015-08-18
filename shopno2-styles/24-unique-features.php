@@ -1,6 +1,6 @@
 <?php
 /*
-Plugin Name: Shopno2 Unique Features
+Plugin Name: 24 - Unique Features
 Plugin URI: http://shopno2.com
 Description: Hides Admin bar for non admins, Auto set Featured Images, Autocrops Thumbnails. 
 Adds them support for custom background and headers/post.

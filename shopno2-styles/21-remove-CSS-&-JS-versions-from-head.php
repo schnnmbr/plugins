@@ -1,10 +1,10 @@
 <?php
 /*
-Plugin Name: Shopno2 Remove CSS & JS cer from head
-Plugin URI: http://shopno2.com
-Description: A simple plugin that contains all Custom Functions
+Plugin Name: 21 - Remove CSS & JS versions from head
+Plugin URI: http://iphco.in
+Description: emove CSS & JS versions from head
 Author: sachin nambiar
-Author URI: shopno2.com
+Author URI: iphco.in
 Version: 0.5
 */
  

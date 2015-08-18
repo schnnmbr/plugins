@@ -1,6 +1,6 @@
 <?php
 /*
-Plugin Name: Shopno2 Disable Visual Editor
+Plugin Name: 25 - Disable Visual Editor
 Plugin URI: http://shopno2.com
 Description: Disables Visual Editor for you. Mind that your customers might not know HTML.
 Author: sachin nambiar

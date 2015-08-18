@@ -1,6 +1,6 @@
 <?php
 /*
-Plugin Name: Shopno2 Dashboard
+Plugin Name: 20 - Remove Dashboard Widgets
 Plugin URI: http://shopno2.com
 Description: A simple plugin that applies better shopno2 security
 Author: sachin nambiar

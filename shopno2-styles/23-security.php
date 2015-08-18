@@ -1,8 +1,8 @@
 <?php
 /*
-Plugin Name: Shopno2 Security
+Plugin Name: 23 - Security
 Plugin URI: http://shopno2.com
-Description: A simple plugin that applies better shopno2 security
+Description: A plugin that applies better wordpress security
 Author: sachin nambiar
 Author URI: shopno2.com
 Version: 0.3
