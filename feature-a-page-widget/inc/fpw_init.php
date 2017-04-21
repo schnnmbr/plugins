@@ -1,7 +1,7 @@
 <?php
 /**
  * Configuring WordPress and Loading Assets Required for Widget
- * 
+ *
  * @package feature_a_page_widget
  * @author 	Mark Root-Wiley (info@MRWweb.com)
  * @link 	http://wordpress.org/plugins/feature-a-page-widget
@@ -20,7 +20,7 @@
 /**
  * define and update the plugin option in the database
  */
-define( 'FPW_VERSION', '2.0.3' );
+define( 'FPW_VERSION', '2.0.6' );
 function fpw_update_version() {
 	// Update the Plugin Version if it doesn't exist or is out of sync
 	$fpw_options = get_option( 'fpw_options' );
@@ -70,8 +70,8 @@ function fpw_admin_scripts( $hook ) {
 	// Keep the rest of WordPress snappy. Only run on the widgets.php page.
 	if( 'widgets.php' == $hook ) {
 		// The Chosen jQuery Plugin - http://harvesthq.github.com/chosen/
-		wp_register_script( 'chosen', plugins_url( 'chosen/chosen.jquery.js', dirname(__FILE__) ), array( 'jquery' ), '1.4.2' );
-		wp_register_style( 'chosen_css', plugins_url( 'chosen/chosen.css', dirname(__FILE__) ), false, '1.4.2' );
+		wp_register_script( 'chosen', plugins_url( 'chosen/chosen.jquery.min.js', dirname(__FILE__) ), array( 'jquery' ), '1.5.1' );
+		wp_register_style( 'chosen_css', plugins_url( 'chosen/chosen.min.css', dirname(__FILE__) ), false, '1.5.1' );
 
 		// Plugin JS
 		wp_enqueue_script( 'fpw_admin_js', plugins_url( 'js/fpw_admin.js', dirname(__FILE__) ), array( 'chosen' ), FPW_VERSION );
@@ -87,14 +87,14 @@ function fpw_admin_scripts( $hook ) {
 add_action( 'wp_enqueue_scripts', 'fpw_enqueue_scripts', 5 );
 function fpw_enqueue_scripts() {
 	// only load styles if there is at least one active widget on the site
-	if ( is_active_widget( false, false, 'fpw_widget' ) ) {
+	if( is_active_widget( false, false, 'fpw_widget' ) || is_customize_preview() ) {
 		wp_enqueue_style( 'fpw_styles_css', plugins_url( 'css/fpw_styles.css', dirname(__FILE__) ), false, FPW_VERSION );
 	}
 };
 
 /**
  * Set up theme support functions and image sizes for widget
- * 
+ *
  * Enables Excerpt and Post Thumbnail for all post_types added via fpw_post_types filter
  */
 add_action( 'init', 'fpw_page_supports', 20 );

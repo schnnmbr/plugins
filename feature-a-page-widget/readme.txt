@@ -1,18 +1,16 @@
 === Feature A Page Widget ===
 Contributors: mrwweb
-Donate link: https://www.networkforgood.org/donation/MakeDonation.aspx?ORGID2=522061398
+Donate link: https://www.paypal.me/rootwiley
 Tags: Widget, Widgets, Sidebar, Page, Pages, Post, Posts, Featured Page, Featured Post, Featured Content, Custom Post Types, Thumbnail, Featured Image, Post Thumbnail, Excerpt, Simple
-Requires at least: 3.8
-Tested up to: 4.2
-Stable tag: 2.0.3
+Requires at least: 3.9
+Tested up to: 4.5.1
+Stable tag: 2.0.10
 License: GPLv2 or later
 License URI: http://www.gnu.org/licenses/gpl-2.0.html
 
 Shows an attractive summary of any page in any sidebar.
 
 == Description ==
-
-**IMPORTANT: Feature a Page Widget 2.0 requires includes a new template override system. Sites using an old template should still work in most cases but can't take advantage of new options. [Full Version 2.0 Documentation](http://mrwweb.com/wordpress-plugins/feature-a-page-widget/version-2-documentation/)**
 
 Feature A Page Widget aims to provide a "just works" solution for showcasing a Page in any sidebar. It leverages Core WordPress features, a *simple* set of options with a thought-through UI including three widget layouts.
 
@@ -26,6 +24,8 @@ This plugin enables Featured Images (aka "Post Thumbnails") and Excerpts for Pag
 1. Add an instance of the "Feature a Page Widget" to the sidebar of your choosing.
 1. Select the Page, choose a layout, and give the widget a title if you want.
 1. Save the widget. Admire your handiwork.
+
+[Full Version 2.0 Documentation](http://mrwweb.com/wordpress-plugins/feature-a-page-widget/version-2-documentation/)
 
 = A Word About Image Sizes =
 
@@ -41,6 +41,8 @@ Feature a Page Widget 2.0 includes even more useful ways to modify the plugins o
 
 See the [FAQ page](https://wordpress.org/plugins/feature-a-page-widget/faq/) for links to code snippets and answers to common requests.
 
+**IMPORTANT: Feature a Page Widget 2.0 changes to a new template override system. Sites using an old template should still work with existing widgets but can't take advantage of new options or add new widgets.**
+
 = Tell Me How to Make The Plugin Better =
 
 * [Vote on the options](http://mrwweb.com/feature-a-page-widget-plugin-wordpress/#gform_wrapper_5) you'd like to see in future versions of the plugin.
@@ -54,6 +56,8 @@ See the [FAQ page](https://wordpress.org/plugins/feature-a-page-widget/faq/) for
 * Serbian (sr_RS). Thanks to Ogi Djuraskovic of [FirstSiteGuide.com](http://firstsiteguide.com/).
 * Polish (pl_PL). Thanks to [Maciej Gryniuk](http://maciej-gryniuk.tk/).
 * Spanish (es_ES). Thanks to [Luuuciano](https://wordpress.org/support/profile/luuuciano).
+* Italian (it_IT). Thanks to [Carmine Scaglione](https://profiles.wordpress.org/scaglione).
+* Dutch (nl_NL). Thanks to [Patrick Catthoor](https://profiles.wordpress.org/pc1271).
 
 = Other Plugins by MRWweb =
 
@@ -71,7 +75,7 @@ See the [FAQ page](https://wordpress.org/plugins/feature-a-page-widget/faq/) for
 
 == Frequently Asked Questions ==
 
-[Full Version 2.0 Documentation](http://mrwweb.com/wordpress-plugins/feature-a-page-widget/version-2-documentation/)
+**[Full Version 2.0 Documentation](http://mrwweb.com/wordpress-plugins/feature-a-page-widget/version-2-documentation/)**
 
 = How do I set the widget image? =
 
@@ -154,14 +158,45 @@ I'm using the [Chosen](http://harvesthq.github.com/chosen/) jQuery plugin. It's 
 4. Uses standard WordPress fields (Title, Featured Image, and Excerpt) that you already know and love.
 
 == Changelog ==
-= 2.0.3 (May 29, 2015) = 
-* [New] Spanish Translations. Thanks to [Luuuciano](https://wordpress.org/support/profile/luuuciano)!
+= 2.0.10 (April 29, 2016) =
+* **[Important Notice] Feature a Page Widget now requires WordPress 3.9 or higher.**
+* [Fix] Custom Sidebars compatibility fix.
+
+= 2.0.9 (March 29, 2016) =
+* [Fix] Restore compatibility with Site Origin Page Builder plugin
+
+= 2.0.8 (March 28, 2016) =
+* [Fix] Inexplicable partial update caused old script names to attempt to be loaded. This completes the 2.0.7 update of Chosen and should resolve any issues.
+
+= 2.0.7 (March 27, 2016) =
+* [New] Support "selective refresh" feature in WordPress 4.5 for faster previews when using the widget in the customizer.
+* Update Chosen to 1.5.1
+* Bump "Tested up to:" to 4.5
+
+= 2.0.6 (Dec 15, 2015) =
+* [Fix] Add isset checks to resolve AJAX warnings. ([Props @maxwelton.](https://wordpress.org/support/topic/ajax-php-warning))
+* [Fix] Support WPML in dropdown page list via `suppress_filters`. (Thanks, Maarten.)
+* [Security][i18n] Escape translated strings for improved security.
+* [Fix] Show Help Text again on Contextual Help tab of widget screen.
+* [Layout] Center images if they don't fill full-width of widget.
+
+= 2.0.5 (Sep 7, 2015) =
+* [i18n] New Dutch translation. Thanks to [Patrick Catthoor](https://profiles.wordpress.org/pc1271)!
+* [i18n News] If you have translation for this plugin, I would love to include it, ideally before the [move to translate.wordpress.org for plugins](https://make.wordpress.org/plugins/2015/09/01/plugin-translations-on-wordpress-org/). [Contact me](http://mrwweb.com/contact/) if you're interested.
+* Bump "Tested to:" number
+
+= 2.0.4 (Aug 28, 2015) =
+- [Fix] Compatibility fix for WPMU Custom Sidebars (Thanks [oxygensmith for reporting](https://wordpress.org/support/topic/conflict-with-wpmu-custom-sidebars?replies=1))
+- [i18n] New Italian translation. Thanks to [Carmine Scaglione](https://profiles.wordpress.org/scaglione).
+
+= 2.0.3 (May 29, 2015) =
+* [i18n] Spanish Translations. Thanks to [Luuuciano](https://wordpress.org/support/profile/luuuciano)!
 
 = 2.0.2 (May 1, 2015) =
 * [Fix] One string missing i18n. (Thanks, Maciej Gryniuk!)
 * [Fix] Prevent clipped radio buttons with browser zoom.
 * [New] `fpw_read_more_ellipsis` to filter punctuation in read more link. [Forum request.](https://wordpress.org/support/topic/excerpt-ellipses?replies=2#post-6861677)
-* [New] Polish Translation from Maciej Gryniuk! (Update .pot file too.)
+* [i18n] Polish Translation from Maciej Gryniuk! (Update .pot file too.)
 * [New] Added  missing space in "Read More" link noted in ["WordPress Plugin Review: Feature a Page Widget."](http://beyond-paper.com/wordpress-plugin-review-feature-a-page-widget/)
 * [Documentation] New sticky [Support Forum post about accessible read more link](https://wordpress.org/support/topic/does-your-read-more-link-say-read-more-about-title).
 
@@ -186,8 +221,8 @@ I'm using the [Chosen](http://harvesthq.github.com/chosen/) jQuery plugin. It's 
 * Various small CSS changes to widget layouts for [hopefully] improved consistency.
 * Reorganized files, WordPress code formatting improvements, and cleaner markup in most places
 * Remove use of `extract()` for more readable code.
-* [New] German translation files by [Christoph Toschko](https://profiles.wordpress.org/jomit/). Thanks, Christoph!
-* [New] Serbian translation from Ogi Djuraskovic of [FirstSiteGuide.com](http://firstsiteguide.com/). Thanks, Ogi!
+* [i18n] German translation files by [Christoph Toschko](https://profiles.wordpress.org/jomit/). Thanks, Christoph!
+* [i18n] Serbian translation from Ogi Djuraskovic of [FirstSiteGuide.com](http://firstsiteguide.com/). Thanks, Ogi!
 * [Update] Update Chosen JS library to v1.4.2.
 
 = 1.2.5 (September 27, 2013) =
@@ -260,6 +295,28 @@ I'm using the [Chosen](http://harvesthq.github.com/chosen/) jQuery plugin. It's 
 * Thanks to awesome tester: [Christine Winckler](http://ChristineTheDesigner.com)
 
 == Upgrade Notice ==
+= 2.0.10 =
+New: Requires WordPress 3.9 or higher. Fix Custom Sidebars plugin compatibility.
+
+= 2.0.9 =
+Restore Site Origin Page Builder plugin compatibility
+
+= 2.0.8 =
+Fixes 2.0.7 release that added "Support for 4.5 'Selective Refresh' Customizer previews"
+
+= 2.0.7 =
+Support for 4.5 "Selective Refresh" Customizer previews
+
+= 2.0.6 =
+Better WPML support, resolve AJAX warning, and security hardening
+
+= 2.0.5 =
+New Dutch translation. v2.0.0 IS A MAJOR UPDATE. Visit plugin home for detailed information about updates. / 2.0.0: Improved interface, ability to feature any post type, new template system, more filters, and more!
+
+= 2.0.4 =
+Italian translation & WPMU Sidebars plugin compatibility fix.
+v2.0 IS A MAJOR UPDATE. Visit plugin home for detailed information about updates. / 2.0.0: Improved interface, ability to feature any post type, new template system, more filters, and more!
+
 = 2.0.3 =
 v2.0 IS A MAJOR UPDATE. Visit plugin home for detailed information about updates. / 2.0.0: Improved interface, ability to feature any post type, new template system, more filters, and more! / 2.0.3: Add Spanish translation.
 

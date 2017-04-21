@@ -57,24 +57,6 @@ jQuery(document).ready(function($) {
 
 	}
 
-	// for pre3.9 WordPress
-	// Fire off chosen on save-widget callback, else the vanilla select reappears.
-	// Thanks http://www.johngadbois.com/adding-your-own-callbacks-to-wordpress-ajax-requests/
-	$(document).ajaxSuccess(function(e, xhr, settings) {
-
-		if(settings.data.search('action=save-widget') != -1 && settings.data.search('id_base=fpw_widget') != -1) {
-			// as of WP 3.6, the activeElement isn't within the widget anymore :( so this doesn't work.
-			// $widget = $(e.currentTarget.activeElement).parents('.widget');
-			// fpwSetChosen( $widget );
-			fpwActivateChosen();
-		}
-
-		if(settings.data.search('action=widgets-order') != -1) {
-			fpwActivateChosen();
-		}
-
-	});
-
 	// 3.9+
 	$( document ).on( 'widget-updated', fpwActivateChosen );
 	$( document ).on( 'widget-added', fpwActivateChosen );

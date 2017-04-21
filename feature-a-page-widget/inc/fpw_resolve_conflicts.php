@@ -80,10 +80,9 @@ add_action( 'fpw_loop_end', 'fpw_add_podpress' );
  */
 add_action('siteorigin_panel_enqueue_admin_scripts', 'fpw_sopb_admin_scripts' );
 function fpw_sopb_admin_scripts() {
-	// Keep the rest of WordPress snappy. Only run on the widgets.php page.
-	// The Chosen jQuery Plugin - http://harvesthq.github.com/chosen/
-	wp_register_script( 'chosen', plugins_url( 'chosen/chosen.jquery.js', dirname(__FILE__) ), array( 'jquery' ), '1.4.2' );
-	wp_register_style( 'chosen_css', plugins_url( 'chosen/chosen.css', dirname(__FILE__) ), false, '1.4.2' );
+	// Chosen fancy drop down scripts & styles
+	wp_register_script( 'chosen', plugins_url( 'chosen/chosen.jquery.min.js', dirname(__FILE__) ), array( 'jquery' ), '1.5.1' );
+	wp_register_style( 'chosen_css', plugins_url( 'chosen/chosen.min.css', dirname(__FILE__) ), false, '1.5.1' );
 
 	// Plugin JS
 	wp_enqueue_script( 'fpw_admin_js', plugins_url( 'js/fpw_admin.js', dirname(__FILE__) ), array( 'chosen' ), FPW_VERSION );

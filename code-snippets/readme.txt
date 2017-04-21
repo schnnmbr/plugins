@@ -1,10 +1,10 @@
 === Code Snippets ===
 Contributors: bungeshea
-Donate link: http://bungeshea.com/donate/
+Donate link: https://bungeshea.com/donate/
 Tags: code-snippets, snippets, code, php, network, multisite
-Requires at least: 3.3
-Tested up to: 4.2.2
-Stable tag: 2.3.0
+Requires at least: 3.6
+Tested up to: 4.7.2
+Stable tag: 2.8.2
 License: MIT
 License URI: license.txt
 
@@ -26,7 +26,8 @@ If you have any feedback, issues, or suggestions for improvements please leave a
 
 Code Snippets can be used in these different languages thanks to the following translators:
 
-* German - [David Decker](http://deckerweb.de) and [Joerg Knoerchen](http://www.sensorgrafie.de/)
+* German - [Mario Siegmann](http://web-alltag.de/), [Joerg Knoerchen](http://www.sensorgrafie.de/), and [David Decker](http://deckerweb.de)
+* Dutch - [Sander Spies](https://github.com/sander1)
 * Slovak - [Ján Fajčák](http://wp.sk)
 * Russian - [Alexander Samsonov](http://www.wordpressplugins.ru/administration/code-snippets.html)
 * Chinese - [Jincheng Shan](http://shanjincheng.com)
@@ -59,7 +60,7 @@ Network Activating Code Snippets through the Network Dashboard will enable a spe
 = How can I insert my snippet into the post text editor? =
 Snippets that you add to this plugin are not meant to be inserted into the text editor. Instead, they are run on your site just as if they were added to your functions.php file.
 
-= Do I need to include the `<?php`, `<?` or `?>` tags in my snippet? =
+= Do I need to include the &lt;?php, &lt;? or ?&gt; tags in my snippet? =
 No, just copy all the content inside those tags. If you accidentally forget (or just like being lazy), the tags will be stripped from the beginning and end of the snippet when you save it. You can, however, use those tags *inside* your snippets to start and end HTML sections
 
 = Help! I just activated a snippet, and my whole site broke! =
@@ -69,19 +70,10 @@ You can try activating 'safe mode'. All snippets will not execute while safe mod
 
  To turn safe mode off, either [comment out](http://php.net/manual/language.basic-syntax.comments.php) this line or delete it.
 
+ You can also activate safe mode on a per-page basis by appending `?snippets-safe-mode=true` to the URL.
+
 = Is there a way to add a snippet but not run it right away? =
 Yes. Just add it but do not activate it yet.
-
-= What do I use to write my snippets? =
-The [CodeMirror](http://codemirror.net) source-code editor will add line numbers, syntax highlighting, bracket matching, search, tabulate and other cool features to the code editor.
-
-= Can I preform search and replace commands in the code editor? =
-
-* __Ctrl-F / Cmd-F__ : Start searching
-* __Ctrl-G / Cmd-G__ : Find next
-* __Shift-Ctrl-G / Shift-Cmd-G__ : Find previous
-* __Shift-Ctrl-F / Cmd-Option-F__ : Replace
-* __Shift-Ctrl-R / Shift-Cmd-Option-F__ : Replace all
 
 = Will I lose my snippets if I change the theme or upgrade WordPress? =
 No, the snippets are stored in the WordPress database and are independent of the theme and unaffected by WordPress upgrades.
@@ -116,7 +108,101 @@ That's fantastic! Fork the [repository on GitHub](http://github.com/sheabunge/co
 
 == Changelog ==
 
-= 2.3.0 =
+= 2.8.2 (27 Feb 2017) =
+* Fix bug introduced in 2.8.1 that broke code verification functionality by executing code twice
+
+= 2.8.1 (25 Feb 2017) =
+* Updated German translation
+* Fixed admin menu items not translating
+* Removed possible conflict between Debug Bar Console plugin ([#](https://github.com/sheabunge/code-snippets/issues/52))
+* Corrected editor alignment on RTL sites ([#](https://wordpress.org/support/topic/suggestion-css-fix-for-rtl-sites/))
+* Fixed bulk actions running when Filter button is clicked ([#](https://wordpress.org/support/topic/bug-with-filtering-action-buttons/))
+* Updated CodeMirror to version 5.24.0
+
+= 2.8.0 (14 Dec 2016) =
+* Fixed Italian translation errors. Props to @arsenalemusica
+* Renamed 'Manage' admin menu label to 'All Snippets' to keep in line with other admin menu labels
+* Renamed placeholder on snippet name field to 'Enter title here'
+* Removed CodeMirror search functionality
+* Moved 'Edit Snippet' admin menu above 'Add New' menu
+* Made pressing Ctrl-Enter in the code editor save the snippet
+* Updated CodeMirror to version 5.21.0
+
+= 2.7.3 (24 Oct 2016) =
+* Updated CodeMirror to version 5.10.0
+* Fixed a few strings not being translated
+
+= 2.7.2 (1 Oct 2016) =
+* Updated German translation by [Mario Siegmann](http://web-alltag.de)
+
+= 2.7.1 (30 Sep 2016) =
+* Added Dutch translation by Sander Spies
+* Ensured that the editor theme setting is properly validated. Thanks to [Netsparker](https://www.netsparker.com) for reporting.
+* Ensured that snippet tags are properly escaped. Thanks to [Netsparker](https://www.netsparker.com) for reporting.
+* Updated CodeMirror to version 5.19.0
+
+= 2.7.0 (23 July 2016) =
+* Fixed plugin translations being loaded
+* Increase default snippets per page so that all are usually shown
+* Fixed description field not being imported
+* Updated German translation by [Mario Siegmann](http://web-alltag.de)
+* Fixed issue with CodeMirror rubyblue theme [[#](https://wordpress.org/support/topic/a-problem-with-the-cursor-color-and-the-fix-that-worked-for-me)]
+* Added query var to disable snippet execution. To use, add `?snippets-safe-mode=true` to the URL
+* Fixed snippet fields not importing
+* Updated CodeMirror to version 5.17.0
+* Fixed a minor XSS vulnerability discovered by Burak Kelebek [[#](https://wordpress.org/support/topic/security-vulnerability-20)]
+
+= 2.6.1 (10 Feb 2016) =
+* Updated German translation by [Mario Siegmann](http://web-alltag.de)
+* Fixed error catching not working correctly
+* Updated error catching to work with snippets including functions and classes
+* Fixed editor autoresizing
+
+= 2.6.0 (31 Dec 2015) =
+* Reconfigured plugin to use classloader and converted a lot of functional code into OOP code
+* Updated CodeMirror to version 5.10.0
+* Added `[code_snippets]` shortcode for embedding snippet code in a post
+* Fixed broken snippet search feature [[#](https://wordpress.org/support/topic/search-is-not-working-6)]
+* Added front-end syntax highlighting for shortcode using [PrismJS](http://prismjs.com)
+
+= 2.5.1 (11 Oct 2016) =
+* Fixed: Ensure errors are fatal before catching them during error checking
+* Fixed: Escape the snippet name on the edit page to ensure it displays correctly
+* Fixed: Exclude snippets with named functions from error checking so they do not run twice
+
+= 2.5.0 (8 Oct 2015) =
+* Added: Detect parse and fatal errors in code when saving a snippet, and display a user-friendly message
+* Fixed: Updated access of some methods in Code_Snippets_List_Table class to match updated WP_List_Table class
+
+= 2.4.2 (27 Sep 2015) =
+* Added query variable to activate safe mode
+* Fixed settings not saving
+* Fixed snippet descriptions not displaying on manage menu
+* Added settings to disable description and tag editors
+* Fixed: Load CodeMirror after plugin styles to fix error with Zenburn theme
+* Fixed: Hide snippet scope icons when the scope selector is disabled
+* Fixed description heading on edt snippet menu being hidden when visual editor disabled
+* Updated editor preview updating code to use vanilla JavaScript instead of jQuery
+* Fixed: Deactivate a shared network snippet on all subsites when it looses its sharing status
+
+= 2.4.1 (17 Sep 2015) =
+* Fixed CodeMirror themes not being detected on settings page [[#](https://wordpress.org/support/topic/updated-to-240-now-i-cant-switch-theme)]
+
+= 2.4.0 (17 Sep 2015) =
+* Added ability to share network snippets to individual sites on WordPress multisite
+* Improved code directory and class structure
+* Remove legacy code for pre-3.6 compatibility
+* Improved code for printing admin messages
+* Updated German translation (Joerg Knoerchen)
+* Added `code_snippets/after_execute_snippet` filter
+* Added class for individual snippets
+* Updated `get_snippets()` function to retrieve individual snippets
+* Removed scope statuses and added fixed tags to indicate scope
+* Changed admin page headers to use `<h1>` tags instead of `<h2>` tags
+* Updated CodeMirror to version 5.6
+* Removed snippet settings page from network admin
+
+= 2.3.0 (20 May 2015) =
 * Removed nested functions
 * Added icons for admin and front-end snippets to manage table
 * Improved settings retrieval by caching settings
@@ -125,24 +211,24 @@ That's fantastic! Fork the [repository on GitHub](http://github.com/sheabunge/co
 * Fixed errors in string translation
 * Fixed bug in import process ([#32](https://github.com/sheabunge/code-snippets/issues/32))
 
-= 2.2.3 =
+= 2.2.3 (13 May 2015) =
 * Fixed broken call to `export_snippet()` function
 * Added support for importing and exporting snippet scope
 * Fixed duplicate primary key database error
 * Improved database table structure
 
-= 2.2.2 =
+= 2.2.2 (11 May 2015) =
 * Polyfilled array_replace_recursive() function for PHP 5.2
 * Updated references to old plugin site
 * Resolved JavaScript error on edit snippet pages
 * Made minor updates to French translation file
 * Added statuses for snippet scopes on manage snippets table
 
-= 2.2.1 =
+= 2.2.1 (10 May 2015) =
 * Fixed the default values of new setting not being applied
 * Fixed missing background of tags input
 
-= 2.2.0 =
+= 2.2.0 (10 May 2015) =
 * Introduced CodeSniffer testing on code
 * Fixed description heading disappearing when media buttons enabled
 * Added snippet scope selector
@@ -150,36 +236,31 @@ That's fantastic! Fork the [repository on GitHub](http://github.com/sheabunge/co
 * Made CodeMirror theme names more readable
 * Fixed bug causing translations to not be loaded
 
-= 2.1.0 =
+= 2.1.0 (09 May 2015) =
 * Added additional setting descriptions
 * Added settings for code and description editor height
 * Updated CodeMirror to version 5.2
 * Fixed not escaping the request URL when using query arg functions
 * Improved efficiency of settings component
 
-= 2.0.3 =
-* Updated German translation by [Joerg Knoerchen](http://www.sensorgraphy.net/)
+= 2.0.3 (17 Mar 2015) =
+* Updated German translation by [Joerg Knoerchen](http://www.sensorgrafie.de/)
 
-= 2.0.2 =
+= 2.0.2 (05 Mar 2015) =
 * Fix error in table creation code
 * Remove settings database option when plugin is uninstalled
 
-= 2.0.1 =
+= 2.0.1 (25 Feb 2015) =
+* Fixed table creation code not running on upgrade
+* Fixed snippets per page option not saving
 
-* Fix table creation code not running on upgrade
-* Fix snippets per page option not saving
-
-= 2.0 =
-
-__Highlights__
-
+= 2.0 (24 Feb 2015) =
+* __Highlights:__
 * Better import/export functionality
 * New settings page with code editor settings
 * Code rewritten for cleaner and more efficient code
 * Lots of new translations
-
-__Added__
-
+* __Added:__
 * Added link to Code Snippets importer under Snippets admin menu
 * Added settings component and admin page
 * Added support for different CodeMirror themes
@@ -191,9 +272,7 @@ __Added__
 * Added Russian translation by Alexander Samsonov
 * Added Slovak translation by [Ján Fajčák] from [WordPress Slovakia](http://wp.sk)
 * Added setting to always save and activate snippets by default
-
-__Changed__
-
+* __Changed:__
 * Added braces to single-line conditionals in line with [new coding standards](https://make.wordpress.org/core/2013/11/13/proposed-coding-standards-change-always-require-braces/)
 * Split up large classes into separate functions
 * Improved plugin file structure
@@ -201,19 +280,25 @@ __Changed__
 * Updated CodeMirror library to version 5.0
 * Rewritten import/export functionality to use DOMDocument
 * Merged Code_Snippets_Export_PHP class into Code_Snippets_Export class
-
-__Deprecated__
-
+* __Deprecated:__
 * Removed old admin style support
 * Removed backwards-compatible support
-
-__Fixed__
-
+* __Fixed:__
 * Fixed incompatibility errors with PHP 5.2
 * Fixed empty MO translation files
 * Removed duplicate MySQL primary key indexing
 
-= 1.9 =
+= 1.9.1.1 (3 Jan 2014) =
+* Add capability check to site snippets importer
+
+= 1.9.1 (2 Jan 2014) =
+* Use an icon font for menu icon instead of embedded SVG
+* Use Sass (libsass) instead of Compass
+* Unminify CodeMirror scripts
+* Fixes for the WP 3.8 interface
+* Fix 'enable snippets menu for site admins' multisite setting
+
+= 1.9 (11 Nov 2013) =
 * Add and remove network capabilities as super admins are added and removed
 * Updated MP6 icon implementation
 * Replaced buggy trim `<?php` and `?>` functionality with a much more reliable regex method ([#](http://wordpress.org/support/topic/character-gets-cut))
@@ -237,7 +322,9 @@ __Fixed__
 * Fixed CodeMirror incompatibility with the WP Editor plugin
 * Fixed CodeMirror incompatibility with the Debug Bar Console plugin
 
-= 1.8.1 =
+= 1.8.1.1 (18 Aug 2013) =
+
+= 1.8.1 (29 July 2013) =
 * Compiled all CodeMirror scripts into a single file
 * Use Sass + Compass for CSS
 * Use Grunt for build automation
@@ -245,48 +332,50 @@ __Fixed__
 * Fixed code typo that was breaking export files
 * Updated CodeMirror to 3.15
 
-= 1.8 =
+= 1.8 (9 July 2013) =
 * Allow no snippet name or code to be set
 * Prevented an error on fresh multisite installations
 * Refactored code to use best practices
 * Improved database table creation method: on a single-site install, the snippets table will always be created. On a multisite install, the network snippets table will always be created; the site-specific table will always be created for the main site; for sub-sites the snippets table will only be created on a visit to a snippets admin page.
 * Updated to CodeMirror 3.14
-* Changes to action and filter hook API
+* Changes to filter and action hook API
 * Added error message handling for import snippets page
 * Don't encode HTML entities in database
 
-= 1.7.1.2 =
-* Correct path to admin menu icon ([#](http://wordpress.org/support/topic/icon-disappears-with-mp6?replies=6#post-4148319))
+= 1.7.1.2 (3 May 2013) =
+* Correct path to admin menu icon. Fixes [#8](https://github.com/sheabunge/code-snippets/issues/8)
 
-= 1.7.1.1 =
-* Fix a minor bug with custom capabilities and admin menus
+= 1.7.1.1 (29 April 2013) =
+* Fixed a bug with custom capabilities and admin menus
 
-= 1.7.1 =
+= 1.7.1 (22 April 2013) =
 * Fix a bug with snippet being set as deactivated when saved
-* Updated PHP Documentation completely. [View online](http://bungeshea.github.io/code-snippets/api)
+* Updated PHP Documentation completely. [[View online](http://bungeshea.github.io/code-snippets/api)]
 * Only load admin functions when viewing dashboard
 * Added German translation thanks to [David Decker](http://deckerweb.de)
 * Allow or deny site administrators access to snippet admin menus. Set your preference in the **Enable Administration Menus** setting under the *Settings > Network Settings* network admin menu.
 * Improve database table creation and upgrade process
 * Optimized to use less database queries
 
-= 1.7 =
+= 1.7 (26 Mar 2013) =
 * Improved plugin API
 * Fixed a bug with saving snippets per page option ([#](http://wordpress.org/support/topic/plugin-code-snippets-snippets-per-page-does-not-work#post-3710991))
 * Updated CodeMirror to version 3.11
 * Allow plugin to be activated on individual sites on multisite ([#](http://wordpress.org/support/topic/dont-work-at-multisite))
 * Slimmed down the description visual editor
 * Added icon for the new MP6 admin UI ([#](http://wordpress.org/support/topic/icon-disappears-with-mp6))
-* Strip PHP tags from the beginning and end of a snippet in case someone forgets
+* Strip PHP tags from the beginning and end of a snippet on save ([#](http://wordpress.org/support/topic/php-tags))
 * Changed to [MIT license](http://opensource.org/licenses/mit-license.php)
 * Removed HTML, CSS and JavaScript CodeMirror modes that were messing things up
+* Change label in admin menu when editing a snippet
+* Improved admin styling
 * Made everything leaner, faster, and better
 
-= 1.6.1 =
+= 1.6.1 (29 Dec 2012) =
 * Fixed a bug with permissions not being applied on install ([#](http://wordpress.org/support/topic/permissions-problem-after-install))
 * Fixed a bug in the uninstall method ([#](http://wordpress.org/support/topic/bug-in-delete-script))
 
-= 1.6 =
+= 1.6 (22 Dec 2012) =
 * Updated code editor to use CodeMirror 3
 * Improved compatibility with Clean Options plugin
 * Code improvements and optimization
@@ -300,7 +389,7 @@ __Fixed__
 * Store multisite only options in site options table
 * Fixed compatibility bugs with WordPress 3.5
 
-= 1.5 =
+= 1.5 (18 Sep 2012) =
 * Updated CodeMirror to version 2.33
 * Updated the 'Manage Snippets' page to use the WP_List_Table class
 	* Added 'Screen Options' tab to 'Manage Snippets' page
@@ -314,41 +403,65 @@ __Fixed__
 * Lengthened snippet name field to 64 characters ([#](http://wordpress.org/support/topic/plugin-code-snippets-snippet-title-limited-to-36-characters))
 * Added i18n
 
-= 1.4 =
+= 1.4 (20 Aug 2012) =
 * Added interface to Network Dashboard
 * Updated uninstall to support multisite
 * Replaced EditArea with [CodeMirror](http://codemirror.net)
 * Small improvements
 
-= 1.3.2 =
+= 1.3.2 (17 Aug 2012) =
 * Fixed a bug with version 1.3.1
 
-= 1.3.1 =
+= 1.3.1 (17 Aug 2012) =
 * Changed plugin website URI
 * Cleaned up some code
 
-= 1.3 =
+= 1.3 (1 Aug 2012) =
 * Added export option to 'Manage Snippets' page
 * Added 'Import Snippets' page
 
-= 1.2 =
+= 1.2 (29 July 2012) =
 * Minor improvements
 * Added code highlighting
 * Removed 'Uninstall Plugin' page
 * Data will now be cleaned up when plugin is deleted through WordPress admin
 
-= 1.1 =
+= 1.1 (24 June 2012) =
 * Fixed a permissions bug with `DISALLOW_FILE_EDIT` being set to true ([#](http://wordpress.org/support/topic/plugin-code-snippets-cant-add-new))
 * Fixed a bug with the page title reading 'Add New Snippet' on the 'Edit Snippets' page
 * Fixed a bug not allowing the plugin to be Network Activated ([#](http://wordpress.org/support/topic/plugin-code-snippets-network-activate-does-not-create-snippets-tables))
 
-= 1.0 =
+= 1.0 (13 June 2012) =
 * Stable version released.
 
 == Upgrade Notice ==
 
+= 2.8.2 =
+Fixed fatal error preventing activated snippets from saving
+
+= 2.8.0 =
+Interface tweaks
+
+= 2.7.2 =
+Update to German translation by Mario Siegmann
+
+= 2.7.0 =
+Fix translation loading and description importing
+
+= 2.5.1 =
+Prevent Don't Panic message from being triggered accidentally
+
+= 2.5.0 =
+Now detects errors in snippet code when saving
+
+= 2.4.1 =
+Fixed CodeMirror themes not being detected on settings page
+
+= 2.4.0 =
+New snippet sharing feature for multisite networks; new Snippet class
+
 = 2.3.0 =
-Numerious fixes and Russian translation update. Props to @signo and @`achumakov.
+Numerous fixes and Russian translation update. Props to @signo and @achumakov.
 
 = 2.2.3 =
 Fixed error when exporting; snippet scopes can now be imported

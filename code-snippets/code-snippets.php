@@ -3,24 +3,24 @@
 /**
  * Code Snippets - An easy, clean and simple way to add code snippets to your site.
  *
- * If you're interested in helping to develop Code Snippets, or perhaps
- * contribute to the localization, please see https://github.com/sheabunge/code-snippets
+ * If you're interested in helping to develop Code Snippets, or perhaps contribute
+ * to the localization, please see https://github.com/sheabunge/code-snippets
  *
  * @package   Code_Snippets
- * @version   2.3.0
- * @author    Shea Bunge <http://bungeshea.com/>
- * @copyright Copyright (c) 2012-2015, Shea Bunge
- * @link      http://bungeshea.com/plugins/code-snippets/
- * @license   http://opensource.org/licenses/MIT
+ * @author    Shea Bunge <shea@bungeshea.com>
+ * @copyright 2012-2017 Shea Bunge
+ * @license   MIT http://opensource.org/licenses/MIT
+ * @version   2.8.2
+ * @link      https://github.com/sheabunge/code-snippets
  */
 
 /*
 Plugin Name: Code Snippets
-Plugin URI:  http://bungeshea.com/plugins/code-snippets/
+Plugin URI:  https://github.com/sheabunge/code-snippets
 Description: An easy, clean and simple way to add code snippets to your site. No need to edit to your theme's functions.php file again!
 Author:      Shea Bunge
-Author URI:  http://bungeshea.com
-Version:     2.3.0
+Author URI:  https://bungeshea.com
+Version:     2.8.2
 License:     MIT
 License URI: license.txt
 Text Domain: code-snippets
@@ -34,7 +34,7 @@ if ( ! defined( 'ABSPATH' ) ) {
 
 /**
  * The version number for this release of the plugin.
- * This will later be used for upgrades and enqueueing files
+ * This will later be used for upgrades and enqueuing files
  *
  * This should be set to the 'Plugin Version' value,
  * as defined above in the plugin header
@@ -42,7 +42,7 @@ if ( ! defined( 'ABSPATH' ) ) {
  * @since 2.0
  * @var string A PHP-standardized version number string
  */
-define( 'CODE_SNIPPETS_VERSION', '2.3.0' );
+define( 'CODE_SNIPPETS_VERSION', '2.8.2' );
 
 /**
  * The full path to the main file of this plugin
@@ -57,63 +57,52 @@ define( 'CODE_SNIPPETS_VERSION', '2.3.0' );
 define( 'CODE_SNIPPETS_FILE', __FILE__ );
 
 /**
- * Load plugin files
+ * Enable autoloading of plugin classes
+ * @param $class_name
  */
-foreach ( array(
+function code_snippets_autoload( $class_name ) {
 
-	/* Database operations functions */
-	'db.php',
+	/* Only autoload classes from this plugin */
+	if ( 'Snippet' !== $class_name && 'Code_Snippets' !== substr( $class_name, 0, 13 ) ) {
+		return;
+	}
 
-	/* Capability functions */
-	'caps.php',
+	/* Remove namespace from class name */
+	$class_file = str_replace( 'Code_Snippets_', '', $class_name );
 
-	/* Snippet operations functions */
-	'snippet-ops.php',
+	/* Convert class name format to file name format */
+	$class_file = strtolower( $class_file );
+	$class_file = str_replace( '_', '-', $class_file );
 
-	/* Upgrade function */
-	'upgrade.php',
+	$class_path = dirname( __FILE__ ) . '/php/';
 
-	/* General Administration functions */
-	'admin.php',
+	if ( 'Menu' === substr( $class_name, -4, 4 ) ) {
+		$class_path .= 'admin-menus/';
+	}
 
-	/* CodeMirror editor functions */
-	'editor.php',
-
-	/* Manage snippets component */
-	'manage/manage.php',
-
-	/* Edit snippet component */
-	'edit/edit.php',
-
-	/* Import snippets component */
-	'import/import.php',
-
-	/* Settings component */
-	'settings/editor-preview.php',
-	'settings/settings-fields.php',
-	'settings/settings.php',
-	'settings/admin.php',
-
-	) as $include ) {
-
-	require plugin_dir_path( __FILE__ ) . "includes/$include";
+	/* Load the class */
+	require_once $class_path . "class-{$class_file}.php";
 }
 
-/* Initialize database table variables */
-set_snippet_table_vars();
+spl_autoload_register( 'code_snippets_autoload' );
+
+/**
+ * Retrieve the instance of the main plugin class
+ *
+ * @since 2.6.0
+ * @return Code_Snippets
+ */
+function code_snippets() {
+	static $plugin;
+
+	if ( is_null( $plugin ) ) {
+		$plugin = new Code_Snippets( CODE_SNIPPETS_VERSION, __FILE__ );
+	}
+
+	return $plugin;
+}
+
+code_snippets()->load_plugin();
 
 /* Execute the snippets once the plugins are loaded */
 add_action( 'plugins_loaded', 'execute_active_snippets', 1 );
-
-/**
- * Load up the localization file if we're using WordPress in a different language.
- * Place it in this plugin's "languages" folder and name it "code-snippets-[language_COUNTRY].mo"
- *
- * If you wish to contribute a language file to be included in the Code Snippets package,
- * please see create an issue on GitHub: https://github.com/sheabunge/code-snippets/issues
- */
-function code_snippets_load_textdomain() {
-	load_plugin_textdomain( 'code-snippets', false, dirname( plugin_basename( __FILE__ ) ) . '/languages' );
-}
-
-add_action( 'plugins_loaded', 'code_snippets_load_textdomain' );

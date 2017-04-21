@@ -2,7 +2,7 @@
 if( !class_exists('FPW_Widget') ) :
 /**
  * Widget Class for Feature a Page Widget
- * 
+ *
  * @package feature_a_page_widget
  * @author 	Mark Root-Wiley (info@MRWweb.com)
  * @link 	http://wordpress.org/plugins/feature-a-page-widget
@@ -15,8 +15,11 @@ class FPW_Widget extends WP_Widget {
 	public function __construct() {
 		parent::__construct(
 	 		'fpw_widget', // Base ID
-			__( 'Feature a Page', 'feature-a-page-widget' ), // Name
-			array( 'description' => __( 'A widget to feature a single page', 'feature-a-page-widget' ) )
+			esc_html__( 'Feature a Page', 'feature-a-page-widget' ), // Name
+			array(
+				'description' => esc_html__( 'A widget to feature a single page', 'feature-a-page-widget' ),
+				'customize_selective_refresh' => true,
+			)
 		);
 	}
 
@@ -24,7 +27,7 @@ class FPW_Widget extends WP_Widget {
 	* Options for the widget
 	*/
  	public function form( $instance ) {
-		
+
 		// Some default values for the widget options
 		$defaults = array(
 			'title' => '',
@@ -71,7 +74,7 @@ class FPW_Widget extends WP_Widget {
 				// check if we're in the customizer, can't get help link when we're there :(
 				global $wp_customize;
 				if( ! isset( $wp_customize ) ) :
-				?> 
+				?>
 					<a href="#0" class="fpw-help-button">
 						<span class="fpw-visually-hidden"><?php _e( 'What is this?', 'feature-a-page-widget' ); ?></span>
 						<span class="fpw-help-icon dashicons dashicons-editor-help"></span>
@@ -84,9 +87,9 @@ class FPW_Widget extends WP_Widget {
 					</a>
 				</span>
 			</span>
-			
+
 			<span class="fpw-page-status-image fpw-form-field">
-				<?php _e( 'Featured Image:', 'feature-a-page-widget' ); ?> 
+				<?php _e( 'Featured Image:', 'feature-a-page-widget' ); ?>
 				<span class="fpw-page-status-set">
 					<span class="fpw-visually-hidden"><?php _e( 'Set', 'feature-a-page-widget' ); ?></span>
 					<span class="fpw-status-icon dashicons dashicons-yes"></span>
@@ -98,7 +101,7 @@ class FPW_Widget extends WP_Widget {
 			</span>&nbsp;
 
 			<span class="fpw-page-status-excerpt fpw-form-field">
-				<?php _e( 'Excerpt:', 'feature-a-page-widget' ); ?> 
+				<?php _e( 'Excerpt:', 'feature-a-page-widget' ); ?>
 				<span class="fpw-page-status-set">
 					<span class="fpw-visually-hidden"><?php _e( 'Set', 'feature-a-page-widget' ); ?></span>
 					<span class="fpw-status-icon dashicons dashicons-yes"></span>
@@ -125,7 +128,7 @@ class FPW_Widget extends WP_Widget {
 				<?php _e( 'Layout Options', 'feature-a-page-widget' ); ?>
 			</legend>
 
-			<?php	
+			<?php
 			foreach( $available_layouts as $slug => $label ) :
 			?>
 
@@ -142,12 +145,12 @@ class FPW_Widget extends WP_Widget {
 		<?php
 		/**
 		 * Check if 1.X template override is present in active theme
-		 * 
+		 *
 		 * Display a warning if so
 		 */
 		$fpw_template = locate_template( 'fpw_views/fpw_default.php', false, true );
 		if( $fpw_template ) {
-			echo '<p class="fpw-error"><span class="dashicons dashicons-info"></span>' . __( 'Your theme is using an outdated widget template. It will continue to work, but new widget options added in Version 2.0 will not. Please rename or remove the custom template and update to one or more new templates.', 'feature-a-page-widget' ) . ' ' . __( '<a href="http://mrwweb.com/wordpress-plugins/feature-a-page-widget/version-2-documentation/" target="_blank">Full Version 2.0 Documentation</a>', 'feature-a-page-widget' ) . '</p>';
+			echo '<p class="fpw-error"><span class="dashicons dashicons-info"></span>' . esc_html__( 'Your theme is using an outdated widget template. It will continue to work, but new widget options added in Version 2.0 will not. Please rename or remove the custom template and update to one or more new templates.', 'feature-a-page-widget' ) . ' ' . esc_html__( '<a href="http://mrwweb.com/wordpress-plugins/feature-a-page-widget/version-2-documentation/" target="_blank">Full Version 2.0 Documentation</a>', 'feature-a-page-widget' ) . '</p>';
 
 		} else {
 
@@ -158,13 +161,13 @@ class FPW_Widget extends WP_Widget {
 
 			<fieldset name="<?php echo $this->get_field_name('fpw_advanced'); ?>" class="fpw-advanced">
 
-				<legend class="fpw-widget-heading"><?php _e( 'Show Page Elements', 'feature-a-page-widget' ); ?></legend>					
+				<legend class="fpw-widget-heading"><?php _e( 'Show Page Elements', 'feature-a-page-widget' ); ?></legend>
 				<?php
 				$things_that_can_be_hidden = array(
-					'title' => __( 'Page Title', 'feature-a-page-widget' ),
-					'image' => __( 'Featured Image', 'feature-a-page-widget' ),
-					'excerpt' => __( 'Excerpt', 'feature-a-page-widget' ),
-					'read_more' => __( '"Read More" Link', 'feature-a-page-widget' )
+					'title' => esc_html__( 'Page Title', 'feature-a-page-widget' ),
+					'image' => esc_html__( 'Featured Image', 'feature-a-page-widget' ),
+					'excerpt' => esc_html__( 'Excerpt', 'feature-a-page-widget' ),
+					'read_more' => esc_html__( '"Read More" Link', 'feature-a-page-widget' )
 				);
 				foreach( $things_that_can_be_hidden as $slug => $label ) :
 				?>
@@ -190,7 +193,7 @@ class FPW_Widget extends WP_Widget {
 		/**
 		 * Sanitize all the options!
 		 */
-		
+
 		/**
 		 * PLain Text
 		 */
@@ -219,17 +222,17 @@ class FPW_Widget extends WP_Widget {
 		/**
 		 * boolean options to sanitize
 		 */
-		$instance['show_title'] = (bool) $new_instance['show_title'];
-		$instance['show_image'] = (bool) $new_instance['show_image'];
-		$instance['show_excerpt'] = (bool) $new_instance['show_excerpt'];
-		$instance['show_read_more'] = (bool) $new_instance['show_read_more'];
-		
+		$true_falses = array( 'show_title', 'show_image', 'show_excerpt', 'show_read_more' );
+		foreach ( $true_falses as $option ) {
+			$instance[$option] = isset( $new_instance[$option] ) ? (bool) $new_instance[$option] : false;
+		}
+
 		return $instance;
 	}
 
 	// outputs the content of the widget
-	public function widget( $args, $instance ) {		
-		/** 
+	public function widget( $args, $instance ) {
+		/**
 		 * Validate options
 		 *----------------------------------------------------*/
 		$defaults = array(
@@ -262,7 +265,7 @@ class FPW_Widget extends WP_Widget {
 
 		/**
 		 * Implement advanced widget options via template function filters
-		 * 
+		 *
 		 * removing filters ensures that later instances don't accidentally inherit settings
 		 */
 		if( (bool) $instance['show_read_more'] ) {
@@ -289,16 +292,16 @@ class FPW_Widget extends WP_Widget {
 			remove_filter( 'fpw_featured_image', '__return_empty_string', 999 );
 		}
 
-		/** 
+		/**
 		 * Widget Output Begins
-		 * 
+		 *
 		 * check active theme for widget template, then use default plugin template file(s)
-		 * 
+		 *
 		 * will use 1.X version template if present in active theme (this may be deprecated at a later time)
-		 */		
+		 */
 		// v 1.X template
 		$fpw_template = locate_template( 'fpw_views/fpw_default.php', false, true );
-		
+
 		// v 2.X templates
 		$fpw2_template = locate_template( 'fpw2_views/' . esc_attr( $instance['layout'] ) . '.php', false, true );
 
@@ -310,7 +313,7 @@ class FPW_Widget extends WP_Widget {
 				'ignore_sticky_posts' => true
 			)
 		);
-		
+
 		// Allow themes to override template
 		if( $fpw_template ) {
 
@@ -320,7 +323,7 @@ class FPW_Widget extends WP_Widget {
 
 			// Stuff only required for legacy templates
 			$featured_page = get_post( $instance['featured_page_id'] );
-			
+
 			// Let's make a post_class string
 			$post_class = get_post_class( 'hentry fpw-clearfix fpw-layout-' . esc_attr( $instance['layout'] ), (int) $instance['featured_page_id'] );
 			$post_classes = '';
@@ -331,7 +334,7 @@ class FPW_Widget extends WP_Widget {
 			// see if there's a page title. if so, put it together nicely for use in the widget
 			if ( $featured_page->post_title ) {
 				$page_title = apply_filters( 'fpw_page_title', esc_attr__( $featured_page->post_title ) );
-				$page_title_html = sprintf( 
+				$page_title_html = sprintf(
 					'<h1 class="fpw-page-title entry-title">%1$s</h1>',
 					sanitize_text_field( $page_title )
 				);
@@ -362,7 +365,7 @@ class FPW_Widget extends WP_Widget {
 				case 'banner':
 					$image_size = 'fpw_banner';
 					break;
-				
+
 				default:
 					$image_size = 'fpw_square';
 					break;
@@ -390,7 +393,7 @@ class FPW_Widget extends WP_Widget {
 			do_action( 'fpw_loop_start' );
 
 			while( $widget_loop->have_posts() ) : $widget_loop->the_post();
-			
+
 			if( $fpw2_template ) {
 				require( $fpw2_template );
 			} else {

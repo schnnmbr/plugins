@@ -3,8 +3,8 @@ Contributors: mekshq
 Donate link: http://mekshq.com/
 Tags: shortcodes, shortcode, php, content, tag, tags, automatic, editor, simple, text
 Requires at least: 3.0
-Tested up to: 4.2.1
-Stable tag: 1.0
+Tested up to: 4.7
+Stable tag: 1.1
 License: GPLv3
 License URI: http://www.gnu.org/licenses/gpl.html
 
@@ -23,9 +23,13 @@ Remove Orphan Shortcodes plugin is created by <a href="http://mekshq.com" target
 
 == Frequently Asked Questions ==
 
-- For any questions, error reports and suggestions please email support@mekshq.com or visit http://mekshq.com
+- For any questions, error reports and suggestions please visit http://mekshq.com/contact
 
 == Changelog ==
+
+= 1.1 =
+* Optimization improvements
+* Fixed an issue with breaking image captions
 
 = 1.0 =
 * Initial release
