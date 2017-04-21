@@ -1,4 +1,4 @@
-<div class="frm_forms <?php echo FrmFormsHelper::get_form_style_class($values); ?>" id="frm_form_<?php echo esc_attr( $form->id ) ?>_container">
+<div class="frm_forms <?php echo FrmFormsHelper::get_form_style_class($values); ?>" id="frm_form_<?php echo esc_attr( $form->id ) ?>_container" <?php echo apply_filters( 'frm_form_attributes', '', $form ); ?>>
 <?php
 if ( ! isset( $include_form_tag ) || $include_form_tag ) {
 ?>
@@ -9,9 +9,9 @@ if ( ! isset( $include_form_tag ) || $include_form_tag ) {
 <?php
 }
 
-include(FrmAppHelper::plugin_path() .'/classes/views/frm-entries/errors.php');
+include( FrmAppHelper::plugin_path() . '/classes/views/frm-entries/errors.php' );
 $form_action = 'create';
-require(FrmAppHelper::plugin_path() .'/classes/views/frm-entries/form.php');
+require( FrmAppHelper::plugin_path() . '/classes/views/frm-entries/form.php' );
 
 if ( ! isset( $include_form_tag ) || $include_form_tag ) {
 ?>

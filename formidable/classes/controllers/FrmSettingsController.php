@@ -22,7 +22,15 @@ class FrmSettingsController {
 
         $uploads = wp_upload_dir();
         $target_path = $uploads['basedir'] . '/formidable/css';
-        $sections = apply_filters( 'frm_add_settings_section', array() );
+
+		$sections = array();
+		if ( apply_filters( 'frm_include_addon_page', false ) ) {
+			$sections['licenses'] = array(
+				'class' => 'FrmAddonsController', 'function' => 'license_settings',
+				'name' => __( 'Plugin Licenses', 'formidable' ),
+			);
+		}
+        $sections = apply_filters( 'frm_add_settings_section', $sections );
 
         $captcha_lang = FrmAppHelper::locales( 'captcha' );
 
@@ -43,7 +51,8 @@ class FrmSettingsController {
         $message = '';
 
         if ( ! isset( $frm_vars['settings_routed'] ) || ! $frm_vars['settings_routed'] ) {
-            //$errors = $frm_settings->validate($_POST,array());
+            $errors = $frm_settings->validate( $_POST, array() );
+
             $frm_settings->update( stripslashes_deep( $_POST ) );
 
             if ( empty( $errors ) ) {
@@ -66,9 +75,9 @@ class FrmSettingsController {
         $action = isset( $_REQUEST['frm_action'] ) ? 'frm_action' : 'action';
 		$action = FrmAppHelper::get_param( $action, '', 'get', 'sanitize_title' );
         if ( $action == 'process-form' ) {
-            return self::process_form( $stop_load );
+			self::process_form( $stop_load );
         } else if ( $stop_load != 'stop_load' ) {
-            return self::display_form();
+			self::display_form();
         }
     }
 }

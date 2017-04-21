@@ -3,7 +3,7 @@
 <?php } else if ( $field['type'] == 'textarea' ) { ?>
 <textarea name="<?php echo esc_attr( $field_name ) ?>" id="<?php echo esc_attr( $html_id ) ?>" <?php
 if ( $field['max'] ) {
-    echo 'rows="'. esc_attr( $field['max'] ) .'" ';
+	echo 'rows="' . esc_attr( $field['max'] ) . '" ';
 }
 do_action('frm_field_input_html', $field);
 ?>><?php echo FrmAppHelper::esc_textarea($field['value']) ?></textarea>
@@ -43,7 +43,7 @@ do_action('frm_field_input_html', $field);
 ?>/><?php
 
 			if ( ! isset( $atts ) || ! isset( $atts['label'] ) || $atts['label'] ) {
-                echo ' '. $opt .'</label>';
+				echo ' ' . $opt . '</label>';
             }
 
 			FrmFieldsHelper::include_other_input( array(
@@ -59,42 +59,7 @@ do_action('frm_field_input_html', $field);
         }
     }
 } else if ( $field['type'] == 'select' ) {
-    $read_only = false;
-    if ( isset($field['post_field']) && $field['post_field'] == 'post_category' ) {
-		echo FrmFieldsHelper::dropdown_categories( array( 'name' => $field_name, 'field' => $field ) );
-	} else {
-		if ( FrmField::is_read_only( $field ) && ! FrmAppHelper::is_admin() ) {
-            $read_only = true; ?>
-<input type="hidden" value="<?php echo esc_attr($field['value']) ?>" name="<?php echo esc_attr( $field_name ) ?>" id="<?php echo esc_attr( $html_id ) ?>" />
-<select disabled="disabled" <?php do_action('frm_field_input_html', $field) ?>>
-<?php	} else { ?>
-<select name="<?php echo esc_attr( $field_name ) ?>" id="<?php echo esc_attr( $html_id ) ?>" <?php do_action('frm_field_input_html', $field) ?>>
-<?php   }
-
-		$other_opt = $other_checked = false;
-		foreach ( $field['options'] as $opt_key => $opt ) {
-			$field_val = apply_filters( 'frm_field_value_saved', $opt, $opt_key, $field );
-			$opt = apply_filters( 'frm_field_label_seen', $opt, $opt_key, $field );
-			$selected = FrmAppHelper::check_selected( $field['value'], $field_val );
-			if ( $other_opt === false ) {
-				$other_args = FrmFieldsHelper::prepare_other_input( compact( 'field', 'field_name', 'opt_key' ), $other_opt, $selected );
-				if ( FrmFieldsHelper::is_other_opt( $opt_key ) && $selected ) {
-					$other_checked = true;
-				}
-			}
-			?>
-		<option value="<?php echo esc_attr($field_val) ?>" <?php echo $selected ? ' selected="selected"' : ''; ?><?php echo ( FrmFieldsHelper::is_other_opt( $opt_key ) ) ? ' class="frm_other_trigger"' : '';?>><?php echo ($opt == '') ? ' ' : $opt; ?></option>
-    <?php
-    	} ?>
-</select>
-<?php
-		FrmFieldsHelper::include_other_input( array(
-			'other_opt' => $other_opt, 'read_only' => $read_only,
-			'checked' => $other_checked, 'name' => $other_args['name'],
-			'value' => $other_args['value'], 'field' => $field,
-			'html_id' => $html_id, 'opt_key' => false,
-		) );
-    }
+	include( FrmAppHelper::plugin_path() . '/classes/views/frm-fields/front-end/dropdown-field.php' );
 } else if ( $field['type'] == 'checkbox' ) {
     $checked_values = $field['value'];
     $read_only = false;
@@ -107,7 +72,7 @@ do_action('frm_field_input_html', $field);
 <?php
             }
         } else { ?>
-<input type="hidden" value="<?php echo esc_attr( $checked_values ) ?>" id="<?php echo esc_attr( $html_id ) ?>-<?php echo esc_attr( sanitize_title( $checked_value ) ) ?>" name="<?php echo esc_attr( $field_name ) ?>[]" />
+<input type="hidden" value="" name="<?php echo esc_attr( $field_name ) ?>[]" />
 <?php
         }
     }
@@ -129,7 +94,7 @@ do_action('frm_field_input_html', $field);
 			$other_args = FrmFieldsHelper::prepare_other_input( compact( 'field', 'field_name', 'opt_key' ), $other_opt, $checked );
 
             ?>
-			<div class="<?php echo esc_attr( apply_filters( 'frm_checkbox_class', 'frm_checkbox', $field, $field_val ) ) ?>" id="frm_checkbox_<?php echo esc_attr( $field['id'] ) ?>-<?php echo esc_attr( $opt_key ) ?>"><?php
+			<div class="<?php echo esc_attr( apply_filters( 'frm_checkbox_class', 'frm_checkbox', $field, $field_val ) ) ?>" id="<?php echo esc_attr( FrmFieldsHelper::get_checkbox_id( $field, $opt_key ) ) ?>"><?php
 
             if ( ! isset( $atts ) || ! isset( $atts['label'] ) || $atts['label'] ) {
                 ?><label for="<?php echo esc_attr( $html_id ) ?>-<?php echo esc_attr( $opt_key ) ?>"><?php
@@ -138,7 +103,7 @@ do_action('frm_field_input_html', $field);
             ?><input type="checkbox" name="<?php echo esc_attr( $field_name ) ?>[<?php echo ( $other_opt ? esc_attr( $opt_key ) : '' ) ?>]" id="<?php echo esc_attr( $html_id ) ?>-<?php echo esc_attr( $opt_key ) ?>" value="<?php echo esc_attr( $field_val ) ?>" <?php echo $checked ?> <?php do_action('frm_field_input_html', $field) ?> /><?php
 
             if ( ! isset( $atts ) || ! isset( $atts['label'] ) || $atts['label'] ) {
-                echo ' '. $opt .'</label>';
+				echo ' ' . $opt . '</label>';
             }
 
 			FrmFieldsHelper::include_other_input( array(
@@ -160,5 +125,6 @@ do_action('frm_field_input_html', $field);
         FrmFieldsHelper::display_recaptcha($field);
     }
 } else {
-    do_action('frm_form_fields', $field, $field_name, compact('errors', 'html_id'));
+	do_action( 'frm_form_fields', $field, $field_name, compact( 'errors', 'html_id' ) );
+	do_action( 'frm_form_field_' . $field['type'], $field, $field_name, compact( 'errors', 'html_id' ) );
 }

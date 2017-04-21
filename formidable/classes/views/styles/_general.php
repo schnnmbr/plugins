@@ -1,3 +1,9 @@
+<p>
+    <label><input type="checkbox" name="<?php echo esc_attr( $frm_style->get_field_name('center_form') ) ?>" id="frm_center_form" value="1" <?php checked($style->post_content['center_form'], 1) ?> />
+	    <?php _e( 'Center form on page', 'formidable' ) ?> <span class="frm_help frm_icon_font frm_tooltip_icon" title="<?php esc_attr_e( 'This will center your form on the page where it is published if the form width is less than the available width on the page.', 'formidable' ) ?>" ></span>
+	</label>
+</p>
+
 <div class="field-group clearfix frm-first-row">
 	<label><?php _e( 'Alignment', 'formidable' ) ?></label>
 	<select name="<?php echo esc_attr( $frm_style->get_field_name('form_align') ) ?>" id="frm_form_align">
@@ -39,31 +45,10 @@
 
 <div class="field-group clearfix frm-half">
 	<label><?php _e( 'Direction', 'formidable' ) ?></label>
-	<select name="<?php echo esc_attr( $frm_style->get_field_name('direction') ) ?>" id="frm_form_align">
+	<select name="<?php echo esc_attr( $frm_style->get_field_name('direction') ) ?>" id="frm_direction">
 		<option value="ltr" <?php selected($style->post_content['direction'], 'ltr') ?>><?php _e( 'Left to Right', 'formidable' ) ?></option>
 		<option value="rtl" <?php selected($style->post_content['direction'], 'rtl') ?>><?php _e( 'Right to Left', 'formidable' ) ?></option>
 	</select>
-</div>
-
-<div class="clear"></div>
-<div class="field-group clearfix frm-half">
-	<label><?php _e( 'Title Size', 'formidable' ) ?></label>
-	<input type="text" name="<?php echo esc_attr( $frm_style->get_field_name('title_size') ) ?>" id="frm_title_size" value="<?php echo esc_attr( $style->post_content['title_size'] ) ?>" />
-</div>
-
-<div class="field-group clearfix frm-half">
-	<label><?php _e( 'Color', 'formidable' ) ?></label>
-	<input type="text" name="<?php echo esc_attr( $frm_style->get_field_name('title_color') ) ?>" id="frm_title_color" class="hex" value="<?php echo esc_attr( $style->post_content['title_color'] ) ?>" />
-</div>
-
-<div class="field-group clearfix frm-half">
-	<label><?php _e( 'Description Size', 'formidable' ) ?></label>
-	<input type="text" name="<?php echo esc_attr( $frm_style->get_field_name('form_desc_size') ) ?>" id="frm_form_desc_size" value="<?php echo esc_attr( $style->post_content['form_desc_size'] ) ?>" />
-</div>
-
-<div class="field-group clearfix frm-half">
-	<label><?php _e( 'Color', 'formidable' ) ?></label>
-	<input type="text" name="<?php echo esc_attr( $frm_style->get_field_name('form_desc_color') ) ?>" id="frm_form_desc_color" class="hex" value="<?php echo esc_attr( $style->post_content['form_desc_color'] ) ?>" />
 </div>
 
 <div class="clear"></div>

@@ -5,7 +5,7 @@ $action = isset( $_REQUEST['frm_action'] ) ? 'frm_action' : 'action';
 $action = FrmAppHelper::get_param( $action, '', 'get', 'sanitize_title' );
 $button = ( $action == 'new' || $action == 'duplicate' ) ? __( 'Create', 'formidable' ) : __( 'Update', 'formidable' );
 
-include(FrmAppHelper::plugin_path() .'/classes/views/frm-forms/_publish_box.php');
+include( FrmAppHelper::plugin_path() . '/classes/views/frm-forms/_publish_box.php' );
 ?>
 
     <div id="frm_position_ele"></div>
@@ -25,7 +25,9 @@ include(FrmAppHelper::plugin_path() .'/classes/views/frm-forms/_publish_box.php'
 <?php
 $col_class = 'frm_col_one';
 foreach ( $frm_field_selection as $field_key => $field_type ) { ?>
-                <li class="frmbutton button <?php echo esc_attr( $col_class .' frm_t'. $field_key ) ?>" id="<?php echo esc_attr( $field_key ) ?>"><a href="#" class="frm_add_field"><?php echo esc_html( $field_type ) ?></a></li>
+				<li class="frmbutton button <?php echo esc_attr( $col_class . ' frm_t' . $field_key ) ?>" id="<?php echo esc_attr( $field_key ) ?>">
+					<a href="#" class="frm_add_field"><?php echo esc_html( $field_type ) ?></a>
+				</li>
 <?php
 	$col_class = empty( $col_class ) ? 'frm_col_one' : '';
 	unset( $field_key, $field_type );
@@ -33,7 +35,8 @@ foreach ( $frm_field_selection as $field_key => $field_type ) { ?>
             </ul>
             <div class="clear"></div>
             <hr/>
-			<ul<?php echo apply_filters('frm_drag_field_class', '') ?> style="margin-top:2px;">
+			<ul <?php echo apply_filters( 'frm_drag_field_class', '' ) ?> style="margin-top:2px;">
+				<li><?php FrmTipsHelper::pro_tip( 'get_builder_tip' ); ?></li>
 <?php
 $col_class = 'frm_col_one';
 $no_allow_class = apply_filters( 'frm_noallow_class', 'frm_noallow' );
@@ -42,20 +45,20 @@ foreach ( FrmField::pro_field_selection() as $field_key => $field_type ) {
 	if ( is_array( $field_type ) ) {
 		$field_label = $field_type['name'];
 
-		if ( isset( $field_type['switch_from'] ) ) { ?>
-                <li class="frmbutton button <?php echo esc_attr( $col_class .' '. $no_allow_class .' frm_t'. $field_key ) ?>" id="<?php echo esc_attr( $field_key ) ?>" data-switchto="<?php echo esc_attr( $field_type['switch_from'] ) ?>" style="display:none !important;"><?php echo apply_filters( 'frmpro_field_links', $field_label, $id, $field_key ) ?></li>
-<?php
+		if ( isset( $field_type['switch_from'] ) ) {
 			continue;
 		}
 
 ?>
-                <li class="frmbutton button <?php echo esc_attr( $col_class .' '. $no_allow_class .' frm_t'. $field_key ) ?> dropdown" id="<?php echo esc_attr( $field_key ) ?>" <?php echo ( isset( $field_type['switch_to'] ) ) ? 'data-switchto="'. esc_attr( $field_type['switch_to'] ) .'"' : ''; ?>>
+				<li class="frmbutton button <?php echo esc_attr( $col_class . ' ' . $no_allow_class . ' frm_t' . $field_key ) ?> dropdown" id="<?php echo esc_attr( $field_key ) ?>">
 	                <a href="#" id="frm-<?php echo esc_attr( $field_key ) ?>Drop" class="frm-dropdown-toggle" data-toggle="dropdown"><?php echo esc_html( $field_label ) ?> <b class="caret"></b></a>
 
                     <ul class="frm-dropdown-menu" role="menu" aria-labelledby="frm-<?php echo esc_attr( $field_key ) ?>Drop">
                 	<?php
 					foreach ( $field_type['types'] as $k => $type ) { ?>
-                        <li class="frm_t<?php echo esc_attr( $field_key ) ?>" id="<?php echo esc_attr( $field_key ) ?>|<?php echo esc_attr( $k ) ?>"><?php echo apply_filters( 'frmpro_field_links', $type, $id, $field_key .'|'. $k ) ?></li>
+						<li class="frm_t<?php echo esc_attr( $field_key ) ?>" id="<?php echo esc_attr( $field_key ) ?>|<?php echo esc_attr( $k ) ?>">
+							<?php echo apply_filters( 'frmpro_field_links', $type, $id, $field_key . '|' . $k ) ?>
+						</li>
                 	<?php
 						unset( $k, $type );
 					} ?>
@@ -65,7 +68,9 @@ foreach ( FrmField::pro_field_selection() as $field_key => $field_type ) {
                 } else {
                     $field_label = $field_type;
                     ?>
-                    <li class="frmbutton button <?php echo esc_attr( $col_class .' '. $no_allow_class .' frm_t'. $field_key ) ?>" id="<?php echo esc_attr( $field_key ) ?>"><?php echo apply_filters( 'frmpro_field_links', $field_label, $id, $field_key ) ?></li>
+					<li class="frmbutton button <?php echo esc_attr( $col_class . ' ' . $no_allow_class . ' frm_t' . $field_key ) ?>" id="<?php echo esc_attr( $field_key ) ?>">
+						<?php echo apply_filters( 'frmpro_field_links', $field_label, $id, $field_key ) ?>
+					</li>
                     <?php
                 }
 
@@ -78,25 +83,25 @@ foreach ( FrmField::pro_field_selection() as $field_key => $field_type ) {
     	<?php do_action('frm_extra_form_instructions'); ?>
 
     	<div id="frm-layout-classes" class="tabs-panel">
-			<p class="howto"><?php _e( 'Add classes in the "CSS layout classes" field option', 'formidable' ) ?></p>
+			<p class="howto"><?php _e( '1. Click inside the "CSS layout classes" field option in any field.', 'formidable' ) ?><br/>
+			<?php _e( '2. This box will activate and you can click to insert classes.', 'formidable' ) ?></p>
     	    <ul class="frm_code_list">
     	    <?php $classes = array(
                     'frm_first'     => array(
                         'label' => __( 'First', 'formidable' ),
                         'title' => __( 'Add this to the first field in each row along with a width. ie frm_first frm_third', 'formidable' ),
                     ),
-                    'frm_last'      => array(
-                        'label' => __( 'Last', 'formidable' ),
-                        'title' => __( 'Add this to the last field in each row along with a width. ie frm_last frm_third', 'formidable' ),
-                    ),
                     'frm_half'      => __( '1/2', 'formidable' ),
                     'frm_third'     => __( '1/3', 'formidable' ),
                     'frm_two_thirds' => __( '2/3', 'formidable' ),
     	            'frm_fourth'    => __( '1/4', 'formidable' ),
+					'frm_three_fourths' => __( '3/4', 'formidable' ),
                     'frm_fifth'     => __( '1/5', 'formidable' ),
+					'frm_two_fifths' => __( '2/5', 'formidable' ),
                     'frm_sixth'     => __( '1/6', 'formidable' ),
                     'frm_seventh'   => __( '1/7', 'formidable' ),
 					'frm_eighth'    => __( '1/8', 'formidable' ),
+					'frm_alignright' => __( 'Right', 'formidable' ),
     	            'frm_inline'    => array(
                         'label' => __( 'Inline', 'formidable' ),
 						'title' => __( 'Align fields in a row without a specific width.', 'formidable' ),

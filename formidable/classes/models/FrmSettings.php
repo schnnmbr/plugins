@@ -1,14 +1,14 @@
 <?php
 
-class FrmSettings{
+class FrmSettings {
     public $option_name = 'frm_options';
     public $menu;
     public $mu_menu;
     public $preview_page_id;
-    public $lock_keys;
     public $use_html;
     public $jquery_css;
     public $accordion_js;
+	public $fade_form;
 
     public $success_msg;
     public $blank_msg;
@@ -27,6 +27,7 @@ class FrmSettings{
     public $privkey;
     public $re_lang;
     public $re_msg;
+	public $re_multi;
 
     public function __construct() {
         if ( ! defined('ABSPATH') ) {
@@ -47,7 +48,7 @@ class FrmSettings{
         $this->set_default_options();
     }
 
-    private function translate_settings($settings) {
+	private function translate_settings( $settings ) {
         if ( $settings ) { //workaround for W3 total cache conflict
             return unserialize(serialize($settings));
         }
@@ -76,13 +77,15 @@ class FrmSettings{
      */
 	public function default_options() {
         return array(
-            'menu'      => 'Formidable',
+            'menu'      => apply_filters( 'frm_default_menu', 'Formidable' ),
             'mu_menu'   => 0,
             'preview_page_id' => 0,
-            'lock_keys' => false,
             'use_html'  => true,
             'jquery_css' => false,
             'accordion_js' => false,
+			'fade_form' => false,
+
+			're_multi'  => 0,
 
             'success_msg' => __( 'Your responses were successfully submitted. Thank you!', 'formidable' ),
             'blank_msg' => __( 'This field cannot be blank.', 'formidable' ),
@@ -126,7 +129,7 @@ class FrmSettings{
         }
     }
 
-    public function fill_with_defaults($params = array()) {
+	public function fill_with_defaults( $params = array() ) {
         $settings = $this->default_options();
 
         foreach ( $settings as $setting => $default ) {
@@ -135,13 +138,18 @@ class FrmSettings{
             } else if ( ! isset($this->{$setting}) ) {
                 $this->{$setting} = $default;
             }
+
+			if ( $setting == 'menu' && empty( $this->{$setting} ) ) {
+				$this->{$setting} = $default;
+			}
+
             unset($setting, $default);
         }
     }
 
     private function fill_recaptcha_settings() {
         $privkey = '';
-        $re_lang = 'en';
+		$re_lang = '';
 
         if ( ! isset($this->pubkey) ) {
             // get the options from the database
@@ -165,8 +173,7 @@ class FrmSettings{
     }
 
     public function validate( $params, $errors ) {
-        $errors = apply_filters( 'frm_validate_settings', $errors, $params );
-        return $errors;
+        return apply_filters( 'frm_validate_settings', $errors, $params );
     }
 
 	public function update( $params ) {
@@ -184,25 +191,24 @@ class FrmSettings{
         do_action( 'frm_update_settings', $params );
     }
 
-    private function update_settings($params) {
+	private function update_settings( $params ) {
         $this->mu_menu = isset($params['frm_mu_menu']) ? $params['frm_mu_menu'] : 0;
 
         $this->pubkey = trim($params['frm_pubkey']);
         $this->privkey = $params['frm_privkey'];
         $this->re_lang = $params['frm_re_lang'];
+		$this->re_multi = isset( $params['frm_re_multi'] ) ? $params['frm_re_multi'] : 0;
 
         $this->load_style = $params['frm_load_style'];
         $this->preview_page_id = (int) $params['frm-preview-page-id'];
-        $this->lock_keys = isset($params['frm_lock_keys']) ? $params['frm_lock_keys'] : 0;
 
         $this->use_html = isset($params['frm_use_html']) ? $params['frm_use_html'] : 0;
-        //$this->custom_style = isset($params['frm_custom_style']) ? $params['frm_custom_style'] : 0;
 		$this->jquery_css = isset( $params['frm_jquery_css'] ) ? absint( $params['frm_jquery_css'] ) : 0;
 		$this->accordion_js = isset( $params['frm_accordion_js'] ) ? absint( $params['frm_accordion_js'] ) : 0;
+		$this->fade_form = isset( $params['frm_fade_form'] ) ? absint( $params['frm_fade_form'] ) : 0;
     }
 
-    private function update_roles($params) {
-        //update roles
+	private function update_roles( $params ) {
         global $wp_roles;
 
         $frm_roles = FrmAppHelper::frm_capabilities();
@@ -210,19 +216,9 @@ class FrmSettings{
         foreach ( $frm_roles as $frm_role => $frm_role_description ) {
             $this->$frm_role = (array) ( isset( $params[ $frm_role ] ) ? $params[ $frm_role ] : 'administrator' );
 
-            if ( count($this->$frm_role) === 1 ) {
-                $set_role = reset($this->$frm_role);
-                switch ( $set_role ) {
-                    case 'subscriber':
-                        array_push($this->$frm_role, 'contributor');
-                    case 'contributor':
-                        array_push($this->$frm_role, 'author');
-                    case 'author':
-                        array_push($this->$frm_role, 'editor');
-                    case 'editor':
-                        array_push($this->$frm_role, 'administrator');
-                }
-                unset($set_role);
+            // Make sure administrators always have permissions
+            if ( ! in_array( 'administrator', $this->$frm_role ) ) {
+				array_push( $this->$frm_role, 'administrator' );
             }
 
             foreach ( $roles as $role => $details ) {
@@ -231,7 +227,6 @@ class FrmSettings{
     			} else {
     			    $wp_roles->remove_cap( $role, $frm_role );
     			}
-    			unset($role, $details);
     		}
 		}
     }
@@ -246,5 +241,4 @@ class FrmSettings{
 
         do_action( 'frm_store_settings' );
     }
-
 }

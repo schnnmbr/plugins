@@ -15,8 +15,8 @@ class FrmFormActionsController {
             'show_in_menu' => true,
             'capability_type' => 'page',
             'supports' => array(
-                'title', 'editor', 'excerpt', 'custom-fields',
-                'page-attributes',
+				'title', 'editor', 'excerpt', 'custom-fields',
+				'page-attributes',
             ),
             'has_archive' => false,
         ) );
@@ -56,7 +56,7 @@ class FrmFormActionsController {
         }
     }
 
-    public static function get_form_actions($action = 'all' ) {
+	public static function get_form_actions( $action = 'all' ) {
         $temp_actions = self::$registered_actions;
         if ( empty($temp_actions) ) {
             self::actions_init();
@@ -131,12 +131,13 @@ class FrmFormActionsController {
     	}
     }
 
-    public static function action_control($form_action, $form, $action_key, $action_control, $values) {
+	public static function action_control( $form_action, $form, $action_key, $action_control, $values ) {
         $action_control->_set($action_key);
-        include(FrmAppHelper::plugin_path() .'/classes/views/frm-form-actions/form_action.php');
+		include( FrmAppHelper::plugin_path() . '/classes/views/frm-form-actions/form_action.php' );
     }
 
     public static function add_form_action() {
+		FrmAppHelper::permission_check('frm_edit_forms');
         check_ajax_referer( 'frm_ajax', 'nonce' );
 
         global $frm_vars;
@@ -154,11 +155,12 @@ class FrmFormActionsController {
         $values = array();
         $form = self::fields_to_values($form_id, $values);
 
-        include(FrmAppHelper::plugin_path() .'/classes/views/frm-form-actions/form_action.php');
+		include( FrmAppHelper::plugin_path() . '/classes/views/frm-form-actions/form_action.php' );
         wp_die();
     }
 
     public static function fill_action() {
+		FrmAppHelper::permission_check('frm_edit_forms');
         check_ajax_referer( 'frm_ajax', 'nonce' );
 
         $action_key = absint( $_POST['action_id'] );
@@ -174,11 +176,11 @@ class FrmFormActionsController {
         $values = array();
         $form = self::fields_to_values($form_action->menu_order, $values);
 
-        include(FrmAppHelper::plugin_path() .'/classes/views/frm-form-actions/_action_inside.php');
+		include( FrmAppHelper::plugin_path() . '/classes/views/frm-form-actions/_action_inside.php' );
         wp_die();
     }
 
-    private static function fields_to_values($form_id, array &$values) {
+	private static function fields_to_values( $form_id, array &$values ) {
         $form = FrmForm::getOne($form_id);
 
 		$values = array( 'fields' => array(), 'id' => $form->id );
@@ -198,7 +200,7 @@ class FrmFormActionsController {
         return $form;
     }
 
-    public static function update_settings($form_id) {
+	public static function update_settings( $form_id ) {
         global $wpdb;
 
         $registered_actions = self::$registered_actions->actions;
@@ -232,7 +234,12 @@ class FrmFormActionsController {
 	}
 
 	public static function trigger_create_actions( $entry_id, $form_id, $args = array() ) {
-		self::trigger_actions( 'create', $form_id, $entry_id, 'all', $args );
+		$filter_args = $args;
+		$filter_args['entry_id'] = $entry_id;
+		$filter_args['form_id']  = $form_id;
+		$event = apply_filters( 'frm_trigger_create_action', 'create', $args );
+
+		self::trigger_actions( $event, $form_id, $entry_id, 'all', $args );
 	}
 
     /**
@@ -241,7 +248,7 @@ class FrmFormActionsController {
 	public static function trigger_actions( $event, $form, $entry, $type = 'all', $args = array() ) {
 		$form_actions = FrmFormAction::get_action_for_form( ( is_object( $form ) ? $form->id : $form ), $type );
 
-		if ( empty( $form_actions ) || ( defined( 'WP_IMPORTING' ) && WP_IMPORTING ) ) {
+		if ( empty( $form_actions ) ) {
             return;
         }
 
@@ -252,11 +259,20 @@ class FrmFormActionsController {
             $link_settings = array( $type => $link_settings );
         }
 
-        $stored_actions = $action_priority = array();
+		$stored_actions = array();
+		$action_priority = array();
+
+		if ( in_array( $event, array( 'create', 'update' ) ) && defined( 'WP_IMPORTING' ) && WP_IMPORTING ) {
+			$this_event = 'import';
+		} else {
+			$this_event = $event;
+		}
 
         foreach ( $form_actions as $action ) {
 
-            if ( ! in_array( $event, $action->post_content['event'] ) ) {
+			$skip_this_action = ( ! in_array( $this_event, $action->post_content['event'] ) );
+			$skip_this_action = apply_filters( 'frm_skip_form_action', $skip_this_action, compact( 'action', 'entry', 'form', 'event' ) );
+			if ( $skip_this_action ) {
                 continue;
             }
 
@@ -264,15 +280,18 @@ class FrmFormActionsController {
                 $entry = FrmEntry::getOne( $entry, true );
             }
 
-			if ( empty( $entry ) || $entry->is_draft ) {
+			if ( empty( $entry ) || ( $entry->is_draft && $event != 'draft' ) ) {
 				continue;
 			}
 
 			$child_entry = ( ( $form && is_numeric( $form->parent_form_id ) && $form->parent_form_id ) || ( $entry && ( $entry->form_id != $form->id || $entry->parent_item_id ) ) || ( isset( $args['is_child'] ) && $args['is_child'] ) );
 
 			if ( $child_entry ) {
-                //don't trigger actions for sub forms
-                continue;
+				// maybe trigger actions for sub forms
+				$trigger_children = apply_filters( 'frm_use_embedded_form_actions', false, compact( 'form', 'entry' ) );
+				if ( ! $trigger_children ) {
+					continue;
+				}
             }
 
             // check conditional logic
@@ -296,8 +315,8 @@ class FrmFormActionsController {
 
             foreach ( $action_priority as $action_id => $priority ) {
                 $action = $stored_actions[ $action_id ];
-                do_action('frm_trigger_'. $action->post_excerpt .'_action', $action, $entry, $form, $event);
-                do_action('frm_trigger_'. $action->post_excerpt .'_'. $event .'_action', $action, $entry, $form);
+				do_action( 'frm_trigger_' . $action->post_excerpt . '_action', $action, $entry, $form, $event );
+				do_action( 'frm_trigger_' . $action->post_excerpt . '_' . $event . '_action', $action, $entry, $form );
 
                 // If post is created, get updated $entry object
                 if ( $action->post_excerpt == 'wppost' && $event == 'create' ) {
@@ -307,7 +326,7 @@ class FrmFormActionsController {
         }
     }
 
-    public static function duplicate_form_actions($form_id, $values, $args = array() ) {
+	public static function duplicate_form_actions( $form_id, $values, $args = array() ) {
         if ( ! isset($args['old_id']) || empty($args['old_id']) ) {
             // continue if we know which actions to copy
             return;
@@ -331,7 +350,6 @@ class FrmFormActionsController {
         $where .= $wpdb->prepare( ' AND post_excerpt = %s ', $frm_vars['action_type'] );
         return $where;
     }
-
 }
 
 
@@ -342,11 +360,11 @@ class Frm_Form_Action_Factory {
 		add_action( 'frm_form_actions_init', array( $this, '_register_actions' ), 100 );
 	}
 
-	public function register($action_class) {
+	public function register( $action_class ) {
 		$this->actions[ $action_class ] = new $action_class();
 	}
 
-	public function unregister($action_class) {
+	public function unregister( $action_class ) {
 		if ( isset( $this->actions[ $action_class ] ) ) {
 			unset($this->actions[ $action_class ]);
 		}

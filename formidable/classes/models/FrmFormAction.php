@@ -24,7 +24,7 @@ class FrmFormAction {
 	 * @param array $old_instance Old settings for this instance
 	 * @return array Settings to save or bool false to cancel saving
 	 */
-	public function update($new_instance, $old_instance) {
+	public function update( $new_instance, $old_instance ) {
 		return $new_instance;
 	}
 
@@ -33,7 +33,7 @@ class FrmFormAction {
 	 *
 	 * @param array $instance Current settings
 	 */
-	public function form($instance, $args = array()) {
+	public function form( $instance, $args = array() ) {
 		echo '<p class="no-options-widget">' . esc_html__( 'There are no options for this action.', 'formidable' ) . '</p>';
 		return 'noform';
 	}
@@ -49,7 +49,7 @@ class FrmFormAction {
 	    return array();
 	}
 
-	public function migrate_values($action, $form) {
+	public function migrate_values( $action, $form ) {
 	    return $action;
 	}
 
@@ -75,7 +75,7 @@ class FrmFormAction {
 
 		$this->id_base = strtolower($id_base);
 		$this->name = $name;
-		$this->option_name = 'frm_' . $this->id_base .'_action';
+		$this->option_name = 'frm_' . $this->id_base . '_action';
 
         $default_options = array(
             'classes'   => '',
@@ -108,8 +108,11 @@ class FrmFormAction {
 	 * @param string $field_name Field name
 	 * @return string Name attribute for $field_name
 	 */
-	public function get_field_name($field_name, $post_field = 'post_content') {
-		return $this->option_name . '[' . $this->number . ']'. ( empty($post_field) ? '' : '['. $post_field .']' ) .'[' . $field_name . ']';
+	public function get_field_name( $field_name, $post_field = 'post_content' ) {
+		$name = $this->option_name . '[' . $this->number . ']';
+		$name .= ( empty( $post_field ) ? '' : '[' . $post_field . ']' );
+		$name .= '[' . $field_name . ']';
+		return $name;
 	}
 
 	/**
@@ -120,18 +123,18 @@ class FrmFormAction {
 	 * @param string $field_name Field name
 	 * @return string ID attribute for $field_name
 	 */
-	public function get_field_id($field_name) {
-		return $field_name .'_'. $this->number;
+	public function get_field_id( $field_name ) {
+		return $field_name . '_' . $this->number;
 	}
 
 	// Private Function. Don't worry about this.
 
-	public function _set($number) {
+	public function _set( $number ) {
 		$this->number = $number;
 		$this->id = $this->id_base . '-' . $number;
 	}
 
-    public function prepare_new($form_id = false) {
+	public function prepare_new( $form_id = false ) {
         if ( $form_id ) {
             $this->form_id = $form_id;
         }
@@ -153,7 +156,7 @@ class FrmFormAction {
             'ID'            => '',
             'post_status'   => 'publish',
             'post_type'     => FrmFormActionsController::$action_post_type,
-            'post_name'     => $this->form_id .'_'. $this->id_base .'_'. $this->number,
+			'post_name'     => $this->form_id . '_' . $this->id_base . '_' . $this->number,
             'menu_order'    => $this->form_id,
         );
         unset($post_content);
@@ -161,7 +164,7 @@ class FrmFormAction {
         return (object) $form_action;
     }
 
-    public function create($form_id) {
+	public function create( $form_id ) {
         $this->form_id = $form_id;
 
         $action = $this->prepare_new();
@@ -169,7 +172,7 @@ class FrmFormAction {
         return $this->save_settings($action);
     }
 
-    public function duplicate_form_actions($form_id, $old_id) {
+	public function duplicate_form_actions( $form_id, $old_id ) {
         if ( $form_id == $old_id ) {
             // don't duplicate the actions if this is a template getting updated
             return;
@@ -205,7 +208,7 @@ class FrmFormAction {
         return $post_id;
     }
 
-    public function duplicate_one($action, $form_id) {
+	public function duplicate_one( $action, $form_id ) {
         global $frm_duplicate_ids;
 
         $action->menu_order = $form_id;
@@ -233,7 +236,7 @@ class FrmFormAction {
         return $this->save_settings($action);
     }
 
-    private function duplicate_array_walk($action, $subkey, $val) {
+	private function duplicate_array_walk( $action, $subkey, $val ) {
         global $frm_duplicate_ids;
 
         if ( is_array($subkey) ) {
@@ -296,7 +299,7 @@ class FrmFormAction {
 			$old_instance = isset( $all_instances[ $number ] ) ? $all_instances[ $number ] : array();
 
  			$new_instance['post_type']  = FrmFormActionsController::$action_post_type;
-            $new_instance['post_name']    = $this->form_id .'_'. $this->id_base .'_'. $this->number;
+			$new_instance['post_name']  = $this->form_id . '_' . $this->id_base . '_' . $this->number;
             $new_instance['menu_order']   = $this->form_id;
             $new_instance['post_status']  = 'publish';
             $new_instance['post_date'] = isset( $old_instance->post_date ) ? $old_instance->post_date : '';
@@ -319,7 +322,7 @@ class FrmFormAction {
 			$instance = apply_filters( 'frm_action_update_callback', $instance, $new_instance, $old_instance, $this );
 
 			$instance['post_content'] = apply_filters('frm_before_save_action', $instance['post_content'], $instance, $new_instance, $old_instance, $this);
-            $instance['post_content'] = apply_filters('frm_before_save_'. $this->id_base .'_action', $new_instance['post_content'], $instance, $new_instance, $old_instance, $this);
+			$instance['post_content'] = apply_filters( 'frm_before_save_' . $this->id_base . '_action', $new_instance['post_content'], $instance, $new_instance, $old_instance, $this );
 
 			if ( false !== $instance ) {
 				$all_instances[ $number ] = $instance;
@@ -333,7 +336,8 @@ class FrmFormAction {
  		return $action_ids;
  	}
 
-	public function save_settings($settings) {
+	public function save_settings( $settings ) {
+		self::clear_cache();
 		return FrmAppHelper::save_settings( $settings, 'frm_actions' );
 	}
 
@@ -356,6 +360,8 @@ class FrmFormAction {
             // don't continue if there are no available actions
             return array();
         }
+
+		$limit = apply_filters( 'frm_form_action_limit', $limit, compact( 'type', 'form_id' ) );
 
         if ( 'all' != $type ) {
             return $action_controls->get_all( $form_id, $limit );
@@ -391,6 +397,23 @@ class FrmFormAction {
 
         return $settings;
     }
+
+	/**
+	 * @param int $action_id
+	 */
+	public static function get_single_action_type( $action_id, $type ) {
+		$action_control = FrmFormActionsController::get_form_actions( $type );
+		return $action_control->get_single_action( $action_id );
+	}
+
+	/**
+	 * @param int $form_id
+	 * @return bool
+	 */
+	public static function form_has_action_type( $form_id, $type ) {
+		$payment_actions = self::get_action_for_form( $form_id, $type );
+		return ! empty( $payment_actions );
+	}
 
 	public function get_all( $form_id = false, $limit = 99 ) {
 	    if ( $form_id ) {
@@ -450,14 +473,14 @@ class FrmFormAction {
 		return $args;
 	}
 
-	public function prepare_action($action) {
-	    $action->post_content = FrmAppHelper::maybe_json_decode($action->post_content);
+	public function prepare_action( $action ) {
+		$action->post_content = (array) FrmAppHelper::maybe_json_decode($action->post_content);
 		$action->post_excerpt = sanitize_title( $action->post_excerpt );
 
         $default_values = $this->get_global_defaults();
 
         // fill default values
-        $action->post_content = wp_parse_args( $action->post_content, $default_values);
+        $action->post_content += $default_values;
 
         foreach ( $default_values as $k => $vals ) {
             if ( is_array($vals) && ! empty($vals) ) {
@@ -475,7 +498,7 @@ class FrmFormAction {
         return $action;
 	}
 
-	public function destroy($form_id = false, $type = 'default') {
+	public function destroy( $form_id = false, $type = 'default' ) {
 	    global $wpdb;
 
 	    $this->form_id = $form_id;
@@ -501,7 +524,7 @@ class FrmFormAction {
 	 *
 	 * @since 2.0.5
 	 */
-	public static function clear_cache( ) {
+	public static function clear_cache() {
 		FrmAppHelper::cache_delete_group( 'frm_actions' );
 	}
 
@@ -535,7 +558,7 @@ class FrmFormAction {
 	/**
 	 * Migrate settings from form->options into new action.
 	 */
-	public function migrate_to_2($form, $update = 'update') {
+	public function migrate_to_2( $form, $update = 'update' ) {
         $action = $this->prepare_new($form->id);
         $form->options = maybe_unserialize($form->options);
 
@@ -568,7 +591,7 @@ class FrmFormAction {
 
             // update form options
 			$wpdb->update( $wpdb->prefix . 'frm_forms', array( 'options' => $form->options ), array( 'id' => $form->id ) );
-            wp_cache_delete( $form->id, 'frm_form');
+	        FrmForm::clear_form_cache();
         }
 
         return $post_id;
@@ -592,14 +615,9 @@ class FrmFormAction {
 				continue;
 			}
 
-			if ( is_array($condition['hide_opt']) ) {
-				$condition['hide_opt'] = reset($condition['hide_opt']);
-			}
+			self::prepare_logic_value( $condition['hide_opt'] );
 
-			$observed_value = isset( $entry->metas[ $condition['hide_field'] ] ) ? $entry->metas[ $condition['hide_field'] ] : '';
-			if ( $condition['hide_opt'] == 'current_user' ) {
-				$condition['hide_opt'] = get_current_user_id();
-			}
+			$observed_value = self::get_value_from_entry( $entry, $condition['hide_field'] );
 
 			$stop = FrmFieldsHelper::value_meets_condition($observed_value, $condition['hide_field_cond'], $condition['hide_opt']);
 
@@ -619,11 +637,59 @@ class FrmFormAction {
 		return $stop;
 	}
 
+	/**
+	 * Prepare the logic value for comparison against the entered value
+	 *
+	 * @since 2.01.02
+	 * @param array|string $logic_value
+	 */
+	private static function prepare_logic_value( &$logic_value ) {
+		if ( is_array( $logic_value ) ) {
+			$logic_value = reset( $logic_value );
+		}
+
+		if ( $logic_value == 'current_user' ) {
+			$logic_value = get_current_user_id();
+		}
+	}
+
+
+	/**
+	 * Get the value from a specific field and entry
+	 *
+	 * @since 2.01.02
+	 * @param object $entry
+	 * @param int $field_id
+	 * @return array|bool|mixed|string
+	 */
+	private static function get_value_from_entry( $entry, $field_id ) {
+		$observed_value = '';
+
+		if ( isset( $entry->metas[ $field_id ] ) ) {
+			$observed_value = $entry->metas[ $field_id ];
+		} else if ( $entry->post_id && FrmAppHelper::pro_is_installed() ) {
+			$field = FrmField::getOne( $field_id );
+			$observed_value = FrmProEntryMetaHelper::get_post_or_meta_value( $entry, $field, array( 'links' => false, 'truncate' => false ) );
+		}
+
+		return $observed_value;
+	}
+
 	public static function default_action_opts( $class = '' ) {
 		return array(
 			'classes'   => 'frm_icon_font ' . $class,
 			'active'    => false,
 			'limit'     => 0,
 		);
+	}
+
+	public static function trigger_labels() {
+		return apply_filters( 'frm_action_triggers', array(
+			'draft'  => __( 'Save Draft', 'formidable' ),
+			'create' => __( 'Create', 'formidable' ),
+			'update' => __( 'Update', 'formidable' ),
+			'delete' => __( 'Delete', 'formidable' ),
+			'import' => __( 'Import', 'formidable' ),
+		) );
 	}
 }

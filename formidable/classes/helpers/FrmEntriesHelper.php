@@ -5,11 +5,10 @@ if ( ! defined('ABSPATH') ) {
 
 class FrmEntriesHelper {
 
-    public static function setup_new_vars( $fields, $form = '', $reset = false ) {
-        global $frm_vars;
+    public static function setup_new_vars( $fields, $form = '', $reset = false, $args = array() ) {
         $values = array();
 		foreach ( array( 'name' => '', 'description' => '', 'item_key' => '' ) as $var => $default ) {
-            $values[ $var ] = FrmAppHelper::get_post_param( $var, $default );
+			$values[ $var ] = FrmAppHelper::get_post_param( $var, $default, 'wp_kses_post' );
         }
 
         $values['fields'] = array();
@@ -18,35 +17,7 @@ class FrmEntriesHelper {
         }
 
         foreach ( (array) $fields as $field ) {
-            $default = $field->default_value;
-            $posted_val = false;
-            $new_value = $default;
-
-            if ( ! $reset && $_POST && isset( $_POST['item_meta'][ $field->id ] ) && $_POST['item_meta'][ $field->id ] != '' ) {
-                $new_value = stripslashes_deep( $_POST['item_meta'][ $field->id ] );
-                $posted_val = true;
-            } else if ( FrmField::is_option_true( $field, 'clear_on_focus' ) ) {
-                $new_value = '';
-            }
-
-            $is_default = ($new_value == $default) ? true : false;
-
-    		//If checkbox, multi-select dropdown, or checkbox data from entries field, set return array to true
-			$return_array = FrmField::is_field_with_multiple_values( $field );
-
-            $field->default_value = apply_filters('frm_get_default_value', $field->default_value, $field, true, $return_array);
-
-            if ( ! is_array( $new_value ) ) {
-                if ( $is_default ) {
-                    $new_value = $field->default_value;
-                } else if ( ! $posted_val ) {
-                    $new_value = apply_filters('frm_filter_default_value', $new_value, $field);
-                }
-
-                $new_value = str_replace('"', '&quot;', $new_value);
-            }
-
-            unset($is_default, $posted_val);
+            $new_value = self::get_field_value_for_new_entry( $field, $reset, $args );
 
             $field_array = array(
                 'id' => $field->id,
@@ -60,6 +31,9 @@ class FrmEntriesHelper {
                 'field_key' => $field->field_key,
                 'field_order' => $field->field_order,
                 'form_id' => $field->form_id,
+				'parent_form_id' => isset( $args['parent_form_id'] ) ? $args['parent_form_id'] : $field->form_id,
+	            'reset_value' => $reset,
+				'in_embed_form' => isset( $args['in_embed_form'] ) ? $args['in_embed_form'] : '0',
             );
 
             $opt_defaults = FrmFieldsHelper::get_default_field_opts($field_array['type'], $field, true);
@@ -77,7 +51,7 @@ class FrmEntriesHelper {
                 $field_array['custom_html'] = FrmFieldsHelper::get_default_html($field->type);
             }
 
-            $field_array = apply_filters('frm_setup_new_fields_vars', $field_array, $field);
+            $field_array = apply_filters('frm_setup_new_fields_vars', $field_array, $field, $args );
             $field_array = array_merge( $field->field_options, $field_array );
 
             $values['fields'][] = $field_array;
@@ -105,7 +79,71 @@ class FrmEntriesHelper {
 		return apply_filters( 'frm_setup_new_entry', $values );
     }
 
-    public static function setup_edit_vars($values, $record) {
+	/**
+	* Set the value for each field
+	* This function is used when the form is first loaded and on all page turns *for a new entry*
+	*
+	* @since 2.0.13
+	*
+	* @param object $field - this is passed by reference since it is an object
+	* @param boolean $reset
+	* @param array $args
+	* @return string|array $new_value
+	*/
+	private static function get_field_value_for_new_entry( $field, $reset, $args ) {
+		//If checkbox, multi-select dropdown, or checkbox data from entries field, the value should be an array
+		$return_array = FrmField::is_field_with_multiple_values( $field );
+
+		// Do any shortcodes in default value and allow customization of default value
+		$field->default_value = apply_filters('frm_get_default_value', $field->default_value, $field, true, $return_array);
+		// Calls FrmProFieldsHelper::get_default_value
+
+		$new_value = $field->default_value;
+
+		if ( ! $reset && self::value_is_posted( $field, $args ) ) {
+			self::get_posted_value( $field, $new_value, $args );
+		} else if ( FrmField::is_option_true( $field, 'clear_on_focus' ) ) {
+			// If clear on focus is selected, the value should be blank (unless it was posted, of course)
+
+			// TODO: move to Pro
+			if ( 'address' == $field->type && isset( $new_value['country'] ) ) {
+				$new_value = array( 'country' => $new_value['country'] );
+			} else {
+				$new_value = '';
+			}
+		}
+
+		if ( ! is_array( $new_value ) ) {
+			$new_value = str_replace('"', '&quot;', $new_value);
+		}
+
+		return $new_value;
+	}
+
+	/**
+	* Check if a field has a posted value
+	*
+	* @since 2.01.0
+	* @param object $field
+	* @param array $args
+	* @return boolean $value_is_posted
+	*/
+	public static function value_is_posted( $field, $args ) {
+		$value_is_posted = false;
+		if ( $_POST ) {
+			$repeating = isset( $args['repeating'] ) && $args['repeating'];
+			if ( $repeating ) {
+				if ( isset( $_POST['item_meta'][ $args['parent_field_id'] ][ $args['key_pointer'] ][ $field->id ] ) ) {
+					$value_is_posted = true;
+				}
+			} else if ( isset( $_POST['item_meta'][ $field->id ] ) ) {
+				$value_is_posted = true;
+			}
+		}
+		return $value_is_posted;
+	}
+
+	public static function setup_edit_vars( $values, $record ) {
 		$values['item_key'] = FrmAppHelper::get_post_param( 'item_key', $record->item_key, 'sanitize_title' );
         $values['form_id'] = $record->form_id;
         $values['is_draft'] = $record->is_draft;
@@ -137,7 +175,7 @@ class FrmEntriesHelper {
 		FrmEntry::maybe_get_entry( $entry );
     }
 
-    public static function replace_default_message($message, $atts) {
+	public static function replace_default_message( $message, $atts ) {
         if ( strpos($message, '[default-message') === false &&
             strpos($message, '[default_message') === false &&
             ! empty( $message ) ) {
@@ -151,8 +189,8 @@ class FrmEntriesHelper {
         preg_match_all("/\[(default-message|default_message)\b(.*?)(?:(\/))?\]/s", $message, $shortcodes, PREG_PATTERN_ORDER);
 
         foreach ( $shortcodes[0] as $short_key => $tag ) {
-            $add_atts = shortcode_parse_atts( $shortcodes[2][ $short_key ] );
-            if ( $add_atts ) {
+			$add_atts = FrmShortcodeHelper::get_shortcode_attribute_array( $shortcodes[2][ $short_key ] );
+			if ( ! empty( $add_atts ) ) {
                 $this_atts = array_merge($atts, $add_atts);
             } else {
                 $this_atts = $atts;
@@ -167,8 +205,9 @@ class FrmEntriesHelper {
         return $message;
     }
 
-    public static function prepare_display_value($entry, $field, $atts) {
+	public static function prepare_display_value( $entry, $field, $atts ) {
 		$field_value = isset( $entry->metas[ $field->id ] ) ? $entry->metas[ $field->id ] : false;
+
         if ( FrmAppHelper::pro_is_installed() ) {
 			FrmProEntriesHelper::get_dynamic_list_values( $field, $entry, $field_value );
         }
@@ -223,7 +262,7 @@ class FrmEntriesHelper {
      * Prepare the saved value for display
      * @return string
      */
-    public static function display_value($value, $field, $atts = array()) {
+	public static function display_value( $value, $field, $atts = array() ) {
 
         $defaults = array(
             'type' => '', 'html' => false, 'show_filename' => true,
@@ -257,6 +296,7 @@ class FrmEntriesHelper {
         }
 
         $value = apply_filters('frm_display_value_custom', maybe_unserialize($value), $field, $atts);
+		$value = apply_filters( 'frm_display_' . $field->type . '_value_custom', $value, compact( 'field', 'atts' ) );
 
         $new_value = '';
 
@@ -290,7 +330,7 @@ class FrmEntriesHelper {
         return apply_filters('frm_display_value', $value, $field, $atts);
     }
 
-    public static function set_posted_value($field, $value, $args) {
+	public static function set_posted_value( $field, $value, $args ) {
         // If validating a field with "other" opt, set back to prev value now
         if ( isset( $args['other'] ) && $args['other'] ) {
             $value = $args['temp_value'];
@@ -302,7 +342,7 @@ class FrmEntriesHelper {
         }
     }
 
-    public static function get_posted_value($field, &$value, $args) {
+	public static function get_posted_value( $field, &$value, $args ) {
 		$field_id = is_object( $field ) ? $field->id : $field;
 
         if ( empty($args['parent_field_id']) ) {
@@ -310,6 +350,8 @@ class FrmEntriesHelper {
         } else {
             $value = isset( $_POST['item_meta'][ $args['parent_field_id'] ][ $args['key_pointer'] ][ $field_id ] ) ? $_POST['item_meta'][ $args['parent_field_id'] ][ $args['key_pointer'] ][ $field_id ] : '';
         }
+		FrmAppHelper::sanitize_value( 'wp_kses_post', $value );
+		$value = stripslashes_deep( $value );
     }
 
     /**
@@ -336,7 +378,7 @@ class FrmEntriesHelper {
             // Save original value
             $args['temp_value'] = $value;
             $args['other'] = true;
-            $other_vals = $_POST['item_meta']['other'][ $field->id ];
+            $other_vals = stripslashes_deep( $_POST['item_meta']['other'][ $field->id ] );
 
             // Set the validation value now
             self::set_other_validation_val( $value, $other_vals, $field, $args );
@@ -423,11 +465,11 @@ class FrmEntriesHelper {
 
 	public static function enqueue_scripts( $params ) {
 		_deprecated_function( __FUNCTION__, '2.0.9', 'FrmFormsController::enqueue_scripts' );
-		return FrmFormsController::enqueue_scripts( $params );
+		FrmFormsController::enqueue_scripts( $params );
 	}
 
     // Add submitted values to a string for spam checking
-    public static function entry_array_to_string($values) {
+	public static function entry_array_to_string( $values ) {
         $content = '';
 		foreach ( $values['item_meta'] as $val ) {
 			if ( $content != '' ) {
@@ -436,7 +478,7 @@ class FrmEntriesHelper {
 
 			if ( is_array($val) ) {
 				$val = FrmAppHelper::array_flatten( $val );
-			    $val = implode(',', $val);
+				$val = implode( ', ', $val );
 			}
 
 			$content .= $val;
@@ -455,12 +497,11 @@ class FrmEntriesHelper {
 		FrmEntryFormat::flatten_multi_file_upload( $field, $val );
 	}
 
-	public static function textarea_display_value( &$value, $type, $plain_text ) {
-		_deprecated_function( __FUNCTION__, '2.0.9', 'FrmEntryFormat::textarea_display_value' );
-		FrmEntryFormat::textarea_display_value( $type, $plain_text, $value );
+	public static function textarea_display_value() {
+		_deprecated_function( __FUNCTION__, '2.0.9', 'custom code' );
 	}
 
-	public static function fill_entry_user_info($atts, array &$values) {
+	public static function fill_entry_user_info( $atts, array &$values ) {
 		_deprecated_function( __FUNCTION__, '2.0.9', 'FrmEntryFormat::fill_entry_user_info' );
 		FrmEntryFormat::fill_entry_user_info( $atts, $values );
 	}
@@ -472,15 +513,11 @@ class FrmEntriesHelper {
 
 	public static function convert_entry_to_content( $values, $atts, array &$content ) {
 		_deprecated_function( __FUNCTION__, '2.0.9', 'FrmEntryFormat::convert_entry_to_content' );
-		return FrmEntryFormat::convert_entry_to_content( $values, $atts, $content );
+		FrmEntryFormat::convert_entry_to_content( $values, $atts, $content );
 	}
 
 	public static function get_browser( $u_agent ) {
 		_deprecated_function( __FUNCTION__, '2.0.9', 'FrmEntryFormat::get_browser' );
 		return FrmEntryFormat::get_browser( $u_agent );
-	}
-
-	public static function entries_dropdown() {
-		_deprecated_function( __FUNCTION__, '1.07.09');
 	}
 }

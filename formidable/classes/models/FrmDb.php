@@ -19,6 +19,8 @@ class FrmDb {
     }
 
     public function upgrade( $old_db_version = false ) {
+	    do_action( 'frm_before_install' );
+
         global $wpdb;
         //$frm_db_version is the version of the database we're moving to
         $frm_db_version = FrmAppHelper::$db_version;
@@ -46,7 +48,7 @@ class FrmDb {
         do_action('frm_after_install');
 
         /**** update the styling settings ****/
-		if ( is_admin() ) {
+		if ( is_admin() && function_exists( 'get_filesystem_method' ) ) {
 			$frm_style = new FrmStyle();
 			$frm_style->update( 'default' );
 		}
@@ -59,13 +61,13 @@ class FrmDb {
         }
 
         $charset_collate = '';
-        if ( ! empty($wpdb->charset) ) {
-            $charset_collate = ' DEFAULT CHARACTER SET '. $wpdb->charset;
-        }
+		if ( ! empty( $wpdb->charset ) ) {
+			$charset_collate .= ' DEFAULT CHARACTER SET ' . $wpdb->charset;
+		}
 
-        if ( ! empty($wpdb->collate) ) {
-            $charset_collate .= ' COLLATE '. $wpdb->collate;
-        }
+		if ( ! empty( $wpdb->collate ) ) {
+			$charset_collate .= ' COLLATE ' . $wpdb->collate;
+		}
 
         return $charset_collate;
     }
@@ -75,11 +77,11 @@ class FrmDb {
         $sql = array();
 
         /* Create/Upgrade Fields Table */
-        $sql[] = 'CREATE TABLE '. $this->fields .' (
-                id int(11) NOT NULL auto_increment,
+		$sql[] = 'CREATE TABLE ' . $this->fields . ' (
+				id BIGINT(20) NOT NULL auto_increment,
 				field_key varchar(100) default NULL,
                 name text default NULL,
-                description text default NULL,
+                description longtext default NULL,
                 type text default NULL,
                 default_value longtext default NULL,
                 options longtext default NULL,
@@ -94,7 +96,7 @@ class FrmDb {
         )';
 
         /* Create/Upgrade Forms Table */
-        $sql[] = 'CREATE TABLE '. $this->forms .' (
+		$sql[] = 'CREATE TABLE ' . $this->forms . ' (
                 id int(11) NOT NULL auto_increment,
 				form_key varchar(100) default NULL,
                 name varchar(255) default NULL,
@@ -112,18 +114,18 @@ class FrmDb {
         )';
 
         /* Create/Upgrade Items Table */
-        $sql[] = 'CREATE TABLE '. $this->entries .' (
-                id int(11) NOT NULL auto_increment,
+		$sql[] = 'CREATE TABLE ' . $this->entries . ' (
+				id BIGINT(20) NOT NULL auto_increment,
 				item_key varchar(100) default NULL,
                 name varchar(255) default NULL,
                 description text default NULL,
                 ip text default NULL,
-                form_id int(11) default NULL,
-                post_id int(11) default NULL,
-                user_id int(11) default NULL,
-                parent_item_id int(11) default 0,
-                is_draft tinyint(1) default 0,
-                updated_by int(11) default NULL,
+				form_id BIGINT(20) default NULL,
+				post_id BIGINT(20) default NULL,
+				user_id BIGINT(20) default NULL,
+				parent_item_id BIGINT(20) default 0,
+				is_draft tinyint(1) default 0,
+				updated_by BIGINT(20) default NULL,
                 created_at datetime NOT NULL,
                 updated_at datetime NOT NULL,
                 PRIMARY KEY  (id),
@@ -135,11 +137,11 @@ class FrmDb {
         )';
 
         /* Create/Upgrade Meta Table */
-        $sql[] = 'CREATE TABLE '. $this->entry_metas .' (
-                id int(11) NOT NULL auto_increment,
-                meta_value longtext default NULL,
-                field_id int(11) NOT NULL,
-                item_id int(11) NOT NULL,
+		$sql[] = 'CREATE TABLE ' . $this->entry_metas . ' (
+				id BIGINT(20) NOT NULL auto_increment,
+				meta_value longtext default NULL,
+				field_id BIGINT(20) NOT NULL,
+				item_id BIGINT(20) NOT NULL,
                 created_at datetime NOT NULL,
                 PRIMARY KEY  (id),
                 KEY field_id (field_id),
@@ -148,7 +150,7 @@ class FrmDb {
 
         foreach ( $sql as $q ) {
 			if ( function_exists( 'dbDelta' ) ) {
-				dbDelta( $q . $charset_collate .';' );
+				dbDelta( $q . $charset_collate . ';' );
 			} else {
 				global $wpdb;
 				$wpdb->query( $q . $charset_collate );
@@ -159,12 +161,13 @@ class FrmDb {
 
     /**
      * @param integer $frm_db_version
+	 * @param int $old_db_version
      */
-    private function migrate_data($frm_db_version, $old_db_version) {
+	private function migrate_data( $frm_db_version, $old_db_version ) {
 		$migrations = array( 4, 6, 11, 16, 17, 23, 25 );
         foreach ( $migrations as $migration ) {
             if ( $frm_db_version >= $migration && $old_db_version < $migration ) {
-                $function_name = 'migrate_to_'. $migration;
+				$function_name = 'migrate_to_' . $migration;
                 $this->$function_name();
             }
         }
@@ -172,6 +175,9 @@ class FrmDb {
 
     /**
      * Change array into format $wpdb->prepare can use
+	 *
+	 * @param array $args
+	 * @param string $starts_with
      */
     public static function get_where_clause_and_values( &$args, $starts_with = ' WHERE ' ) {
         if ( empty($args) ) {
@@ -192,8 +198,10 @@ class FrmDb {
     }
 
     /**
+	 * @param array $args
      * @param string $base_where
      * @param string $where
+	 * @param array $values
      */
     public static function parse_where_from_array( $args, $base_where, &$where, &$values ) {
         $condition = ' AND';
@@ -225,17 +233,19 @@ class FrmDb {
 
     /**
      * @param string $key
+	 * @param string|array $value
      * @param string $where
+	 * @param array $values
      */
     private static function interpret_array_to_sql( $key, $value, &$where, &$values ) {
 		$key = trim( $key );
 
-        if ( strpos( $key, 'created_at' ) !== false || strpos( $key, 'updated_at' ) !== false  ) {
+		if ( strpos( $key, 'created_at' ) !== false || strpos( $key, 'updated_at' ) !== false ) {
             $k = explode(' ', $key);
             $where .= ' DATE_FORMAT(' . reset( $k ) . ', %s) ' . str_replace( reset( $k ), '', $key );
             $values[] = '%Y-%m-%d %H:%i:%s';
         } else {
-            $where .= ' '. $key;
+			$where .= ' ' . $key;
         }
 
 		$lowercase_key = explode( ' ', strtolower( $key ) );
@@ -244,7 +254,7 @@ class FrmDb {
         if ( is_array( $value ) ) {
             // translate array of values to "in"
 			if ( strpos( $lowercase_key, 'like' ) !== false ) {
-				$where = rtrim( $where, $key );
+				$where = preg_replace('/' . $key . '$/', '', $where);
 				$where .= '(';
 				$start = true;
 				foreach ( $value as $v ) {
@@ -257,7 +267,7 @@ class FrmDb {
 				}
 				$where .= ')';
 			} else if ( ! empty( $value ) ) {
-            	$where .= ' in ('. FrmAppHelper::prepare_array_values( $value, '%s' ) .')';
+				$where .= ' in (' . FrmAppHelper::prepare_array_values( $value, '%s' ) . ')';
 				$values = array_merge( $values, $value );
 			}
         } else if ( strpos( $lowercase_key, 'like' ) !== false ) {
@@ -266,7 +276,8 @@ class FrmDb {
 			 * If the key is like% then skip the first % for starts with
 			 * If the key is %like then skip the last % for ends with
 			 */
-			$start = $end = '%';
+			$start = '%';
+			$end = '%';
 			if ( $lowercase_key == 'like%' ) {
 				$start = '';
 				$where = rtrim( $where, '%' );
@@ -289,47 +300,67 @@ class FrmDb {
 				$where .= '=';
 			}
 
-            $where .= is_numeric( $value ) ? ( strpos( $value, '.' ) !== false ? '%f' : '%d' ) : '%s';
+			self::add_query_placeholder( $key, $value, $where );
+
             $values[] = $value;
         }
     }
 
+	/**
+	 * Add %d, or %s to query
+	 *
+	 * @since 2.02.05
+	 * @param string $key
+	 * @param int|string $value
+	 * @param string $where
+	 */
+    private static function add_query_placeholder( $key, $value, &$where ) {
+		if ( is_numeric( $value ) && strpos( $key, 'meta_value' ) === false ) {
+			$where .= '%d';
+		} else {
+			$where .= '%s';
+		}
+	}
+
     /**
      * @param string $table
+	 * @param array $where
+	 * @param array $args
+	 * @return int
      */
     public static function get_count( $table, $where = array(), $args = array() ) {
         $count = self::get_var( $table, $where, 'COUNT(*)', $args );
         return $count;
     }
 
+	/**
+	 * @param string $table
+	 * @param array $where
+	 * @param string $field
+	 * @param array $args
+	 * @param string $limit
+	 * @param string $type
+	 * @return array|null|string|object
+	 */
     public static function get_var( $table, $where = array(), $field = 'id', $args = array(), $limit = '', $type = 'var' ) {
         $group = '';
         self::get_group_and_table_name( $table, $group );
 		self::convert_options_to_array( $args, '', $limit );
 
-		$query = 'SELECT ' . $field . ' FROM ' . $table;
-		if ( is_array( $where ) || empty( $where ) ) {
-			// only separate into array values and query string if is array
-        	self::get_where_clause_and_values( $where );
-			global $wpdb;
-			$query = $wpdb->prepare( $query . $where['where'] . ' ' . implode( ' ', $args ), $where['values'] );
-		} else {
-			/**
-			 * Allow the $where to be prepared before we recieve it here.
-			 * This is a fallback for reverse compatability, but is not recommended
-			 */
-			_deprecated_argument( 'where', '2.0', __( 'Use the query in an array format so it can be properly prepared.', 'formidable' ) );
-			$query .= $where . ' ' . implode( ' ', $args );
-		}
+		$query = self::generate_query_string_from_pieces( $field, $table, $where, $args );
 
-        $cache_key = str_replace( array( ' ', ',' ), '_', trim( implode('_', FrmAppHelper::array_flatten( $where ) ) . implode( '_', $args ) . $field .'_'. $type, ' WHERE' ) );
-        $results = FrmAppHelper::check_cache( $cache_key, $group, $query, 'get_'. $type );
+		$cache_key = str_replace( array( ' ', ',' ), '_', trim( implode( '_', FrmAppHelper::array_flatten( $where ) ) . implode( '_', $args ) . $field . '_' . $type, ' WHERE' ) );
+		$results = FrmAppHelper::check_cache( $cache_key, $group, $query, 'get_' . $type );
         return $results;
     }
 
     /**
      * @param string $table
      * @param array $where
+	 * @param string $field
+	 * @param array $args
+	 * @param string $limit
+	 * @return mixed
      */
     public static function get_col( $table, $where = array(), $field = 'id', $args = array(), $limit = '' ) {
         return self::get_var( $table, $where, $field, $args, $limit, 'col' );
@@ -338,6 +369,10 @@ class FrmDb {
     /**
      * @since 2.0
      * @param string $table
+	 * @param array $where
+	 * @param string $fields
+	 * @param array $args
+	 * @return mixed
      */
     public static function get_row( $table, $where = array(), $fields = '*', $args = array() ) {
         $args['limit'] = 1;
@@ -345,22 +380,14 @@ class FrmDb {
     }
 
     /**
-     * @param string $table
-     */
-    public static function get_one_record( $table, $args = array(), $fields = '*', $order_by = '' ) {
-        _deprecated_function( __FUNCTION__, '2.0', 'FrmDb::get_row' );
-		return self::get_var( $table, $args, $fields, array( 'order_by' => $order_by, 'limit' => 1 ), '', 'row' );
-    }
-
-    public static function get_records( $table, $args = array(), $order_by = '', $limit = '', $fields = '*' ) {
-        _deprecated_function( __FUNCTION__, '2.0', 'FrmDb::get_results' );
-        return self::get_results( $table, $args, $fields, compact('order_by', 'limit') );
-    }
-
-    /**
      * Prepare a key/value array before DB call
+	 *
      * @since 2.0
      * @param string $table
+	 * @param array $where
+	 * @param string $fields
+	 * @param array $args
+	 * @return mixed
      */
     public static function get_results( $table, $where = array(), $fields = '*', $args = array() ) {
         return self::get_var( $table, $where, $fields, $args, '', 'results' );
@@ -370,6 +397,7 @@ class FrmDb {
 	 * Check for like, not like, in, not in, =, !=, >, <, <=, >=
 	 * Return a value to append to the where array key
 	 *
+	 * @param string $where_is
 	 * @return string
 	 */
 	public static function append_where_is( $where_is ) {
@@ -453,7 +481,65 @@ class FrmDb {
 				$args[ $k ] = $db_name . ' ' . $v;
             }
         }
+
+		// Make sure LIMIT is the last argument
+		if ( isset( $args['order_by'] ) && isset( $args['limit'] ) ) {
+			$temp_limit = $args['limit'];
+			unset( $args['limit'] );
+			$args['limit'] = $temp_limit;
+		}
     }
+
+	/**
+	 * Get the associative array results for the given columns, table, and where query
+	 *
+	 * @since 2.02.05
+	 * @param string $columns
+	 * @param string $table
+	 * @param array $where
+	 * @return mixed
+	 */
+	public static function get_associative_array_results( $columns, $table, $where ) {
+		$group = '';
+		self::get_group_and_table_name( $table, $group );
+
+		$query = self::generate_query_string_from_pieces( $columns, $table, $where );
+
+		$cache_key = str_replace( array( ' ', ',' ), '_', trim( implode( '_', FrmAppHelper::array_flatten( $where ) ) . $columns . '_results_ARRAY_A' , ' WHERE' ) );
+		$results = FrmAppHelper::check_cache( $cache_key, $group, $query, 'get_associative_results' );
+
+		return $results;
+	}
+
+	/**
+	 * Combine the pieces of a query to form a full, prepared query
+	 *
+	 * @since 2.02.05
+	 *
+	 * @param string $columns
+	 * @param string $table
+	 * @param mixed $where
+	 * @param array $args
+	 * @return string
+	 */
+	private static function generate_query_string_from_pieces( $columns, $table, $where, $args = array() ) {
+		$query = 'SELECT ' . $columns . ' FROM ' . $table;
+
+		if ( is_array( $where ) || empty( $where ) ) {
+			self::get_where_clause_and_values( $where );
+			global $wpdb;
+			$query = $wpdb->prepare( $query . $where['where'] . ' ' . implode( ' ', $args ), $where['values'] );
+		} else {
+			/**
+			 * Allow the $where to be prepared before we recieve it here.
+			 * This is a fallback for reverse compatability, but is not recommended
+			 */
+			_deprecated_argument( 'where', '2.0', __( 'Use the query in an array format so it can be properly prepared.', 'formidable' ) );
+			$query .= $where . ' ' . implode( ' ', $args );
+		}
+
+		return $query;
+	}
 
     public function uninstall() {
 		if ( ! current_user_can( 'administrator' ) ) {
@@ -463,10 +549,10 @@ class FrmDb {
 
         global $wpdb, $wp_roles;
 
-        $wpdb->query( 'DROP TABLE IF EXISTS '. $this->fields );
-        $wpdb->query( 'DROP TABLE IF EXISTS '. $this->forms );
-        $wpdb->query( 'DROP TABLE IF EXISTS '. $this->entries );
-        $wpdb->query( 'DROP TABLE IF EXISTS '. $this->entry_metas );
+		$wpdb->query( 'DROP TABLE IF EXISTS ' . $this->fields );
+		$wpdb->query( 'DROP TABLE IF EXISTS ' . $this->forms );
+		$wpdb->query( 'DROP TABLE IF EXISTS ' . $this->entries );
+		$wpdb->query( 'DROP TABLE IF EXISTS ' . $this->entry_metas );
 
         delete_option('frm_options');
         delete_option('frm_db_version');
@@ -489,7 +575,7 @@ class FrmDb {
 		remove_action( 'before_delete_post', 'FrmProDisplaysController::before_delete_post' );
 		remove_action( 'deleted_post', 'FrmProEntriesController::delete_entry' );
 
-		$post_ids = $wpdb->get_col( $wpdb->prepare( 'SELECT ID FROM ' . $wpdb->posts .' WHERE post_type in (%s, %s, %s)', FrmFormActionsController::$action_post_type, FrmStylesController::$post_type, 'frm_display' ) );
+		$post_ids = $wpdb->get_col( $wpdb->prepare( 'SELECT ID FROM ' . $wpdb->posts . ' WHERE post_type in (%s, %s, %s)', FrmFormActionsController::$action_post_type, FrmStylesController::$post_type, 'frm_display' ) );
 		foreach ( $post_ids as $post_id ) {
 			// Delete's each post.
 			wp_delete_post( $post_id, true );
@@ -501,7 +587,7 @@ class FrmDb {
 		delete_transient( 'frm_options' );
 		delete_transient( 'frmpro_options' );
 
-		$wpdb->query( $wpdb->prepare( 'DELETE FROM '. $wpdb->options .' WHERE option_name LIKE %s OR option_name LIKE %s', '_transient_timeout_frm_form_fields_%', '_transient_frm_form_fields_%' ) );
+		$wpdb->query( $wpdb->prepare( 'DELETE FROM ' . $wpdb->options . ' WHERE option_name LIKE %s OR option_name LIKE %s', '_transient_timeout_frm_form_fields_%', '_transient_frm_form_fields_%' ) );
 
         do_action('frm_after_uninstall');
         return true;
@@ -538,9 +624,9 @@ class FrmDb {
 	 */
 	private function migrate_to_23() {
 		global $wpdb;
-		$exists = $wpdb->get_row( 'SHOW COLUMNS FROM '. $this->forms .' LIKE "parent_form_id"' );
+		$exists = $wpdb->get_row( 'SHOW COLUMNS FROM ' . $this->forms . ' LIKE "parent_form_id"' );
 		if ( empty( $exists ) ) {
-			$wpdb->query( 'ALTER TABLE '. $this->forms .' ADD parent_form_id int(11) default 0' );
+			$wpdb->query( 'ALTER TABLE ' . $this->forms . ' ADD parent_form_id int(11) default 0' );
 		}
 	}
 
@@ -651,7 +737,7 @@ class FrmDb {
         $forms = FrmDb::get_results( $this->forms, array(), 'id, options');
 
         $sending = __( 'Sending', 'formidable' );
-        $img = FrmAppHelper::plugin_url() .'/images/ajax_loader.gif';
+		$img = FrmAppHelper::plugin_url() . '/images/ajax_loader.gif';
         $old_default_html = <<<DEFAULT_HTML
 <div class="frm_submit">
 [if back_button]<input type="submit" value="[back_label]" name="frm_prev_page" formnovalidate="formnovalidate" [back_hook] />[/if back_button]
@@ -673,7 +759,7 @@ DEFAULT_HTML;
                 $form->options['submit_html'] = $new_default_html;
 				$wpdb->update( $this->forms, array( 'options' => serialize( $form->options ) ), array( 'id' => $form->id ) );
 			} else if ( ! strpos( $form->options['submit_html'], 'save_draft' ) ) {
-                $form->options['submit_html'] = preg_replace('~\<\/div\>(?!.*\<\/div\>)~', $draft_link ."\r\n</div>", $form->options['submit_html']);
+				$form->options['submit_html'] = preg_replace( '~\<\/div\>(?!.*\<\/div\>)~', $draft_link . "\r\n</div>", $form->options['submit_html'] );
 				$wpdb->update( $this->forms, array( 'options' => serialize( $form->options ) ), array( 'id' => $form->id ) );
             }
             unset($form);

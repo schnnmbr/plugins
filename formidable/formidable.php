@@ -1,15 +1,15 @@
 <?php
 /*
-Plugin Name: Formidable
+Plugin Name: Formidable Forms
 Description: Quickly and easily create drag-and-drop forms
-Version: 2.0.11
-Plugin URI: http://formidablepro.com/
-Author URI: http://strategy11.com
+Version: 2.03.06
+Plugin URI: https://formidableforms.com/
+Author URI: https://formidableforms.com/
 Author: Strategy11
 Text Domain: formidable
 */
 
-/*  Copyright 2010  Strategy11  (email : support@strategy11.com)
+/*  Copyright 2010  Formidable Forms
 
     This program is free software; you can redistribute it and/or modify
     it under the terms of the GNU General Public License, version 2, as
@@ -35,7 +35,7 @@ function frm_forms_autoloader( $class_name ) {
     }
 
     $filepath = dirname(__FILE__);
-	if ( preg_match( '/^FrmPro.+$/', $class_name ) || 'FrmUpdatesController' == $class_name ) {
+	if ( preg_match( '/^FrmPro.+$/', $class_name ) ) {
         $filepath .= '/pro';
     }
     $filepath .= '/classes';
@@ -48,7 +48,7 @@ function frm_forms_autoloader( $class_name ) {
         $filepath .= '/models/';
     }
 
-    $filepath .= $class_name .'.php';
+	$filepath .= $class_name . '.php';
 
     if ( file_exists($filepath) ) {
         include($filepath);
@@ -65,10 +65,10 @@ spl_autoload_register('frm_forms_autoloader');
 
 $frm_path = dirname(__FILE__);
 if ( file_exists($frm_path . '/pro/formidable-pro.php') ) {
-    include($frm_path .'/pro/formidable-pro.php');
+	include( $frm_path . '/pro/formidable-pro.php' );
 }
 
 FrmHooksController::trigger_load_hook();
 
-include_once($frm_path .'/deprecated.php');
+include_once( $frm_path . '/deprecated.php' );
 unset($frm_path);
