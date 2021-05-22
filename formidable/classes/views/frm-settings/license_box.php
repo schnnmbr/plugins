@@ -1,12 +1,32 @@
-<div class="general_settings metabox-holder tabs-panel frm_license_box <?php echo ($a == 'general_settings') ? 'frm_block' : 'frm_hidden'; ?>">
-<?php if ( ! is_multisite() || is_super_admin() ) { ?>
-    <div class="postbox">
-        <div class="inside">
-			<p class="alignright"><?php printf( __( '%1$sClick here%2$s to get it now', 'formidable' ), '<a href="' . esc_url( FrmAppHelper::make_affiliate_url( 'https://formidableforms.com' ) ) . '">', '</a>' ) ?> &#187;</p>
-			<p><?php _e( 'Ready to take your forms to the next level?<br/>Formidable Forms will help you create views, manage data, and get reports.', 'formidable' ) ?></p>
+<?php
+if ( ! defined( 'ABSPATH' ) ) {
+	die( 'You are not allowed to call this page directly.' );
+}
+?>
+<div id="frm_license_top" class="frm_unauthorized_box">
+<p id="frm-connect-btns" class="frm-show-unauthorized">
+	<a href="<?php echo esc_url( FrmAddonsController::connect_link() ); ?>" class="button-primary frm-button-primary">
+		<?php esc_html_e( 'Connect an Account', 'formidable' ); ?>
+	</a>
+	or
+	<a href="<?php echo esc_url( FrmAppHelper::admin_upgrade_link( 'settings-license' ) ); ?>" target="_blank" class="button-secondary frm-button-secondary">
+		<?php esc_html_e( 'Get Formidable Now', 'formidable' ); ?>
+	</a>
+</p>
 
-			<p>Already signed up? <a href="<?php echo esc_url( FrmAppHelper::make_affiliate_url( 'https://formidableforms.com/knowledgebase/install-formidable-forms/' ) ) ?>" target="_blank"><?php _e( 'Click here', 'formidable' ) ?></a> to get installation instructions and download the pro version.</p>
-        </div>
-    </div>
-<?php } ?>
+<div id="frm-using-lite" class="frm-show-unauthorized">
+<p>You're using Formidable Forms Lite - no license needed. Enjoy! 🙂</p>
+<p>
+		<?php
+		printf(
+			/* translators: %1$s: Start link HTML, %2$s: End link HTML */
+			esc_html__( 'To unlock more features consider %1$supgrading to PRO%2$s.', 'formidable' ),
+			'<a href="' . esc_url( FrmAppHelper::admin_upgrade_link( 'settings-license' ) ) . '">',
+			'</a>'
+		);
+		?>
+</p>
 </div>
+</div>
+
+<div class="frm_pro_license_msg frm_hidden"></div>

@@ -1,22 +1,30 @@
-<div id="titlediv">
+<?php
+if ( ! defined( 'ABSPATH' ) ) {
+	die( 'You are not allowed to call this page directly.' );
+}
+
+FrmFormsHelper::form_switcher( $form );
+?>
+
 <ul class="frm_form_nav">
 <?php
 
-$class = ' class="first"';
 foreach ( $nav_items as $nav_item ) {
 	if ( current_user_can( $nav_item['permission'] ) ) {
 		?>
-		<li<?php echo $class ?>><a<?php FrmAppHelper::select_current_page( $nav_item['page'], $current_page, $nav_item['current'] ); ?> href="<?php echo esc_url( $nav_item['link'] ) ?>"><?php echo esc_html( $nav_item['label'] ) ?></a> </li>
+		<li>
+			<a href="<?php echo esc_url( $nav_item['link'] ); ?>"
+				<?php FrmAppHelper::select_current_page( $nav_item['page'], $current_page, $nav_item['current'] ); ?>
+				<?php
+				if ( isset( $nav_item['atts'] ) ) {
+					echo FrmAppHelper::array_to_html_params( $nav_item['atts'] ); // WPCS: XSS ok.
+				}
+				?>>
+				<?php echo esc_html( $nav_item['label'] ); ?>
+			</a>
+		</li>
 		<?php
-		$class = '';
 	}
 }
-
-FrmFormsHelper::form_switcher();
 ?>
 </ul>
-
-<?php if ( $form && $title == 'show' ) { ?>
-    <input id="title" type="text" value="<?php echo esc_attr( $form->name == '' ? __( '(no title)') : $form->name ) ?>" readonly="readonly" disabled="disabled" />
-<?php } ?>
-</div>

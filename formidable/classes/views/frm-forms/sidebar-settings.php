@@ -1,11 +1,8 @@
-<div id="postbox-container-1" class="postbox-container">
-    <?php
+<?php
+if ( ! defined( 'ABSPATH' ) ) {
+	die( 'You are not allowed to call this page directly.' );
+}
 
-    if ( ! isset($hide_preview) || ! $hide_preview ) {
-		include( FrmAppHelper::plugin_path() . '/classes/views/frm-forms/_publish_box.php' );
-    }
+_deprecated_file( esc_html( basename( __FILE__ ) ), '4.0', 'formidable/classes/views/frm-forms/mb_insert_fields.php' );
 
-	include( FrmAppHelper::plugin_path() . '/classes/views/frm-forms/mb_insert_fields.php' );
-
-    ?>
-</div>
+include FrmAppHelper::plugin_path() . '/classes/views/frm-forms/mb_insert_fields.php';

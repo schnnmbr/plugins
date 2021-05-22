@@ -1,18 +1,9 @@
 <?php
-/*
-Copyright 2009-2016 John Blackbourn
-
-This program is free software; you can redistribute it and/or modify
-it under the terms of the GNU General Public License as published by
-the Free Software Foundation; either version 2 of the License, or
-(at your option) any later version.
-
-This program is distributed in the hope that it will be useful,
-but WITHOUT ANY WARRANTY; without even the implied warranty of
-MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
-GNU General Public License for more details.
-
-*/
+/**
+ * General utilities class.
+ *
+ * @package query-monitor
+ */
 
 if ( ! class_exists( 'QM_Util' ) ) {
 class QM_Util {
@@ -21,6 +12,7 @@ class QM_Util {
 	protected static $file_dirs       = array();
 	protected static $abspath         = null;
 	protected static $contentpath     = null;
+	protected static $sort_field      = null;
 
 	private function __construct() {}
 
@@ -34,7 +26,7 @@ class QM_Util {
 
 		if ( $bytes ) {
 			$last = strtolower( substr( $size, -1 ) );
-			$pos = strpos( ' kmg', $last, 1);
+			$pos = strpos( ' kmg', $last, 1 );
 			if ( $pos ) {
 				$bytes *= pow( 1024, $pos );
 			}
@@ -77,16 +69,47 @@ class QM_Util {
 
 	public static function get_file_dirs() {
 		if ( empty( self::$file_dirs ) ) {
-			self::$file_dirs['plugin']     = self::standard_dir( WP_PLUGIN_DIR );
-			self::$file_dirs['go-plugin']  = self::standard_dir( WPMU_PLUGIN_DIR . '/shared-plugins' );
-			self::$file_dirs['mu-plugin']  = self::standard_dir( WPMU_PLUGIN_DIR );
-			self::$file_dirs['vip-plugin'] = self::standard_dir( get_theme_root() . '/vip/plugins' );
-			self::$file_dirs['stylesheet'] = self::standard_dir( get_stylesheet_directory() );
-			self::$file_dirs['template']   = self::standard_dir( get_template_directory() );
-			self::$file_dirs['other']      = self::standard_dir( WP_CONTENT_DIR );
-			self::$file_dirs['core']       = self::standard_dir( ABSPATH );
+
+			/**
+			 * Filters the absolute directory paths that correlate to components.
+			 *
+			 * Note that this filter is applied before QM adds its built-in list of components. This is
+			 * so custom registered components take precedence during component detection.
+			 *
+			 * See the corresponding `qm/component_name/{$type}` filter for specifying the component name.
+			 *
+			 * @since 3.6.0
+			 *
+			 * @param string[] $dirs Array of absolute directory paths keyed by component identifier.
+			 */
+			self::$file_dirs = apply_filters( 'qm/component_dirs', self::$file_dirs );
+
+			self::$file_dirs['plugin']     = WP_PLUGIN_DIR;
+			self::$file_dirs['mu-vendor']  = WPMU_PLUGIN_DIR . '/vendor';
+			self::$file_dirs['go-plugin']  = WPMU_PLUGIN_DIR . '/shared-plugins';
+			self::$file_dirs['mu-plugin']  = WPMU_PLUGIN_DIR;
+			self::$file_dirs['vip-plugin'] = get_theme_root() . '/vip/plugins';
+
+			if ( defined( 'WPCOM_VIP_CLIENT_MU_PLUGIN_DIR' ) ) {
+				self::$file_dirs['vip-client-mu-plugin'] = WPCOM_VIP_CLIENT_MU_PLUGIN_DIR;
+			}
+
+			if ( defined( '\Altis\ROOT_DIR' ) ) {
+				self::$file_dirs['altis-vendor'] = \Altis\ROOT_DIR . '/vendor';
+			}
+
+			self::$file_dirs['theme']      = null;
+			self::$file_dirs['stylesheet'] = get_stylesheet_directory();
+			self::$file_dirs['template']   = get_template_directory();
+			self::$file_dirs['other']      = WP_CONTENT_DIR;
+			self::$file_dirs['core']       = ABSPATH;
 			self::$file_dirs['unknown']    = null;
+
+			foreach ( self::$file_dirs as $type => $dir ) {
+				self::$file_dirs[ $type ] = self::standard_dir( $dir );
+			}
 		}
+
 		return self::$file_dirs;
 	}
 
@@ -96,12 +119,13 @@ class QM_Util {
 
 		$file = self::standard_dir( $file );
 
-		if ( isset( self::$file_components[$file] ) ) {
-			return self::$file_components[$file];
+		if ( isset( self::$file_components[ $file ] ) ) {
+			return self::$file_components[ $file ];
 		}
 
 		foreach ( self::get_file_dirs() as $type => $dir ) {
-			if ( $dir && ( 0 === strpos( $file, $dir ) ) ) {
+			// this slash makes paths such as plugins-mu match mu-plugin not plugin
+			if ( $dir && ( 0 === strpos( $file, trailingslashit( $dir ) ) ) ) {
 				break;
 			}
 		}
@@ -109,16 +133,25 @@ class QM_Util {
 		$context = $type;
 
 		switch ( $type ) {
+			case 'altis-vendor':
+				$plug = str_replace( \Altis\ROOT_DIR . '/vendor/', '', $file );
+				$plug = explode( '/', $plug, 3 );
+				$plug = $plug[0] . '/' . $plug[1];
+				/* translators: %s: Dependency name */
+				$name = sprintf( __( 'Dependency: %s', 'query-monitor' ), $plug );
+				break;
 			case 'plugin':
 			case 'mu-plugin':
-				$plug = plugin_basename( $file );
+			case 'mu-vendor':
+				$plug = str_replace( '/vendor/', '/', $file );
+				$plug = plugin_basename( $plug );
 				if ( strpos( $plug, '/' ) ) {
 					$plug = explode( '/', $plug );
 					$plug = reset( $plug );
 				} else {
 					$plug = basename( $plug );
 				}
-				if ( 'mu-plugin' === $type ) {
+				if ( 'plugin' !== $type ) {
 					/* translators: %s: Plugin name */
 					$name = sprintf( __( 'MU Plugin: %s', 'query-monitor' ), $plug );
 				} else {
@@ -129,6 +162,7 @@ class QM_Util {
 				break;
 			case 'go-plugin':
 			case 'vip-plugin':
+			case 'vip-client-mu-plugin':
 				$plug = str_replace( self::$file_dirs[ $type ], '', $file );
 				$plug = trim( $plug, '/' );
 				if ( strpos( $plug, '/' ) ) {
@@ -137,8 +171,13 @@ class QM_Util {
 				} else {
 					$plug = basename( $plug );
 				}
-				/* translators: %s: Plugin name */
-				$name    = sprintf( __( 'VIP Plugin: %s', 'query-monitor' ), $plug );
+				if ( 'vip-client-mu-plugin' === $type ) {
+					/* translators: %s: Plugin name */
+					$name = sprintf( __( 'VIP Client MU Plugin: %s', 'query-monitor' ), $plug );
+				} else {
+					/* translators: %s: Plugin name */
+					$name = sprintf( __( 'VIP Plugin: %s', 'query-monitor' ), $plug );
+				}
 				$context = $plug;
 				break;
 			case 'stylesheet':
@@ -147,12 +186,19 @@ class QM_Util {
 				} else {
 					$name = __( 'Theme', 'query-monitor' );
 				}
+				$type = 'theme';
 				break;
 			case 'template':
 				$name = __( 'Parent Theme', 'query-monitor' );
+				$type = 'theme';
 				break;
 			case 'other':
-				$name    = self::standard_dir( $file, '' );
+				// Anything else that's within the content directory should appear as
+				// `wp-content/{dir}` or `wp-content/{file}`
+				$name    = self::standard_dir( $file );
+				$name    = str_replace( dirname( self::$file_dirs['other'] ), '', $name );
+				$parts   = explode( '/', trim( $name, '/' ) );
+				$name    = $parts[0] . '/' . $parts[1];
 				$context = $file;
 				break;
 			case 'core':
@@ -161,23 +207,44 @@ class QM_Util {
 			case 'unknown':
 			default:
 				$name = __( 'Unknown', 'query-monitor' );
+
+				/**
+				 * Filters the name of a custom or unknown component.
+				 *
+				 * The dynamic portion of the hook name, `$type`, refers to the component identifier.
+				 *
+				 * See the corresponding `qm/component_dirs` filter for specifying the component directories.
+				 *
+				 * @since 3.6.0
+				 *
+				 * @param string $name The component name.
+				 * @param string $file The full file path for the file within the component.
+				 */
+				$name = apply_filters( "qm/component_name/{$type}", $name, $file );
 				break;
 		}
 
-		return self::$file_components[$file] = (object) compact( 'type', 'name', 'context' );
+		self::$file_components[ $file ] = (object) compact( 'type', 'name', 'context' );
 
+		return self::$file_components[ $file ];
 	}
 
 	public static function populate_callback( array $callback ) {
 
-		if ( is_string( $callback['function'] ) and ( false !== strpos( $callback['function'], '::' ) ) ) {
+		if ( is_string( $callback['function'] ) && ( false !== strpos( $callback['function'], '::' ) ) ) {
 			$callback['function'] = explode( '::', $callback['function'] );
+		}
+
+		if ( isset( $callback['class'] ) ) {
+			$callback['function'] = array(
+				$callback['class'],
+				$callback['function'],
+			);
 		}
 
 		try {
 
 			if ( is_array( $callback['function'] ) ) {
-
 				if ( is_object( $callback['function'][0] ) ) {
 					$class  = get_class( $callback['function'][0] );
 					$access = '->';
@@ -186,28 +253,26 @@ class QM_Util {
 					$access = '::';
 				}
 
-				$callback['name'] = $class . $access . $callback['function'][1] . '()';
+				$callback['name'] = self::shorten_fqn( $class . $access . $callback['function'][1] ) . '()';
 				$ref = new ReflectionMethod( $class, $callback['function'][1] );
-
-			} else if ( is_object( $callback['function'] ) ) {
-
+			} elseif ( is_object( $callback['function'] ) ) {
 				if ( is_a( $callback['function'], 'Closure' ) ) {
 					$ref  = new ReflectionFunction( $callback['function'] );
-					$file = QM_Util::standard_dir( $ref->getFileName(), '' );
+					$file = self::standard_dir( $ref->getFileName(), '' );
+					if ( 0 === strpos( $file, '/' ) ) {
+						$file = basename( $ref->getFileName() );
+					}
 					/* translators: 1: Line number, 2: File name */
 					$callback['name'] = sprintf( __( 'Closure on line %1$d of %2$s', 'query-monitor' ), $ref->getStartLine(), $file );
 				} else {
 					// the object should have a __invoke() method
 					$class = get_class( $callback['function'] );
-					$callback['name'] = $class . '->__invoke()';
+					$callback['name'] = self::shorten_fqn( $class ) . '->__invoke()';
 					$ref = new ReflectionMethod( $class, '__invoke' );
 				}
-
 			} else {
-
-				$callback['name'] = $callback['function'] . '()';
+				$callback['name'] = self::shorten_fqn( $callback['function'] ) . '()';
 				$ref = new ReflectionFunction( $callback['function'] );
-
 			}
 
 			$callback['file'] = $ref->getFileName();
@@ -220,7 +285,7 @@ class QM_Util {
 				if ( preg_match( '|(?P<file>.*)\((?P<line>[0-9]+)\)|', $callback['file'], $matches ) ) {
 					$callback['file'] = $matches['file'];
 					$callback['line'] = $matches['line'];
-					$file = trim( QM_Util::standard_dir( $callback['file'], '' ), '/' );
+					$file = trim( self::standard_dir( $callback['file'], '' ), '/' );
 					/* translators: 1: Line number, 2: File name */
 					$callback['name'] = sprintf( __( 'Anonymous function on line %1$d of %2$s', 'query-monitor' ), $callback['line'], $file );
 				} else {
@@ -240,7 +305,6 @@ class QM_Util {
 					'context' => '',
 				);
 			}
-
 		} catch ( ReflectionException $e ) {
 
 			$callback['error'] = new WP_Error( 'reflection_exception', $e->getMessage() );
@@ -252,7 +316,7 @@ class QM_Util {
 	}
 
 	public static function is_ajax() {
-		if ( defined( 'DOING_AJAX' ) and DOING_AJAX ) {
+		if ( defined( 'DOING_AJAX' ) && DOING_AJAX ) {
 			return true;
 		}
 		return false;
@@ -262,7 +326,7 @@ class QM_Util {
 		if ( self::is_ajax() ) {
 			return true;
 		}
-		if ( isset( $_SERVER['HTTP_X_REQUESTED_WITH'] ) and 'xmlhttprequest' === strtolower( $_SERVER['HTTP_X_REQUESTED_WITH'] ) ) {
+		if ( isset( $_SERVER['HTTP_X_REQUESTED_WITH'] ) && 'xmlhttprequest' === strtolower( $_SERVER['HTTP_X_REQUESTED_WITH'] ) ) { // phpcs:ignore
 			return true;
 		}
 		return false;
@@ -287,10 +351,12 @@ class QM_Util {
 			return false;
 		}
 
+		// phpcs:disable
 		$num_sites = $wpdb->get_var( "
 			SELECT COUNT(*)
 			FROM {$wpdb->site}
 		" );
+		// phpcs:enable
 
 		return ( $num_sites > 1 );
 	}
@@ -310,17 +376,153 @@ class QM_Util {
 	}
 
 	public static function get_query_type( $sql ) {
-		$sql = $type = trim( $sql );
+		// Trim leading whitespace and brackets
+		$sql = ltrim( $sql, ' \t\n\r\0\x0B(' );
 
 		if ( 0 === strpos( $sql, '/*' ) ) {
 			// Strip out leading comments such as `/*NO_SELECT_FOUND_ROWS*/` before calculating the query type
-			$type = preg_replace( '|^/\*[^\*/]+\*/|', '', $sql );
+			$sql = preg_replace( '|^/\*[^\*/]+\*/|', '', $sql );
 		}
 
-		$type = preg_split( '/\b/', trim( $type ), 2, PREG_SPLIT_NO_EMPTY );
-		$type = strtoupper( $type[0] );
+		$words = preg_split( '/\b/', trim( $sql ), 2, PREG_SPLIT_NO_EMPTY );
+		$type = strtoupper( $words[0] );
 
 		return $type;
+	}
+
+	public static function display_variable( $value ) {
+		if ( is_string( $value ) ) {
+			return $value;
+		} elseif ( is_bool( $value ) ) {
+			return ( $value ) ? 'true' : 'false';
+		} elseif ( is_scalar( $value ) ) {
+			return $value;
+		} elseif ( is_object( $value ) ) {
+			$class = get_class( $value );
+
+			switch ( true ) {
+
+				case ( $value instanceof WP_Post ):
+				case ( $value instanceof WP_User ):
+					return sprintf( '%s (ID: %s)', $class, $value->ID );
+					break;
+
+				case ( $value instanceof WP_Term ):
+					return sprintf( '%s (term_id: %s)', $class, $value->term_id );
+					break;
+
+				case ( $value instanceof WP_Comment ):
+					return sprintf( '%s (comment_ID: %s)', $class, $value->comment_ID );
+					break;
+
+				case ( $value instanceof WP_Error ):
+					return sprintf( '%s (%s)', $class, $value->get_error_code() );
+					break;
+
+				case ( $value instanceof WP_Role ):
+				case ( $value instanceof WP_Post_Type ):
+				case ( $value instanceof WP_Taxonomy ):
+					return sprintf( '%s (%s)', $class, $value->name );
+					break;
+
+				case ( $value instanceof WP_Network ):
+					return sprintf( '%s (id: %s)', $class, $value->id );
+					break;
+
+				case ( $value instanceof WP_Site ):
+					return sprintf( '%s (blog_id: %s)', $class, $value->blog_id );
+					break;
+
+				case ( $value instanceof WP_Theme ):
+					return sprintf( '%s (%s)', $class, $value->get_stylesheet() );
+					break;
+
+				default:
+					return $class;
+					break;
+
+			}
+		} else {
+			return gettype( $value );
+		}
+	}
+
+	/**
+	 * Shortens a fully qualified name to reduce the length of the names of long namespaced symbols.
+	 *
+	 * This initialises portions that do not form the first or last portion of the name. For example:
+	 *
+	 *     Inpsyde\Wonolog\HookListener\HookListenersRegistry->hook_callback()
+	 *
+	 * becomes:
+	 *
+	 *     Inpsyde\W\H\HookListenersRegistry->hook_callback()
+	 *
+	 * @param string $fqn A fully qualified name.
+	 * @return string A shortened version of the name.
+	 */
+	public static function shorten_fqn( $fqn ) {
+		return preg_replace_callback( '#\\\\[a-zA-Z0-9_\\\\]{4,}\\\\#', function( array $matches ) {
+			preg_match_all( '#\\\\([a-zA-Z0-9_])#', $matches[0], $m );
+			return '\\' . implode( '\\', $m[1] ) . '\\';
+		}, $fqn );
+	}
+
+	/**
+	 * Helper function for JSON encoding data and formatting it in a consistent and compatible manner.
+	 *
+	 * @param mixed $data The data to be JSON encoded.
+	 * @return string The JSON encoded data.
+	 */
+	public static function json_format( $data ) {
+		$json_options = JSON_PRETTY_PRINT;
+
+		if ( defined( 'JSON_UNESCAPED_SLASHES' ) ) {
+			// phpcs:ignore PHPCompatibility.Constants.NewConstants.json_unescaped_slashesFound
+			$json_options |= JSON_UNESCAPED_SLASHES;
+		}
+
+		$json = json_encode( $data, $json_options );
+
+		if ( ! defined( 'JSON_UNESCAPED_SLASHES' ) ) {
+			$json = wp_unslash( $json );
+		}
+
+		return $json;
+	}
+
+	public static function is_stringy( $data ) {
+		return ( is_string( $data ) || ( is_object( $data ) && method_exists( $data, '__toString' ) ) );
+	}
+
+	public static function sort( array &$array, $field ) {
+		self::$sort_field = $field;
+		usort( $array, array( __CLASS__, '_sort' ) );
+	}
+
+	public static function rsort( array &$array, $field ) {
+		self::$sort_field = $field;
+		usort( $array, array( __CLASS__, '_rsort' ) );
+	}
+
+	private static function _rsort( $a, $b ) {
+		$field = self::$sort_field;
+
+		if ( $a[ $field ] === $b[ $field ] ) {
+			return 0;
+		} else {
+			return ( $a[ $field ] > $b[ $field ] ) ? -1 : 1;
+		}
+	}
+
+	private static function _sort( $a, $b ) {
+		$field = self::$sort_field;
+
+		if ( $a[ $field ] === $b[ $field ] ) {
+			return 0;
+		} else {
+			return ( $a[ $field ] > $b[ $field ] ) ? 1 : -1;
+		}
 	}
 
 }

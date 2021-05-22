@@ -4,13 +4,12 @@
 <channel>
 	<form>
 		<id>1</id>
-		<form_key><![CDATA[contact]]></form_key>
+		<form_key><![CDATA[contact-form]]></form_key>
 		<name><![CDATA[Contact Us]]></name>
 		<description><![CDATA[We would like to hear from you. Please send us a message by filling out the form below and we will get back with you shortly.]]></description>
-		<created_at>2009-11-24 00:17:31</created_at>
+		<created_at></created_at>
 		<logged_in>0</logged_in>
-		<is_template>1</is_template>
-		<default_template>1</default_template>
+		<is_template>0</is_template>
 		<editable>0</editable>
 		<options><![CDATA[{"custom_style":1}]]></options>
 		<status><![CDATA[published]]></status>
@@ -54,19 +53,6 @@
             <field_options><![CDATA[{"blank":"","invalid":"Please enter a valid email address","classes":"frm_full"}]]></field_options>
 		</field>
 		<field>
-		    <id>4</id>
-            <field_key><![CDATA[itt5me]]></field_key>
-            <name><![CDATA[Website]]></name>
-            <description><![CDATA[]]></description>
-            <type><![CDATA[url]]></type>
-            <default_value><![CDATA[]]></default_value>
-            <field_order>4</field_order>
-            <form_id>1</form_id>
-            <required></required>
-            <options><![CDATA[]]></options>
-            <field_options><![CDATA[{"blank":"","invalid":"Please enter a valid website","classes":"frm_full"}]]></field_options>
-		</field>
-		<field>
 		    <id>5</id>
             <field_key><![CDATA[e6lis6]]></field_key>
             <name><![CDATA[Subject]]></name>
@@ -92,26 +78,13 @@
             <options><![CDATA[]]></options>
             <field_options><![CDATA[{"max":"5","blank":"","classes":"frm_full"}]]></field_options>
 		</field>
-		<field>
-		    <id>7</id>
-            <field_key><![CDATA[62n6q3]]></field_key>
-            <name><![CDATA[Captcha]]></name>
-            <description><![CDATA[]]></description>
-            <type><![CDATA[captcha]]></type>
-            <default_value><![CDATA[]]></default_value>
-            <field_order>7</field_order>
-            <form_id>1</form_id>
-            <required></required>
-            <options><![CDATA[]]></options>
-            <field_options><![CDATA[{"label":"none","blank":"","clear_on_focus":0,"default_blank":0}]]></field_options>
-		</field>
 	</form>
 	<view>
 		<title>Email Notification</title>
 		<link></link>
 		<post_author><![CDATA[admin]]></post_author>
 		<description></description>
-		<content><![CDATA[{"email_to":"[admin_email]","cc":"","bcc":"","reply_to":"","from":"[sitename] <[admin_email]>","email_subject":"","email_message":"[default-message]","event":["create"],"conditions":{"send_stop":"send","any_all":"any"}}]]></content>
+		<content><![CDATA[{"email_to":"[admin_email]","cc":"","bcc":"","reply_to":"[3]","from":"[sitename] <[admin_email]>","email_subject":"","email_message":"[default-message]","event":["create"],"conditions":{"send_stop":"send","any_all":"any"}}]]></content>
 		<excerpt><![CDATA[email]]></excerpt>
 		<post_id>1</post_id>
 		<post_date>2015-04-06 17:18:12</post_date>

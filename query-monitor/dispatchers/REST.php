@@ -1,18 +1,11 @@
 <?php
-/*
-Copyright 2009-2016 John Blackbourn
+/**
+ * REST API request dispatcher.
+ *
+ * @package query-monitor
+ */
 
-This program is free software; you can redistribute it and/or modify
-it under the terms of the GNU General Public License as published by
-the Free Software Foundation; either version 2 of the License, or
-(at your option) any later version.
-
-This program is distributed in the hope that it will be useful,
-but WITHOUT ANY WARRANTY; without even the implied warranty of
-MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
-GNU General Public License for more details.
-
-*/
+defined( 'ABSPATH' ) || exit;
 
 class QM_Dispatcher_REST extends QM_Dispatcher {
 
@@ -26,6 +19,7 @@ class QM_Dispatcher_REST extends QM_Dispatcher {
 	}
 
 	/**
+	 * Filters a REST API response in order to add QM's headers.
 	 *
 	 * @param WP_HTTP_Response $result  Result to send to the client. Usually a WP_REST_Response.
 	 * @param WP_REST_Server   $server  Server instance.
@@ -71,7 +65,7 @@ class QM_Dispatcher_REST extends QM_Dispatcher {
 			return false;
 		}
 
-		if ( ! $this->user_can_view() ) {
+		if ( ! self::user_can_view() ) {
 			return false;
 		}
 

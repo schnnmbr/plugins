@@ -1,24 +1,24 @@
 <?php
-/*
-Copyright 2009-2016 John Blackbourn
+/**
+ * HTTP redirects output for HTTP headers.
+ *
+ * @package query-monitor
+ */
 
-This program is free software; you can redistribute it and/or modify
-it under the terms of the GNU General Public License as published by
-the Free Software Foundation; either version 2 of the License, or
-(at your option) any later version.
-
-This program is distributed in the hope that it will be useful,
-but WITHOUT ANY WARRANTY; without even the implied warranty of
-MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
-GNU General Public License for more details.
-
-*/
+defined( 'ABSPATH' ) || exit;
 
 class QM_Output_Headers_Redirects extends QM_Output_Headers {
 
+	/**
+	 * Collector instance.
+	 *
+	 * @var QM_Collector_Redirects Collector.
+	 */
+	protected $collector;
+
 	public function get_output() {
 
-		$data = $this->collector->get_data();
+		$data    = $this->collector->get_data();
 		$headers = array();
 
 		if ( empty( $data['trace'] ) ) {
@@ -33,7 +33,8 @@ class QM_Output_Headers_Redirects extends QM_Output_Headers {
 }
 
 function register_qm_output_headers_redirects( array $output, QM_Collectors $collectors ) {
-	if ( $collector = QM_Collectors::get( 'redirects' ) ) {
+	$collector = QM_Collectors::get( 'redirects' );
+	if ( $collector ) {
 		$output['redirects'] = new QM_Output_Headers_Redirects( $collector );
 	}
 	return $output;
